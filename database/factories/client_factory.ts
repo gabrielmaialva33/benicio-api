@@ -65,5 +65,5 @@ export const ClientFactory = factory
   .state('favorite', (client) => {
     client.is_favorite = true
   })
-  .relation('createdBy', () => UserFactory)
+  .relation('created_by', () => UserFactory)
   .build()

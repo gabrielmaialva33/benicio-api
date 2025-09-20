@@ -67,9 +67,9 @@ test.group('Clients CRUD', (group) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
 
     // Create some test clients
-    await ClientFactory.merge({ fantasy_name: 'Client One' }).apply('individual').create()
-    await ClientFactory.merge({ fantasy_name: 'Client Two' }).apply('individual').create()
-    await ClientFactory.merge({ fantasy_name: 'Client Three' }).apply('company').create()
+    await ClientFactory.with('created_by').merge({ fantasy_name: 'Client One' }).apply('individual').create()
+    await ClientFactory.with('created_by').merge({ fantasy_name: 'Client Two' }).apply('individual').create()
+    await ClientFactory.with('created_by').merge({ fantasy_name: 'Client Three' }).apply('company').create()
 
     const response = await client.get('/api/v1/clients?page=1&per_page=2').loginAs(authUser)
 
@@ -100,9 +100,9 @@ test.group('Clients CRUD', (group) => {
   test('should filter clients by search', async ({ client, assert }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
 
-    await ClientFactory.merge({ fantasy_name: 'Acme Corporation' }).apply('individual').create()
-    await ClientFactory.merge({ fantasy_name: 'Beta Inc' }).apply('individual').create()
-    await ClientFactory.merge({ fantasy_name: 'Acme Solutions' }).apply('individual').create()
+    await ClientFactory.with('created_by').merge({ fantasy_name: 'Acme Corporation' }).apply('individual').create()
+    await ClientFactory.with('created_by').merge({ fantasy_name: 'Beta Inc' }).apply('individual').create()
+    await ClientFactory.with('created_by').merge({ fantasy_name: 'Acme Solutions' }).apply('individual').create()
 
     const response = await client.get('/api/v1/clients?search=Acme').loginAs(authUser)
 
