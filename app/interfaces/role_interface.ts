@@ -10,6 +10,9 @@ namespace IRole {
     USER = 'user',
     GUEST = 'guest',
     EDITOR = 'editor',
+    MANAGER = 'manager',
+    EMPLOYEE = 'employee',
+    CLIENT = 'client',
   }
 
   export interface RoleHierarchy {
@@ -17,8 +20,26 @@ namespace IRole {
   }
 
   export const ROLE_HIERARCHY: RoleHierarchy = {
-    [Slugs.ROOT]: [Slugs.ADMIN, Slugs.USER, Slugs.GUEST, Slugs.EDITOR],
-    [Slugs.ADMIN]: [Slugs.USER, Slugs.GUEST, Slugs.EDITOR],
+    [Slugs.ROOT]: [
+      Slugs.ADMIN,
+      Slugs.MANAGER,
+      Slugs.EMPLOYEE,
+      Slugs.CLIENT,
+      Slugs.USER,
+      Slugs.GUEST,
+      Slugs.EDITOR,
+    ],
+    [Slugs.ADMIN]: [
+      Slugs.MANAGER,
+      Slugs.EMPLOYEE,
+      Slugs.CLIENT,
+      Slugs.USER,
+      Slugs.GUEST,
+      Slugs.EDITOR,
+    ],
+    [Slugs.MANAGER]: [Slugs.EMPLOYEE, Slugs.CLIENT],
+    [Slugs.EMPLOYEE]: [Slugs.CLIENT],
+    [Slugs.CLIENT]: [],
     [Slugs.EDITOR]: [Slugs.USER],
     [Slugs.USER]: [Slugs.GUEST],
     [Slugs.GUEST]: [],

@@ -11,6 +11,9 @@ export const AvailableRoles = [
   { name: 'User', slug: IRole.Slugs.USER },
   { name: 'Guest', slug: IRole.Slugs.GUEST },
   { name: 'Editor', slug: IRole.Slugs.EDITOR },
+  { name: 'Manager', slug: IRole.Slugs.MANAGER },
+  { name: 'Employee', slug: IRole.Slugs.EMPLOYEE },
+  { name: 'Client', slug: IRole.Slugs.CLIENT },
 ] as ModelAttributes<Role>[]
 
 @inject()

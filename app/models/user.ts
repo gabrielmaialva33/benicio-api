@@ -53,6 +53,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare username: string | null
 
+  @column()
+  declare user_type: 'employee' | 'manager' | 'client'
+
   @column({ serializeAs: null })
   declare password: string
 
@@ -97,6 +100,23 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotColumns: ['granted', 'expires_at'],
   })
   declare permissions: ManyToMany<typeof Permission>
+
+  /**
+   * ------------------------------------------------------
+   * Computed Properties
+   * ------------------------------------------------------
+   */
+  public get is_employee(): boolean {
+    return this.user_type === 'employee'
+  }
+
+  public get is_manager(): boolean {
+    return this.user_type === 'manager'
+  }
+
+  public get is_client(): boolean {
+    return this.user_type === 'client'
+  }
 
   /**
    * ------------------------------------------------------
