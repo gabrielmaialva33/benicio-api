@@ -6,6 +6,7 @@ import Permission from '#models/permission'
 import Role from '#models/role'
 import User from '#models/user'
 import Client from '#models/client'
+import { ClientFactory } from '#database/factories/client_factory'
 
 import IPermission from '#interfaces/permission_interface'
 import IRole from '#interfaces/role_interface'
@@ -70,17 +71,20 @@ test.group('Clients CRUD', (group) => {
       {
         fantasy_name: 'Client One',
         document: '11111111111',
+        document_type: 'cpf',
         person_type: 'individual',
       },
       {
         fantasy_name: 'Client Two',
         company_name: 'Company Two',
         document: '22222222222222',
+        document_type: 'cnpj',
         person_type: 'company',
       },
       {
         fantasy_name: 'Client Three',
         document: '33333333333',
+        document_type: 'cpf',
         person_type: 'individual',
       },
     ])
