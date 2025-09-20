@@ -27,9 +27,14 @@
 
 ## :bookmark: Sobre
 
-A **API Benício** é um sistema abrangente de gestão advocatícia desenvolvido especificamente para o Benício Advocacia. Construído com **AdonisJS v6** e React, oferece uma base completa para gerenciar processos jurídicos, clientes, documentos e todos os aspectos operacionais de um escritório de advocacia moderno.
+A **API Benício** é um sistema abrangente de gestão advocatícia desenvolvido especificamente para o Benício Advocacia.
+Construído com **AdonisJS v6** e React, oferece uma base completa para gerenciar processos jurídicos, clientes,
+documentos e todos os aspectos operacionais de um escritório de advocacia moderno.
 
-Este sistema vai além dos softwares jurídicos tradicionais ao oferecer uma arquitetura AI-first que aumenta a produtividade e permite integração perfeita com fluxos de trabalho de desenvolvimento modernos. Desde gestão de relacionamento com clientes até acompanhamento de processos, gestão de documentos e supervisão financeira, a API Benício oferece as ferramentas necessárias para uma gestão eficiente da prática advocatícia.
+Este sistema vai além dos softwares jurídicos tradicionais ao oferecer uma arquitetura AI-first que aumenta a
+produtividade e permite integração perfeita com fluxos de trabalho de desenvolvimento modernos. Desde gestão de
+relacionamento com clientes até acompanhamento de processos, gestão de documentos e supervisão financeira, a API Benício
+oferece as ferramentas necessárias para uma gestão eficiente da prática advocatícia.
 
 ### 🏗️ Visão Geral da Arquitetura
 
@@ -88,31 +93,46 @@ graph TD
 
 A API Benício foi projetada de forma única para maximizar a eficácia da gestão advocatícia assistida por IA.
 
-- **Inteligência de Domínio Jurídico**: O sistema compreende terminologia jurídica, estruturas de processos e procedimentos legais brasileiros, facilitando para a IA auxiliar na gestão de casos e geração de documentos jurídicos.
-- **Dados Jurídicos Estruturados**: Tipagem completa de entidades jurídicas (processos, clientes, documentos, prazos) cria contratos claros que a IA pode entender e manipular com precisão.
-- **Arquitetura Jurídica Modular**: Organização orientada ao domínio em torno de práticas jurídicas (litígio, contratos, consultas) permite que a IA estenda funcionalidades seguindo convenções legais estabelecidas.
-- **Foco na Lógica de Negócio Jurídica**: Com infraestrutura para autenticação, gestão de documentos e acompanhamento de casos já resolvida, a IA pode ser direcionada para resolver problemas complexos de fluxo de trabalho jurídico desde o primeiro dia.
+- **Inteligência de Domínio Jurídico**: O sistema compreende terminologia jurídica, estruturas de processos e
+  procedimentos legais brasileiros, facilitando para a IA auxiliar na gestão de casos e geração de documentos jurídicos.
+- **Dados Jurídicos Estruturados**: Tipagem completa de entidades jurídicas (processos, clientes, documentos, prazos)
+  cria contratos claros que a IA pode entender e manipular com precisão.
+- **Arquitetura Jurídica Modular**: Organização orientada ao domínio em torno de práticas jurídicas (litígio, contratos,
+  consultas) permite que a IA estenda funcionalidades seguindo convenções legais estabelecidas.
+- **Foco na Lógica de Negócio Jurídica**: Com infraestrutura para autenticação, gestão de documentos e acompanhamento de
+  casos já resolvida, a IA pode ser direcionada para resolver problemas complexos de fluxo de trabalho jurídico desde o
+  primeiro dia.
 
 ## 🌟 Principais Funcionalidades
 
-- **⚖️ Gestão de Processos**: Sistema completo de acompanhamento de litígios e processos com gestão de prazos e controles processuais.
-- **👥 Gestão de Relacionamento com Clientes**: Portal abrangente de clientes com prospecção integrada e acompanhamento de relacionamentos.
-- **📄 Gestão de Documentos Jurídicos**: Armazenamento seguro de documentos com categorização automática e controle de versão.
+- **⚖️ Gestão de Processos**: Sistema completo de acompanhamento de litígios e processos com gestão de prazos e
+  controles processuais.
+- **👥 Gestão de Relacionamento com Clientes**: Portal abrangente de clientes com prospecção integrada e acompanhamento
+  de relacionamentos.
+- **📄 Gestão de Documentos Jurídicos**: Armazenamento seguro de documentos com categorização automática e controle de
+  versão.
 - **💰 Gestão Financeira**: Faturamento, controle de despesas e relatórios financeiros adaptados para práticas jurídicas.
-- **⏰ Gestão de Prazos e Tarefas**: Acompanhamento automatizado de prazos com integração de calendário e sistemas de lembrete.
-- **📊 Relatórios Jurídicos**: Relatórios abrangentes sobre progresso de casos, desempenho financeiro e análises da prática.
-- **🔐 Autenticação Segura**: Autenticação multi-fator com controle de acesso baseado em funções para hierarquia de escritório de advocacia.
+- **⏰ Gestão de Prazos e Tarefas**: Acompanhamento automatizado de prazos com integração de calendário e sistemas de
+  lembrete.
+- **📊 Relatórios Jurídicos**: Relatórios abrangentes sobre progresso de casos, desempenho financeiro e análises da
+  prática.
+- **🔐 Autenticação Segura**: Autenticação multi-fator com controle de acesso baseado em funções para hierarquia de
+  escritório de advocacia.
 - **🏥 Monitoramento de Saúde**: Monitoramento de sistema integrado para conformidade e supervisão operacional.
 
 ## :computer: Tecnologias
 
 - **[AdonisJS v6](https://adonisjs.com/)**: Framework Node.js robusto otimizado para aplicações jurídicas.
-- **[React 19](https://reactjs.org/)**: Frontend moderno com componentes e fluxos de trabalho específicos para área jurídica.
-- **[TypeScript](https://www.typescriptlang.org/)**: Segurança de tipos completa em entidades e fluxos de trabalho jurídicos.
-- **[PostgreSQL](https://www.postgresql.org/)**: Banco de dados confiável para dados jurídicos sensíveis com trilhas de auditoria.
+- **[React 19](https://reactjs.org/)**: Frontend moderno com componentes e fluxos de trabalho específicos para área
+  jurídica.
+- **[TypeScript](https://www.typescriptlang.org/)**: Segurança de tipos completa em entidades e fluxos de trabalho
+  jurídicos.
+- **[PostgreSQL](https://www.postgresql.org/)**: Banco de dados confiável para dados jurídicos sensíveis com trilhas de
+  auditoria.
 - **[Redis](https://redis.io/)**: Cache de alta performance para pesquisas de casos e indexação de documentos.
 - **[VineJS](https://vinejs.dev/)**: Validação de documentos jurídicos com padrões legais brasileiros.
-- **[Lucid ORM](https://lucid.adonisjs.com/)**: Modelagem de entidades jurídicas com mapeamento de relacionamentos complexos.
+- **[Lucid ORM](https://lucid.adonisjs.com/)**: Modelagem de entidades jurídicas com mapeamento de relacionamentos
+  complexos.
 
 ## :package: Instalação
 

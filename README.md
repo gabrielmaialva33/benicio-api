@@ -27,9 +27,14 @@
 
 ## :bookmark: About
 
-**Benício API** is a comprehensive legal practice management system designed specifically for Benício Advocacia. Built with **AdonisJS v6** and React, it provides a complete foundation for managing legal cases, clients, documents, and all operational aspects of a modern law firm.
+**Benício API** is a comprehensive legal practice management system designed specifically for Benício Advocacia. Built
+with **AdonisJS v6** and React, it provides a complete foundation for managing legal cases, clients, documents, and all
+operational aspects of a modern law firm.
 
-This system goes beyond traditional legal software by offering an AI-first architecture that enhances productivity and enables seamless integration with modern development workflows. From client relationship management to case tracking, document management, and financial oversight, Benício API delivers the tools necessary for efficient legal practice management.
+This system goes beyond traditional legal software by offering an AI-first architecture that enhances productivity and
+enables seamless integration with modern development workflows. From client relationship management to case tracking,
+document management, and financial oversight, Benício API delivers the tools necessary for efficient legal practice
+management.
 
 ### 🏗️ Architecture Overview
 
@@ -88,15 +93,20 @@ graph TD
 
 Benício API is uniquely designed to maximize the effectiveness of AI-assisted legal practice management.
 
-- **Legal Domain Intelligence**: The system understands legal terminology, case structures, and Brazilian legal procedures, making it easy for AI to assist with case management and legal document generation.
-- **Structured Legal Data**: Complete typing of legal entities (cases, clients, documents, deadlines) creates clear contracts that AI can understand and manipulate with precision.
-- **Modular Legal Architecture**: Domain-driven organization around legal practices (litigation, contracts, consultations) enables AI to extend functionality following established legal conventions.
-- **Focus on Legal Business Logic**: With infrastructure for authentication, document management, and case tracking already handled, AI can be directed to solve complex legal workflow problems from day one.
+- **Legal Domain Intelligence**: The system understands legal terminology, case structures, and Brazilian legal
+  procedures, making it easy for AI to assist with case management and legal document generation.
+- **Structured Legal Data**: Complete typing of legal entities (cases, clients, documents, deadlines) creates clear
+  contracts that AI can understand and manipulate with precision.
+- **Modular Legal Architecture**: Domain-driven organization around legal practices (litigation, contracts,
+  consultations) enables AI to extend functionality following established legal conventions.
+- **Focus on Legal Business Logic**: With infrastructure for authentication, document management, and case tracking
+  already handled, AI can be directed to solve complex legal workflow problems from day one.
 
 ## 🌟 Key Features
 
 - **⚖️ Case Management**: Complete litigation and case tracking system with deadline management and procedural controls.
-- **👥 Client Relationship Management**: Comprehensive client portal with integrated prospecting and relationship tracking.
+- **👥 Client Relationship Management**: Comprehensive client portal with integrated prospecting and relationship
+  tracking.
 - **📄 Legal Document Management**: Secure document storage with automatic categorization and version control.
 - **💰 Financial Management**: Billing, expense tracking, and financial reporting tailored for legal practices.
 - **⏰ Deadline & Task Management**: Automated deadline tracking with calendar integration and reminder systems.
