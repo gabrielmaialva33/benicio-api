@@ -83,6 +83,7 @@
     "@rlanz/bull-queue": "^3.1.0",
     "@vinejs/vine": "^3.0.1",
     "argon2": "^0.44.0",
+    "axios": "^1.12.2",
     "better-sqlite3": "^12.2.0",
     "edge.js": "^6.3.0",
     "jsonwebtoken": "^9.0.2",
