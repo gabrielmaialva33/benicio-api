@@ -1,6 +1,6 @@
 import { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import { createUserValidator, signInValidator } from '#validators/users/users_validator'
+import { createUserValidator, signInValidator } from '#validators/users/user'
 import SignInService from '#services/users/sign_in_service'
 import SignUpService from '#services/users/sign_up_service'
 
