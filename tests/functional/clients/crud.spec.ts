@@ -67,27 +67,9 @@ test.group('Clients CRUD', (group) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
 
     // Create some test clients
-    await Client.createMany([
-      {
-        fantasy_name: 'Client One',
-        document: '11111111111',
-        document_type: 'cpf',
-        person_type: 'individual',
-      },
-      {
-        fantasy_name: 'Client Two',
-        company_name: 'Company Two',
-        document: '22222222222222',
-        document_type: 'cnpj',
-        person_type: 'company',
-      },
-      {
-        fantasy_name: 'Client Three',
-        document: '33333333333',
-        document_type: 'cpf',
-        person_type: 'individual',
-      },
-    ])
+    await ClientFactory.merge({ fantasy_name: 'Client One' }).apply('individual').create()
+    await ClientFactory.merge({ fantasy_name: 'Client Two' }).apply('individual').create()
+    await ClientFactory.merge({ fantasy_name: 'Client Three' }).apply('company').create()
 
     const response = await client.get('/api/v1/clients?page=1&per_page=2').loginAs(authUser)
 
