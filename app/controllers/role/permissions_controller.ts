@@ -5,7 +5,7 @@ import {
   createPermissionValidator,
   syncRolePermissionsValidator,
   syncUserPermissionsValidator,
-} from '#validators/permissions/permission_validators'
+} from '#validators/permissions/permission'
 import CreatePermissionService from '#services/permissions/create_permission_service'
 import SyncRolePermissionsService from '#services/permissions/sync_role_permissions_service'
 import SyncUserPermissionsService from '#services/permissions/sync_user_permissions_service'

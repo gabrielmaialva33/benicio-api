@@ -3,7 +3,7 @@ import { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 import db from '@adonisjs/lucid/services/db'
 
-import { attachRoleValidator } from '#validators/roles/roles_validator'
+import { attachRoleValidator } from '#validators/roles/role'
 
 import ListRolesService from '#services/roles/list_roles_service'
 import SyncRolesService from '#services/roles/sync_roles_service'

@@ -341,17 +341,19 @@ await loadHelpers() // Access helpers module
 ### REPL Best Practices
 
 1. **Use for debugging and data exploration**
-  - Test queries before implementing
-  - Inspect data relationships
-  - Debug service methods
+
+- Test queries before implementing
+- Inspect data relationships
+- Debug service methods
 
 2. **Common Use Cases**
-  - Testing model queries
-  - Debugging service logic
-  - Inspecting configuration
-  - Running one-off data migrations
-  - Testing email templates
-  - Verifying queue jobs
+
+- Testing model queries
+- Debugging service logic
+- Inspecting configuration
+- Running one-off data migrations
+- Testing email templates
+- Verifying queue jobs
 
 ### REPL Tips
 
@@ -365,28 +367,33 @@ await loadHelpers() // Access helpers module
 ## Important Instructions for AI Assistants
 
 1. **ALWAYS USE COMMANDS** - Never create files manually
-  - Use `node ace make:controller` not manual file creation
-  - Use `node ace make:migration` not manual database files
-  - Use `node ace make:service` not manual service files
+
+- Use `node ace make:controller` not manual file creation
+- Use `node ace make:migration` not manual database files
+- Use `node ace make:service` not manual service files
 
 2. **Follow the Architecture**
-  - Controller → Service → Repository → Model flow
-  - Use dependency injection with `@inject()` decorator
-  - Keep business logic in services, not controllers
+
+- Controller → Service → Repository → Model flow
+- Use dependency injection with `@inject()` decorator
+- Keep business logic in services, not controllers
 
 3. **Use Import Aliases**
-  - Always use `#controllers/*`, `#services/*`, etc.
-  - Never use relative imports like `../../`
+
+- Always use `#controllers/*`, `#services/*`, etc.
+- Never use relative imports like `../../`
 
 4. **Test Before Committing**
-  - Run `pnpm lint` - Must pass
-  - Run `pnpm typecheck` - Must pass
-  - Run `pnpm test` - Must pass
+
+- Run `pnpm lint` - Must pass
+- Run `pnpm typecheck` - Must pass
+- Run `pnpm test` - Must pass
 
 5. **Suggest REPL for Debugging**
-  - When users need to explore data
-  - When testing queries before implementation
-  - When debugging service methods
+
+- When users need to explore data
+- When testing queries before implementation
+- When debugging service methods
 
 6. **Example Workflow**
 

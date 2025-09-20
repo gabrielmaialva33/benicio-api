@@ -2,8 +2,8 @@
 
 ## Project Overview
 
-**Benício API** is a comprehensive legal practice management system designed for Benício Advocacia. Built with *
-*AdonisJS v6** and React, it provides complete functionality for managing legal cases, clients, documents, and all
+**Benício API** is a comprehensive legal practice management system designed for Benício Advocacia. Built with \*
+\*AdonisJS v6\*\* and React, it provides complete functionality for managing legal cases, clients, documents, and all
 operational aspects of a modern law firm.
 
 ### Key Features

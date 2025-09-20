@@ -64,7 +64,7 @@ servers:
     description: Production server
 
 security:
-  - bearerAuth: [ ]
+  - bearerAuth: []
 
 components:
   securitySchemes:
@@ -118,7 +118,7 @@ components:
           example: 'Regular user role'
         slug:
           type: string
-          enum: [ root, admin, user, guest ]
+          enum: [root, admin, user, guest]
           example: 'user'
         created_at:
           type: string
@@ -222,7 +222,7 @@ components:
           example: 'document.pdf'
         fileCategory:
           type: string
-          enum: [ image, document, video, audio, file ]
+          enum: [image, document, video, audio, file]
           example: 'document'
         fileType:
           type: string
@@ -275,7 +275,7 @@ components:
       in: query
       schema:
         type: string
-        enum: [ asc, desc ]
+        enum: [asc, desc]
         default: asc
       description: Sort order
 
@@ -348,7 +348,7 @@ paths:
       description: Returns basic information about the API
       tags:
         - Health
-      security: [ ]
+      security: []
       responses:
         '200':
           description: API information
@@ -387,7 +387,7 @@ paths:
       description: Check the health status of the API and its services
       tags:
         - Health
-      security: [ ]
+      security: []
       responses:
         '200':
           description: Service is healthy
@@ -434,7 +434,7 @@ paths:
       description: Authenticate a user and receive JWT tokens
       tags:
         - Authentication
-      security: [ ]
+      security: []
       requestBody:
         required: true
         content:
@@ -542,7 +542,7 @@ paths:
       description: Create a new user account
       tags:
         - Authentication
-      security: [ ]
+      security: []
       requestBody:
         required: true
         content:
@@ -592,7 +592,7 @@ paths:
       description: Verify a user's email address using a token from the verification link.
       tags:
         - Authentication
-      security: [ ]
+      security: []
       parameters:
         - name: token
           in: query
@@ -822,7 +822,7 @@ paths:
                   type: array
                   items:
                     type: integer
-                  example: [ 1, 2, 3 ]
+                  example: [1, 2, 3]
       responses:
         '200':
           description: Roles attached successfully
@@ -917,7 +917,7 @@ paths:
                   type: array
                   items:
                     type: integer
-                  example: [ 1, 2, 3 ]
+                  example: [1, 2, 3]
       responses:
         '200':
           description: Permissions synced successfully
@@ -952,7 +952,7 @@ paths:
                   type: array
                   items:
                     type: integer
-                  example: [ 4, 5 ]
+                  example: [4, 5]
       responses:
         '200':
           description: Permissions attached successfully
@@ -987,7 +987,7 @@ paths:
                   type: array
                   items:
                     type: integer
-                  example: [ 1 ]
+                  example: [1]
       responses:
         '200':
           description: Permissions detached successfully
@@ -1022,7 +1022,7 @@ paths:
                   type: array
                   items:
                     type: integer
-                  example: [ 10, 11 ]
+                  example: [10, 11]
       responses:
         '200':
           description: User permissions synced successfully
@@ -1072,7 +1072,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  example: [ 'users.create', 'files.delete' ]
+                  example: ['users.create', 'files.delete']
       responses:
         '200':
           description: Check result
