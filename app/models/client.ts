@@ -7,13 +7,17 @@ import {
   belongsTo,
   column,
   hasMany,
+  scope,
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import * as model from '@adonisjs/lucid/types/model'
 import User from '#models/user'
 import ClientAddress from '#models/client_address'
 import ClientContact from '#models/client_contact'
+
+type ClientBuilder = ModelQueryBuilderContract<typeof Client>
 
 export default class Client extends BaseModel {
   static table = 'clients'
@@ -160,18 +164,58 @@ export default class Client extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
-  static active(query: model.ModelQueryBuilderContract<typeof Client>) {
+  static active = scope((query) => {
     query.where('is_active', true)
-  }
+  })
 
-  static favorites(query: model.ModelQueryBuilderContract<typeof Client>) {
+  static favorites = scope((query) => {
     query.where('is_favorite', true)
-  }
+  })
 
-  static byType(
-    query: model.ModelQueryBuilderContract<typeof Client>,
-    type: 'individual' | 'company'
-  ) {
+  static byType = scope((query, type: 'individual' | 'company') => {
     query.where('person_type', type)
-  }
+  })
+
+  static byClientType = scope(
+    (
+      query,
+      clientType:
+        | 'prospect'
+        | 'prospect_sic'
+        | 'prospect_dbm'
+        | 'client'
+        | 'board_contact'
+        | 'news_contact'
+    ) => {
+      query.where('client_type', clientType)
+    }
+  )
+
+  static search = scope((query, searchTerm: string) => {
+    const cleanedTerm = searchTerm.replace(/\D/g, '')
+
+    query.where((q) => {
+      q.whereILike('fantasy_name', `%${searchTerm}%`).orWhereILike(
+        'company_name',
+        `%${searchTerm}%`
+      )
+
+      // Check if it might be a document
+      if (cleanedTerm.length === 11 || cleanedTerm.length === 14) {
+        q.orWhere('document', cleanedTerm)
+      }
+    })
+  })
+
+  static withRelationships = scope((query: ClientBuilder) => {
+    query.preload('addresses').preload('contacts')
+  })
+
+  static byCompanyGroup = scope((query, companyGroupId: number) => {
+    query.where('company_group_id', companyGroupId)
+  })
+
+  static byBusinessSector = scope((query, businessSectorId: number) => {
+    query.where('business_sector_id', businessSectorId)
+  })
 }

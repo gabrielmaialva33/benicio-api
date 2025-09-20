@@ -58,7 +58,7 @@ namespace IClient {
     fantasy_name: string
     company_name?: string | null
     document: string
-    document_type: 'cpf' | 'cnpj'
+    document_type?: 'cpf' | 'cnpj'
     client_type?:
       | 'prospect'
       | 'prospect_sic'
