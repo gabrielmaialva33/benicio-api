@@ -132,10 +132,14 @@ export default class Client extends BaseModel {
   })
   declare updated_by: BelongsTo<typeof User>
 
-  @hasMany(() => ClientAddress)
+  @hasMany(() => ClientAddress, {
+    foreignKey: 'client_id',
+  })
   declare addresses: HasMany<typeof ClientAddress>
 
-  @hasMany(() => ClientContact)
+  @hasMany(() => ClientContact, {
+    foreignKey: 'client_id',
+  })
   declare contacts: HasMany<typeof ClientContact>
 
   /**

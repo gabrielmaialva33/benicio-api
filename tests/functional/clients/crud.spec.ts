@@ -7,6 +7,7 @@ import Role from '#models/role'
 import User from '#models/user'
 import Client from '#models/client'
 import { ClientFactory } from '#database/factories/client_factory'
+import { UserFactory } from '#database/factories/user_factory'
 
 import IPermission from '#interfaces/permission_interface'
 import IRole from '#interfaces/role_interface'
@@ -66,10 +67,27 @@ test.group('Clients CRUD', (group) => {
   test('should list clients with pagination', async ({ client }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
 
-    // Create some test clients
-    await ClientFactory.with('created_by').merge({ fantasy_name: 'Client One' }).apply('individual').create()
-    await ClientFactory.with('created_by').merge({ fantasy_name: 'Client Two' }).apply('individual').create()
-    await ClientFactory.with('created_by').merge({ fantasy_name: 'Client Three' }).apply('company').create()
+    // Create some test clients using the basic factory
+    const createdByUser = await UserFactory.create()
+
+    await ClientFactory.merge({
+      fantasy_name: 'Client One',
+      person_type: 'individual',
+      document_type: 'cpf',
+      created_by_id: createdByUser.id
+    }).create()
+    await ClientFactory.merge({
+      fantasy_name: 'Client Two',
+      person_type: 'individual',
+      document_type: 'cpf',
+      created_by_id: createdByUser.id
+    }).create()
+    await ClientFactory.merge({
+      fantasy_name: 'Client Three',
+      person_type: 'company',
+      document_type: 'cnpj',
+      created_by_id: createdByUser.id
+    }).create()
 
     const response = await client.get('/api/v1/clients?page=1&per_page=2').loginAs(authUser)
 
@@ -79,52 +97,70 @@ test.group('Clients CRUD', (group) => {
     })
     response.assertJsonStructure({
       message: {},
-      data: {
-        meta: {
-          total: {},
-          per_page: {},
-          current_page: {},
-        },
-        data: [
-          {
-            id: {},
-            fantasy_name: {},
-            document: {},
-            person_type: {},
-          },
-        ],
+      meta: {
+        total: {},
+        per_page: {},
+        current_page: {},
       },
+      data: [
+        {
+          id: {},
+          fantasy_name: {},
+          document: {},
+          person_type: {},
+        },
+      ],
     })
   })
 
   test('should filter clients by search', async ({ client, assert }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
 
-    await ClientFactory.with('created_by').merge({ fantasy_name: 'Acme Corporation' }).apply('individual').create()
-    await ClientFactory.with('created_by').merge({ fantasy_name: 'Beta Inc' }).apply('individual').create()
-    await ClientFactory.with('created_by').merge({ fantasy_name: 'Acme Solutions' }).apply('individual').create()
+    const createdByUser = await UserFactory.create()
+
+    await ClientFactory.merge({
+      fantasy_name: 'Acme Corporation',
+      person_type: 'individual',
+      document_type: 'cpf',
+      created_by_id: createdByUser.id
+    }).create()
+    await ClientFactory.merge({
+      fantasy_name: 'Beta Inc',
+      person_type: 'individual',
+      document_type: 'cpf',
+      created_by_id: createdByUser.id
+    }).create()
+    await ClientFactory.merge({
+      fantasy_name: 'Acme Solutions',
+      person_type: 'individual',
+      document_type: 'cpf',
+      created_by_id: createdByUser.id
+    }).create()
 
     const response = await client.get('/api/v1/clients?search=Acme').loginAs(authUser)
 
     response.assertStatus(200)
     const body = response.body()
-    assert.equal(body.data.data.length, 2)
-    assert.isTrue(body.data.data.every((c: any) => c.fantasy_name.includes('Acme')))
+    assert.equal(body.data.length, 2)
+    assert.isTrue(body.data.every((c: any) => c.fantasy_name.includes('Acme')))
   })
 
   test('should get client by id', async ({ client }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
+    const createdByUser = await UserFactory.create()
 
     const targetClient = await Client.create({
       fantasy_name: 'Target Client',
       company_name: 'Target Company Ltd',
       document: '12345678901234',
+      document_type: 'cnpj',
       person_type: 'company',
       client_type: 'client',
       revenue_range: 'medium',
       employee_count_range: '51-200',
       is_active: true,
       notes: 'Important client',
+      created_by_id: createdByUser.id,
     })
 
     const response = await client.get(`/api/v1/clients/${targetClient.id}`).loginAs(authUser)
@@ -255,11 +291,14 @@ test.group('Clients CRUD', (group) => {
 
   test('should not allow duplicate document', async ({ client }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.CREATE])
+    const createdByUser = await UserFactory.create()
 
     const existingClient = await Client.create({
       fantasy_name: 'Existing Client',
       document: '11111111111',
+      document_type: 'cpf',
       person_type: 'individual',
+      created_by_id: createdByUser.id,
     })
 
     const response = await client
@@ -284,13 +323,16 @@ test.group('Clients CRUD', (group) => {
 
   test('should update client', async ({ client, assert }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.UPDATE])
+    const createdByUser = await UserFactory.create()
 
     const targetClient = await Client.create({
       fantasy_name: 'Old Name',
       document: '12345678901',
+      document_type: 'cpf',
       person_type: 'individual',
       client_type: 'prospect',
       is_active: false,
+      created_by_id: createdByUser.id,
     })
 
     const updateData = {
@@ -324,12 +366,15 @@ test.group('Clients CRUD', (group) => {
 
   test('should not update document when updating client', async ({ client, assert }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.UPDATE])
+    const createdByUser = await UserFactory.create()
 
     const originalDocument = '12345678901'
     const targetClient = await Client.create({
       fantasy_name: 'Client Name',
       document: originalDocument,
+      document_type: 'cpf',
       person_type: 'individual',
+      created_by_id: createdByUser.id,
     })
 
     const response = await client
@@ -349,11 +394,14 @@ test.group('Clients CRUD', (group) => {
 
   test('should delete client', async ({ client, assert }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.DELETE])
+    const createdByUser = await UserFactory.create()
 
     const targetClient = await Client.create({
       fantasy_name: 'Delete Me',
       document: '12345678901',
+      document_type: 'cpf',
       person_type: 'individual',
+      created_by_id: createdByUser.id,
     })
 
     const response = await client.delete(`/api/v1/clients/${targetClient.id}`).loginAs(authUser)
@@ -412,11 +460,14 @@ test.group('Clients CRUD', (group) => {
 
   test('should check permissions for operations', async ({ client }) => {
     const authUser = await createAuthenticatedUser([]) // No permissions
+    const createdByUser = await UserFactory.create()
 
     const testClient = await Client.create({
       fantasy_name: 'Test Client',
       document: '12345678901',
+      document_type: 'cpf',
       person_type: 'individual',
+      created_by_id: createdByUser.id,
     })
 
     const responses = await Promise.all([
