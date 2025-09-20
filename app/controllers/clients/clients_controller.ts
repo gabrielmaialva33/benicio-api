@@ -155,7 +155,9 @@ export default class ClientsController {
   async lookupCep({ params, response }: HttpContext) {
     const service = await app.container.make(CepLookupService)
 
-    if (!service.isValidCep(params.cep)) {
+    // Validate CEP format
+    const cleanCep = params.cep.replace(/\D/g, '')
+    if (cleanCep.length !== 8) {
       return response.badRequest({
         message: 'Invalid CEP format',
       })
