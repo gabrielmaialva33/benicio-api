@@ -1,7 +1,7 @@
-import { Factory } from '@adonisjs/lucid/factories'
+import factory from '@adonisjs/lucid/factories'
 import Client from '#models/client'
 
-export const ClientFactory = Factory.define(Client, ({ faker }) => {
+export const ClientFactory = factory.define(Client, ({ faker }) => {
   const personType = faker.helpers.arrayElement(['individual', 'company'])
   const isIndividual = personType === 'individual'
 
@@ -42,13 +42,13 @@ export const ClientFactory = Factory.define(Client, ({ faker }) => {
     billing_notes: faker.helpers.maybe(() => faker.lorem.sentence(), { probability: 0.2 }),
   }
 })
-  .state('individual', (client) => {
+  .state('individual', (client, { faker }) => {
     client.person_type = 'individual'
     client.company_name = null
     client.document = faker.string.numeric(11)
     client.document_type = 'cpf'
   })
-  .state('company', (client) => {
+  .state('company', (client, { faker }) => {
     client.person_type = 'company'
     client.company_name = faker.company.name()
     client.document = faker.string.numeric(14)
