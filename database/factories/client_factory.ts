@@ -1,5 +1,6 @@
 import factory from '@adonisjs/lucid/factories'
 import Client from '#models/client'
+import { UserFactory } from '#database/factories/user_factory'
 
 export const ClientFactory = factory
   .define(Client, ({ faker }) => {
@@ -64,4 +65,5 @@ export const ClientFactory = factory
   .state('favorite', (client) => {
     client.is_favorite = true
   })
+  .relation('createdBy', () => UserFactory)
   .build()
