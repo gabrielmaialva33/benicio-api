@@ -1,13 +1,13 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/gabrielmaialva33/adonis-kit/refs/heads/main/.github/assets/graphic-design.png" height="250" alt="Adonis Kit">
+  <img src="https://raw.githubusercontent.com/gabrielmaialva33/benicio-api/refs/heads/main/.github/assets/graphic-design.png" height="250" alt="Benício API">
 </h1>
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/gabrielmaialva33/adonis-kit?color=00b8d3&style=flat-square" alt="License" />
-  <img src="https://img.shields.io/github/languages/top/gabrielmaialva33/adonis-kit?style=flat-square" alt="GitHub top language" >
-  <img src="https://img.shields.io/github/repo-size/gabrielmaialva33/adonis-kit?style=flat-square" alt="Repository size" >
-  <a href="https://github.com/gabrielmaialva33/adonis-kit/commits/main">
-    <img src="https://img.shields.io/github/last-commit/gabrielmaialva33/adonis-kit?style=flat-square" alt="GitHub last commit" >
+  <img src="https://img.shields.io/github/license/gabrielmaialva33/benicio-api?color=00b8d3&style=flat-square" alt="License" />
+  <img src="https://img.shields.io/github/languages/top/gabrielmaialva33/benicio-api?style=flat-square" alt="GitHub top language" >
+  <img src="https://img.shields.io/github/repo-size/gabrielmaialva33/benicio-api?style=flat-square" alt="Repository size" >
+  <a href="https://github.com/gabrielmaialva33/benicio-api/commits/main">
+    <img src="https://img.shields.io/github/last-commit/gabrielmaialva33/benicio-api?style=flat-square" alt="GitHub last commit" >
   </a>
 </p>
 
@@ -27,86 +27,92 @@
 
 ## :bookmark: About
 
-**Adonis Kit** is a modern, opinionated, and AI-first API starter kit designed to accelerate the development of robust
-backend applications. Built with **AdonisJS v6**, it provides a powerful foundation for creating scalable REST APIs with
-comprehensive authentication, authorization, and data management capabilities.
+**Benício API** is a comprehensive legal practice management system designed specifically for Benício Advocacia. Built with **AdonisJS v6** and React, it provides a complete foundation for managing legal cases, clients, documents, and all operational aspects of a modern law firm.
 
-This project is not just a collection of technologies; it's a foundation engineered for efficiency, scalability, and
-seamless collaboration with AI development partners. By providing a well-defined architecture with features like
-multi-guard authentication, role-based access control (RBAC), and file management out of the box, it allows developers (
-both human and AI) to focus on building unique business logic instead of boilerplate code.
+This system goes beyond traditional legal software by offering an AI-first architecture that enhances productivity and enables seamless integration with modern development workflows. From client relationship management to case tracking, document management, and financial oversight, Benício API delivers the tools necessary for efficient legal practice management.
 
 ### 🏗️ Architecture Overview
 
 ```mermaid
 graph TD
+    subgraph "Frontend Layer"
+        UI_REACT[React Dashboard]
+        UI_AUTH[Authentication]
+        UI_CASES[Case Management]
+        UI_CLIENTS[Client Portal]
+    end
+
     subgraph "API Layer"
-        API_ROUTES[Routes]
+        API_ROUTES[Legal Routes]
         API_MW["Middleware (Auth, ACL)"]
         API_CTRL[Controllers]
-        API_VALIDATORS[Validators]
+        API_VALIDATORS[Legal Validators]
     end
 
     subgraph "Business Layer"
-        BL_SERVICES[Services]
-        BL_REPOS[Repositories]
-        BL_EVENTS[Events & Listeners]
+        BL_LEGAL[Legal Services]
+        BL_CLIENT[Client Services]
+        BL_DOCUMENT[Document Services]
+        BL_FINANCIAL[Financial Services]
+        BL_EVENTS[Legal Events]
     end
 
     subgraph "Data Layer"
-        DL_MODELS[Lucid Models]
+        DL_MODELS[Legal Models]
         DL_DB[(PostgreSQL)]
         DL_CACHE[(Redis)]
+        DL_FILES[Document Storage]
     end
 
-    subgraph "Configuration"
-        CONF_AUTH[Auth Guards]
-        CONF_DB[Database Config]
-        CONF_STORAGE[File Storage]
-    end
+    UI_REACT --> API_ROUTES
+    UI_AUTH --> API_ROUTES
+    UI_CASES --> API_ROUTES
+    UI_CLIENTS --> API_ROUTES
 
     API_ROUTES --> API_MW
     API_MW --> API_CTRL
     API_CTRL --> API_VALIDATORS
-    API_CTRL --> BL_SERVICES
-    BL_SERVICES --> BL_REPOS
-    BL_SERVICES --> BL_EVENTS
-    BL_REPOS --> DL_MODELS
+    API_CTRL --> BL_LEGAL
+    API_CTRL --> BL_CLIENT
+    API_CTRL --> BL_DOCUMENT
+    API_CTRL --> BL_FINANCIAL
+    BL_LEGAL --> BL_EVENTS
+    BL_CLIENT --> DL_MODELS
+    BL_DOCUMENT --> DL_FILES
+    BL_FINANCIAL --> DL_MODELS
     DL_MODELS --> DL_DB
-    BL_SERVICES --> DL_CACHE
+    BL_LEGAL --> DL_CACHE
 ```
 
 ## :rocket: AI-First Development
 
-This starter kit is uniquely designed to maximize the effectiveness of AI-assisted coding.
+Benício API is uniquely designed to maximize the effectiveness of AI-assisted legal practice management.
 
-- **Well-Structured API Foundation**: The clear separation of concerns (controllers, services, repositories) makes it
-  easy for AI to locate, understand, and modify specific parts of the codebase with precision.
-- **Strongly-Typed Foundation**: Complete TypeScript usage creates a clear contract across all API layers. This reduces
-  ambiguity and allows AI to understand data structures and function signatures, leading to fewer errors.
-- **Modular and Opinionated Architecture**: Domain-driven service organization and consistent patterns make it simple
-  for AI to extend functionality following established conventions.
-- **Focus on Business Logic**: With boilerplate for authentication, permissions, and file storage already handled, AI
-  can be directed to solve higher-level business problems from day one.
+- **Legal Domain Intelligence**: The system understands legal terminology, case structures, and Brazilian legal procedures, making it easy for AI to assist with case management and legal document generation.
+- **Structured Legal Data**: Complete typing of legal entities (cases, clients, documents, deadlines) creates clear contracts that AI can understand and manipulate with precision.
+- **Modular Legal Architecture**: Domain-driven organization around legal practices (litigation, contracts, consultations) enables AI to extend functionality following established legal conventions.
+- **Focus on Legal Business Logic**: With infrastructure for authentication, document management, and case tracking already handled, AI can be directed to solve complex legal workflow problems from day one.
 
 ## 🌟 Key Features
 
-- **🔐 Multi-Guard Authentication**: Ready-to-use JWT-based authentication.
-- **👥 Advanced Role-Based Access Control (RBAC)**: Manage user permissions with roles and fine-grained rules.
-- **📁 File Management**: Pre-configured file upload service with support for local, S3, and GCS drivers.
-- **⚡️ High-Performance API**: Optimized REST endpoints with intelligent caching and queue processing.
-- **🔄 Event-Driven Architecture**: Built-in event system for decoupled, scalable application logic.
-- **✅ Type-Safe API**: Complete TypeScript coverage with auto-completion and type checking.
-- **🏥 Health Checks**: Integrated health check endpoint for monitoring.
+- **⚖️ Case Management**: Complete litigation and case tracking system with deadline management and procedural controls.
+- **👥 Client Relationship Management**: Comprehensive client portal with integrated prospecting and relationship tracking.
+- **📄 Legal Document Management**: Secure document storage with automatic categorization and version control.
+- **💰 Financial Management**: Billing, expense tracking, and financial reporting tailored for legal practices.
+- **⏰ Deadline & Task Management**: Automated deadline tracking with calendar integration and reminder systems.
+- **📊 Legal Reporting**: Comprehensive reports on case progress, financial performance, and practice analytics.
+- **🔐 Secure Authentication**: Multi-factor authentication with role-based access control for law firm hierarchy.
+- **🏥 Health Monitoring**: Built-in system monitoring for compliance and operational oversight.
 
 ## :computer: Technologies
 
-- **[AdonisJS v6](https://adonisjs.com/)**: A robust Node.js framework for the backend.
-- **[TypeScript](https://www.typescriptlang.org/)**: For type safety across the entire API.
-- **[PostgreSQL](https://www.postgresql.org/)**: A reliable and powerful relational database.
-- **[Redis](https://redis.io/)**: Used for caching, queues, and session management.
-- **[VineJS](https://vinejs.dev/)**: Modern validation library for request data.
-- **[Lucid ORM](https://lucid.adonisjs.com/)**: Elegant ActiveRecord implementation for AdonisJS.
+- **[AdonisJS v6](https://adonisjs.com/)**: Robust Node.js framework optimized for legal applications.
+- **[React 19](https://reactjs.org/)**: Modern frontend with legal-specific components and workflows.
+- **[TypeScript](https://www.typescriptlang.org/)**: Complete type safety across legal entities and workflows.
+- **[PostgreSQL](https://www.postgresql.org/)**: Reliable database for sensitive legal data with audit trails.
+- **[Redis](https://redis.io/)**: High-performance caching for case searches and document indexing.
+- **[VineJS](https://vinejs.dev/)**: Legal document validation with Brazilian legal standards.
+- **[Lucid ORM](https://lucid.adonisjs.com/)**: Legal entity modeling with complex relationship mapping.
 
 ## :package: Installation
 
@@ -114,15 +120,16 @@ This starter kit is uniquely designed to maximize the effectiveness of AI-assist
 
 - **Node.js** (v18 or higher)
 - **pnpm** (or npm/yarn)
-- **Docker** (for running PostgreSQL and Redis)
+- **Docker** (for PostgreSQL and Redis)
+- **Legal Practice License** (for production use)
 
 ### 🚀 Getting Started
 
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/gabrielmaialva33/adonis-kit.git
-   cd adonis-kit
+   git clone https://github.com/gabrielmaialva33/benicio-api.git
+   cd benicio-api
    ```
 
 2. **Install dependencies:**
@@ -137,7 +144,7 @@ This starter kit is uniquely designed to maximize the effectiveness of AI-assist
    cp .env.example .env
    ```
 
-   _Open the `.env` file and configure your database credentials and other settings._
+   _Configure your database credentials, legal API keys, and practice-specific settings._
 
 4. **Run database migrations:**
 
@@ -145,21 +152,50 @@ This starter kit is uniquely designed to maximize the effectiveness of AI-assist
    node ace migration:run
    ```
 
-5. **Start the development server:**
+5. **Seed with legal templates:**
+
+   ```sh
+   node ace db:seed
+   ```
+
+6. **Start the development server:**
    ```sh
    pnpm dev
    ```
-   _Your API will be available at `http://localhost:3333`._
+   _Your legal practice API will be available at `http://localhost:3333`._
 
 ### 📜 Available Scripts
 
-- `pnpm dev`: Starts the development server with HMR.
-- `pnpm build`: Compiles the application for production.
-- `pnpm start`: Runs the production-ready server.
-- `pnpm test`: Executes unit tests.
-- `pnpm test:e2e`: Executes end-to-end tests.
-- `pnpm lint`: Lints the codebase.
-- `pnpm format`: Formats the code with Prettier.
+- `pnpm dev`: Starts the development server with legal hot-reload.
+- `pnpm build`: Compiles the application for production deployment.
+- `pnpm start`: Runs the production legal practice server.
+- `pnpm test`: Executes legal workflow unit tests.
+- `pnpm test:e2e`: Executes end-to-end legal process tests.
+- `pnpm lint`: Lints codebase with legal coding standards.
+- `pnpm format`: Formats code for legal compliance documentation.
+
+## 🏛️ Legal Features
+
+### Case Management
+
+- **Process Tracking**: Complete Brazilian legal process management
+- **Deadline Control**: Automated deadline tracking with legal calendar integration
+- **Document Association**: Link documents to specific cases and proceedings
+- **Progress Monitoring**: Real-time case status and milestone tracking
+
+### Client Portal
+
+- **Client Dashboard**: Dedicated client access to their cases and documents
+- **Communication Hub**: Secure messaging between lawyers and clients
+- **Document Sharing**: Controlled document access with permission management
+- **Billing Transparency**: Real-time billing and expense tracking
+
+### Practice Management
+
+- **Lawyer Scheduling**: Calendar management with court appearance tracking
+- **Task Assignment**: Distribute legal work among team members
+- **Performance Analytics**: Practice efficiency and case outcome analytics
+- **Compliance Monitoring**: Ensure adherence to legal standards and regulations
 
 ## :memo: License
 
@@ -168,5 +204,5 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 ---
 
 <p align="center">
-  Made with ❤️ by the community.
+  Built with ⚖️ for legal excellence by Benício Advocacia.
 </p>
