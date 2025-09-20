@@ -4,8 +4,7 @@ import AddClientContactService from '#services/clients/contacts/add_client_conta
 import UpdateClientContactService from '#services/clients/contacts/update_client_contact_service'
 import DeleteClientContactService from '#services/clients/contacts/delete_client_contact_service'
 import GetClientService from '#services/clients/get_client_service'
-import createContactValidator from '#validators/clients/contact'
-import updateContactValidator from '#validators/clients/contact_update'
+import { createContactValidator, updateContactValidator } from '#validators/clients/contact'
 
 export default class ContactsController {
   /**

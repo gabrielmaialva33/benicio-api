@@ -4,8 +4,7 @@ import AddClientAddressService from '#services/clients/addresses/add_client_addr
 import UpdateClientAddressService from '#services/clients/addresses/update_client_address_service'
 import DeleteClientAddressService from '#services/clients/addresses/delete_client_address_service'
 import GetClientService from '#services/clients/get_client_service'
-import createAddressValidator from '#validators/clients/address'
-import updateAddressValidator from '#validators/clients/address_update'
+import { createAddressValidator, updateAddressValidator } from '#validators/clients/address'
 
 export default class AddressesController {
   /**

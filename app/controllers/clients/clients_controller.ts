@@ -1,8 +1,10 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import { createClientValidator } from '#validators/clients/client'
-import { updateClientValidator } from '#validators/clients/client_update'
-import { clientFiltersValidator } from '#validators/clients/client_filters'
+import {
+  createClientValidator,
+  updateClientValidator,
+  clientFiltersValidator,
+} from '#validators/clients/client'
 import ListClientsService from '#services/clients/list_clients_service'
 import CreateClientService from '#services/clients/create_client_service'
 import UpdateClientService from '#services/clients/update_client_service'
