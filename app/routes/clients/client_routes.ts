@@ -28,20 +28,20 @@ router
     // Client addresses
     router
       .group(() => {
-        router.get('/', [ClientAddressesController, 'index'])
-        router.post('/', [ClientAddressesController, 'store'])
-        router.put('/:id', [ClientAddressesController, 'update'])
-        router.delete('/:id', [ClientAddressesController, 'destroy'])
+        router.get('/', [AddressesController, 'index'])
+        router.post('/', [AddressesController, 'store'])
+        router.put('/:id', [AddressesController, 'update'])
+        router.delete('/:id', [AddressesController, 'destroy'])
       })
       .prefix('/:client_id/addresses')
 
     // Client contacts
     router
       .group(() => {
-        router.get('/', [ClientContactsController, 'index'])
-        router.post('/', [ClientContactsController, 'store'])
-        router.put('/:id', [ClientContactsController, 'update'])
-        router.delete('/:id', [ClientContactsController, 'destroy'])
+        router.get('/', [ContactsController, 'index'])
+        router.post('/', [ContactsController, 'store'])
+        router.put('/:id', [ContactsController, 'update'])
+        router.delete('/:id', [ContactsController, 'destroy'])
       })
       .prefix('/:client_id/contacts')
   })
