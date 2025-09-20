@@ -100,23 +100,9 @@ test.group('Clients CRUD', (group) => {
   test('should filter clients by search', async ({ client, assert }) => {
     const authUser = await createAuthenticatedUser([IPermission.Actions.READ])
 
-    await Client.createMany([
-      {
-        fantasy_name: 'Acme Corporation',
-        document: '11111111111',
-        person_type: 'individual',
-      },
-      {
-        fantasy_name: 'Beta Inc',
-        document: '22222222222',
-        person_type: 'individual',
-      },
-      {
-        fantasy_name: 'Acme Solutions',
-        document: '33333333333',
-        person_type: 'individual',
-      },
-    ])
+    await ClientFactory.merge({ fantasy_name: 'Acme Corporation' }).apply('individual').create()
+    await ClientFactory.merge({ fantasy_name: 'Beta Inc' }).apply('individual').create()
+    await ClientFactory.merge({ fantasy_name: 'Acme Solutions' }).apply('individual').create()
 
     const response = await client.get('/api/v1/clients?search=Acme').loginAs(authUser)
 

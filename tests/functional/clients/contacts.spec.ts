@@ -107,9 +107,7 @@ test.group('Client Contacts', (group) => {
       },
     ])
 
-    const response = await client
-      .get(`/api/v1/clients/${testClient.id}/contacts`)
-      .loginAs(authUser)
+    const response = await client.get(`/api/v1/clients/${testClient.id}/contacts`).loginAs(authUser)
 
     response.assertStatus(200)
     response.assertBodyContains({
