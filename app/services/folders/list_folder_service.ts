@@ -29,9 +29,9 @@ export default class ListFoldersService {
       // Preload relationships
       query = query
         .preload('client')
-        .preload('folderType')
+        .preload('folder_type')
         .preload('court')
-        .preload('responsibleLawyer')
+        .preload('responsible_lawyer')
 
       // Paginate results
       const folders = await query.paginate(page, perPage)

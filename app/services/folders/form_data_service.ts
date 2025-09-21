@@ -39,9 +39,9 @@ export default class FormDataService {
             query
               .whereNull('deleted_at')
               .preload('client')
-              .preload('folderType')
+              .preload('folder_type')
               .preload('court')
-              .preload('responsibleLawyer'),
+              .preload('responsible_lawyer'),
         }),
         FolderType.query().where('is_active', true).orderBy('sort_order'),
         Client.query().where('is_active', true).orderBy('name'),

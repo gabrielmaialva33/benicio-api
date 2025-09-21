@@ -40,12 +40,12 @@ export default class DeleteFolderService {
       }
 
       // Load relationships for response
-      await folder.load('folderType')
+      await folder.load('folder_type')
       await folder.load('client')
       if (folder.court_id) {
         await folder.load('court')
       }
-      await folder.load('updatedBy')
+      await folder.load('updated_by')
 
       logger.info(`♻️ Folder restored: ${folder.title} (ID: ${folder.id}) by user ${user.id}`)
 

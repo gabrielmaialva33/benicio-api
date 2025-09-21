@@ -45,12 +45,12 @@ export default class CreateFolderService {
       })
 
       // Load relationships for response
-      await folder.load('folderType')
+      await folder.load('folder_type')
       await folder.load('client')
       if (folder.court_id) {
         await folder.load('court')
       }
-      await folder.load('createdBy')
+      await folder.load('created_by')
 
       logger.info(`📁 Folder created: ${folder.title} (ID: ${folder.id}) by user ${user.id}`)
 
