@@ -478,13 +478,18 @@ test.group('Client Contacts', (group) => {
     })
 
     // Test individual operations with specific permission messages
-    const getResponse = await client.get(`/api/v1/clients/${testClient.id}/contacts`).loginAs(authUser)
+    const getResponse = await client
+      .get(`/api/v1/clients/${testClient.id}/contacts`)
+      .loginAs(authUser)
     getResponse.assertStatus(403)
     getResponse.assertBodyContains({
       message: 'Insufficient permissions. Required: clients.read',
     })
 
-    const postResponse = await client.post(`/api/v1/clients/${testClient.id}/contacts`).json({}).loginAs(authUser)
+    const postResponse = await client
+      .post(`/api/v1/clients/${testClient.id}/contacts`)
+      .json({})
+      .loginAs(authUser)
     postResponse.assertStatus(403)
     postResponse.assertBodyContains({
       message: 'Insufficient permissions. Required: clients.create',
