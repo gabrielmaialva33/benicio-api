@@ -138,27 +138,27 @@ export default class FolderParty extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
-  static active = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
+  static active = scope((query) => {
     query.where('is_active', true)
   })
 
-  static byFolder = scope((query: ModelQueryBuilderContract<typeof FolderParty>, folderId: number) => {
+  static byFolder = scope((query, folderId: number) => {
     query.where('folder_id', folderId)
   })
 
-  static byType = scope((query: ModelQueryBuilderContract<typeof FolderParty>, type: string) => {
+  static byType = scope((query, type: string) => {
     query.where('party_type', type)
   })
 
-  static byRole = scope((query: ModelQueryBuilderContract<typeof FolderParty>, role: string) => {
+  static byRole = scope((query, role: string) => {
     query.where('role', role)
   })
 
-  static primaryParties = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
+  static primaryParties = scope((query) => {
     query.where('is_primary_party', true)
   })
 
-  static search = scope((query: ModelQueryBuilderContract<typeof FolderParty>, searchTerm: string) => {
+  static search = scope((query, searchTerm: string) => {
     query.where((q) => {
       q.whereILike('name', `%${searchTerm}%`)
         .orWhereILike('document', `%${searchTerm}%`)
@@ -166,7 +166,7 @@ export default class FolderParty extends BaseModel {
     })
   })
 
-  static withRelationships = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
+  static withRelationships = scope((query) => {
     query.preload('folder').preload('client').preload('created_by')
   })
 

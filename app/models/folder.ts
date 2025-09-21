@@ -362,7 +362,7 @@ export default class Folder extends BaseModel {
   })
 
   static withRelationships = scope((query) => {
-    query.preload('client').preload('folder_type').preload('court').preload('responsible_lawyer')
+    query.preload('client').preload('folderType').preload('court').preload('responsibleLawyer')
   })
 
   static withCounts = scope((query) => {

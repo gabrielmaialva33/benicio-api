@@ -207,47 +207,47 @@ export default class FolderDocument extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
-  static active = scope((query: FolderDocumentBuilder) => {
+  static active = scope((query) => {
     query.where('is_active', true)
   })
 
-  static byType = scope((query: ModelQueryBuilderContract<typeof FolderDocument>, type: string) => {
+  static byType = scope((query, type: string) => {
     query.where('document_type', type)
   })
 
   static byFolder = scope(
-    (query: ModelQueryBuilderContract<typeof FolderDocument>, folderId: number) => {
+    (query, folderId: number) => {
       query.where('folder_id', folderId)
     }
   )
 
   static byConfidentiality = scope(
-    (query: ModelQueryBuilderContract<typeof FolderDocument>, level: string) => {
+    (query, level: string) => {
       query.where('confidentiality_level', level)
     }
   )
 
-  static originals = scope((query: FolderDocumentBuilder) => {
+  static originals = scope((query) => {
     query.where('is_original', true)
   })
 
-  static signed = scope((query: FolderDocumentBuilder) => {
+  static signed = scope((query) => {
     query.where('is_signed', true)
   })
 
-  static requiresSignature = scope((query: FolderDocumentBuilder) => {
+  static requiresSignature = scope((query) => {
     query.where('requires_signature', true).where('is_signed', false)
   })
 
   static recent = scope(
-    (query: ModelQueryBuilderContract<typeof FolderDocument>, days: number = 30) => {
+    (query, days: number = 30) => {
       const pastDate = DateTime.now().minus({ days })
       query.where('created_at', '>=', pastDate.toSQL())
     }
   )
 
   static search = scope(
-    (query: ModelQueryBuilderContract<typeof FolderDocument>, searchTerm: string) => {
+    (query, searchTerm: string) => {
       query.where((q) => {
         q.whereILike('title', `%${searchTerm}%`)
           .orWhereILike('description', `%${searchTerm}%`)
@@ -257,7 +257,7 @@ export default class FolderDocument extends BaseModel {
     }
   )
 
-  static withRelationships = scope((query: ModelQueryBuilderContract<typeof FolderDocument>) => {
+  static withRelationships = scope((query) => {
     query.preload('folder').preload('uploaded_by').preload('signed_by')
   })
 

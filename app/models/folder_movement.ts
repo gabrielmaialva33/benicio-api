@@ -184,25 +184,25 @@ export default class FolderMovement extends BaseModel {
    * ------------------------------------------------------
    */
   static byFolder = scope(
-    (query: ModelQueryBuilderContract<typeof FolderMovement>, folderId: number) => {
+    (query, folderId: number) => {
       query.where('folder_id', folderId)
     }
   )
 
-  static byType = scope((query: ModelQueryBuilderContract<typeof FolderMovement>, type: string) => {
+  static byType = scope((query, type: string) => {
     query.where('movement_type', type)
   })
 
-  static requiresAction = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static requiresAction = scope((query) => {
     query.where('requires_action', true)
   })
 
-  static withDeadlines = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static withDeadlines = scope((query) => {
     query.where('is_deadline', true).whereNotNull('deadline_date')
   })
 
   static upcomingDeadlines = scope(
-    (query: ModelQueryBuilderContract<typeof FolderMovement>, days: number = 30) => {
+    (query, days: number = 30) => {
       const futureDate = DateTime.now().plus({ days }).toSQLDate()
       query
         .where('is_deadline', true)
@@ -211,44 +211,44 @@ export default class FolderMovement extends BaseModel {
   )
 
   static byUrgency = scope(
-    (query: ModelQueryBuilderContract<typeof FolderMovement>, level: string) => {
+    (query, level: string) => {
       query.where('urgency_level', level)
     }
   )
 
-  static urgent = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static urgent = scope((query) => {
     query.whereIn('urgency_level', ['high', 'urgent'])
   })
 
-  static favorable = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static favorable = scope((query) => {
     query.where('is_favorable', true)
   })
 
-  static unfavorable = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static unfavorable = scope((query) => {
     query.where('is_favorable', false)
   })
 
-  static automated = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static automated = scope((query) => {
     query.where('auto_generated', true)
   })
 
-  static manual = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static manual = scope((query) => {
     query.where('auto_generated', false)
   })
 
-  static publicMovements = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static publicMovements = scope((query) => {
     query.where('is_public', true)
   })
 
   static recent = scope(
-    (query: ModelQueryBuilderContract<typeof FolderMovement>, days: number = 30) => {
+    (query, days: number = 30) => {
       const pastDate = DateTime.now().minus({ days })
       query.where('movement_date', '>=', pastDate.toSQL())
     }
   )
 
   static search = scope(
-    (query: ModelQueryBuilderContract<typeof FolderMovement>, searchTerm: string) => {
+    (query, searchTerm: string) => {
       query.where((q) => {
         q.whereILike('title', `%${searchTerm}%`)
           .orWhereILike('description', `%${searchTerm}%`)
@@ -259,7 +259,7 @@ export default class FolderMovement extends BaseModel {
     }
   )
 
-  static withRelationships = scope((query: ModelQueryBuilderContract<typeof FolderMovement>) => {
+  static withRelationships = scope((query) => {
     query.preload('folder').preload('created_by')
   })
 
