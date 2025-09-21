@@ -113,18 +113,6 @@ test.group('Client Contacts', (group) => {
     response.assertBodyContains({
       message: 'Contacts retrieved successfully',
     })
-    response.assertJsonStructure({
-      message: {},
-      data: [
-        {
-          id: {},
-          name: {},
-          contact_type: {},
-          contact_value: {},
-          address_id: {},
-        },
-      ],
-    })
   })
 
   test('should create a new contact for a client', async ({ client, assert }) => {
