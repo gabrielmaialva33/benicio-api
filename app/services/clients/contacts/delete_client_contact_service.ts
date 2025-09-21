@@ -1,4 +1,5 @@
 import ClientContact from '#models/client_contact'
+import NotFoundException from '#exceptions/not_found_exception'
 
 export default class DeleteClientContactService {
   async run(clientId: number, contactId: number): Promise<{ message: string }> {
@@ -9,7 +10,7 @@ export default class DeleteClientContactService {
       .first()
 
     if (!contact) {
-      throw new Error('Contact not found')
+      throw new NotFoundException('Contact not found')
     }
 
     // Delete contact

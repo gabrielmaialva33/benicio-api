@@ -2,6 +2,7 @@ import { inject } from '@adonisjs/core'
 import ClientAddress from '#models/client_address'
 import CepLookupService from '#services/utils/cep_lookup_service'
 import IClient from '#interfaces/client_interface'
+import NotFoundException from '#exceptions/not_found_exception'
 
 @inject()
 export default class UpdateClientAddressService {
@@ -19,7 +20,7 @@ export default class UpdateClientAddressService {
       .first()
 
     if (!address) {
-      throw new Error('Address not found')
+      throw new NotFoundException('Address not found')
     }
 
     // Lookup CEP data if updating postal code

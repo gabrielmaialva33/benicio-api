@@ -64,10 +64,20 @@ test.group('Client Contacts', (group) => {
   }
 
   async function createTestClientWithAddress() {
+    const createdBy = await User.create({
+      full_name: 'Test Creator',
+      email: `creator-${Date.now()}@test.com`,
+      username: `creator${Date.now()}`,
+      password: 'password123',
+      user_type: 'employee',
+    })
+
     const client = await Client.create({
       fantasy_name: 'Test Client',
       document: `${Date.now()}`.padStart(11, '0'),
+      document_type: 'cpf',
       person_type: 'individual',
+      created_by_id: createdBy.id,
     })
 
     const address = await ClientAddress.create({
@@ -305,6 +315,7 @@ test.group('Client Contacts', (group) => {
 
     const response = await client
       .post(`/api/v1/clients/${testClient.id}/contacts`)
+      .header('Accept', 'application/json')
       .json({
         address_id: 'invalid', // not a number
         name: '', // empty
@@ -369,6 +380,7 @@ test.group('Client Contacts', (group) => {
     // Test invalid type
     const invalidResponse = await client
       .post(`/api/v1/clients/${testClient.id}/contacts`)
+      .header('Accept', 'application/json')
       .json({
         address_id: address.id,
         name: 'Invalid Contact',
@@ -433,7 +445,8 @@ test.group('Client Contacts', (group) => {
 
     response.assertStatus(400)
     response.assertBodyContains({
-      message: 'Address does not belong to this client',
+      message: 'Error creating contact',
+      error: 'Address not found or does not belong to this client',
     })
   })
 
@@ -464,23 +477,34 @@ test.group('Client Contacts', (group) => {
       contact_value: 'test@example.com',
     })
 
-    const responses = await Promise.all([
-      client.get(`/api/v1/clients/${testClient.id}/contacts`).loginAs(authUser),
-      client.post(`/api/v1/clients/${testClient.id}/contacts`).json({}).loginAs(authUser),
-      client
-        .put(`/api/v1/clients/${testClient.id}/contacts/${testContact.id}`)
-        .json({})
-        .loginAs(authUser),
-      client
-        .delete(`/api/v1/clients/${testClient.id}/contacts/${testContact.id}`)
-        .loginAs(authUser),
-    ])
+    // Test individual operations with specific permission messages
+    const getResponse = await client.get(`/api/v1/clients/${testClient.id}/contacts`).loginAs(authUser)
+    getResponse.assertStatus(403)
+    getResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.read',
+    })
 
-    responses.forEach((response) => {
-      response.assertStatus(403)
-      response.assertBodyContains({
-        message: 'Insufficient permissions',
-      })
+    const postResponse = await client.post(`/api/v1/clients/${testClient.id}/contacts`).json({}).loginAs(authUser)
+    postResponse.assertStatus(403)
+    postResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.create',
+    })
+
+    const putResponse = await client
+      .put(`/api/v1/clients/${testClient.id}/contacts/${testContact.id}`)
+      .json({})
+      .loginAs(authUser)
+    putResponse.assertStatus(403)
+    putResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.update',
+    })
+
+    const deleteResponse = await client
+      .delete(`/api/v1/clients/${testClient.id}/contacts/${testContact.id}`)
+      .loginAs(authUser)
+    deleteResponse.assertStatus(403)
+    deleteResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.delete',
     })
   })
 })

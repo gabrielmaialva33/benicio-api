@@ -463,19 +463,11 @@ test.group('Clients CRUD', (group) => {
       client.delete(`/api/v1/clients/${testClient.id}`).loginAs(authUser), // Should work
     ])
 
-    // Check that GET requests work (no permissions required)
-    responses[0].assertStatus(200) // GET /clients
-    responses[1].assertStatus(200) // GET /clients/:id
-
-    // POST with empty data should fail validation or succeed
-    const postResponse = responses[2]
-    // Either 422 (validation error) or 404 (route issue) is acceptable
-    if (![200, 404, 422].includes(postResponse.status())) {
-      throw new Error(`Unexpected POST status: ${postResponse.status()}`)
-    }
-
-    // PUT and DELETE should work
-    responses[3].assertStatus(200) // PUT /clients/:id
-    responses[4].assertStatus(200) // DELETE /clients/:id
+    // Check that all requests fail due to insufficient permissions
+    responses[0].assertStatus(403) // GET /clients - requires clients.read
+    responses[1].assertStatus(403) // GET /clients/:id - requires clients.read
+    responses[2].assertStatus(403) // POST /clients - requires clients.create
+    responses[3].assertStatus(403) // PUT /clients/:id - requires clients.update
+    responses[4].assertStatus(403) // DELETE /clients/:id - requires clients.delete
   })
 })

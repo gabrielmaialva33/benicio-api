@@ -1,6 +1,7 @@
 import ClientContact from '#models/client_contact'
 import ClientAddress from '#models/client_address'
 import IClient from '#interfaces/client_interface'
+import NotFoundException from '#exceptions/not_found_exception'
 
 export default class UpdateClientContactService {
   async run(
@@ -15,7 +16,7 @@ export default class UpdateClientContactService {
       .first()
 
     if (!contact) {
-      throw new Error('Contact not found')
+      throw new NotFoundException('Contact not found')
     }
 
     // If updating address, verify it exists and belongs to client

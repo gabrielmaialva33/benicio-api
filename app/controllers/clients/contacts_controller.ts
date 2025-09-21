@@ -5,6 +5,7 @@ import UpdateClientContactService from '#services/clients/contacts/update_client
 import DeleteClientContactService from '#services/clients/contacts/delete_client_contact_service'
 import GetClientService from '#services/clients/get_client_service'
 import { createContactValidator, updateContactValidator } from '#validators/clients/contact'
+import NotFoundException from '#exceptions/not_found_exception'
 
 export default class ContactsController {
   /**
@@ -13,7 +14,7 @@ export default class ContactsController {
   async index({ params, response }: HttpContext) {
     try {
       const service = await app.container.make(GetClientService)
-      const client = await service.run(params.clientId, true)
+      const client = await service.run(params.client_id, true)
 
       if (!client) {
         return response.notFound({ message: 'Client not found' })
@@ -35,10 +36,11 @@ export default class ContactsController {
    * Create a new contact for a client
    */
   async store({ params, request, response }: HttpContext) {
+    const validated = await request.validateUsing(createContactValidator)
+
     try {
-      const validated = await request.validateUsing(createContactValidator)
       const service = await app.container.make(AddClientContactService)
-      const contact = await service.run(params.clientId, validated)
+      const contact = await service.run(params.client_id, validated)
 
       return response.created({
         message: 'Contact created successfully',
@@ -56,16 +58,23 @@ export default class ContactsController {
    * Update a contact
    */
   async update({ params, request, response }: HttpContext) {
+    const validated = await request.validateUsing(updateContactValidator)
+
     try {
-      const validated = await request.validateUsing(updateContactValidator)
       const service = await app.container.make(UpdateClientContactService)
-      const contact = await service.run(params.clientId, params.id, validated)
+      const contact = await service.run(params.client_id, params.id, validated)
 
       return response.ok({
         message: 'Contact updated successfully',
         data: contact,
       })
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        return response.notFound({
+          message: error.message,
+        })
+      }
+
       return response.badRequest({
         message: 'Error updating contact',
         error: error.message,
@@ -79,10 +88,16 @@ export default class ContactsController {
   async destroy({ params, response }: HttpContext) {
     try {
       const service = await app.container.make(DeleteClientContactService)
-      const result = await service.run(params.clientId, params.id)
+      const result = await service.run(params.client_id, params.id)
 
       return response.ok(result)
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        return response.notFound({
+          message: error.message,
+        })
+      }
+
       return response.badRequest({
         message: 'Error deleting contact',
         error: error.message,

@@ -1,4 +1,5 @@
 import ClientAddress from '#models/client_address'
+import NotFoundException from '#exceptions/not_found_exception'
 
 export default class DeleteClientAddressService {
   async run(clientId: number, addressId: number): Promise<{ message: string }> {
@@ -9,7 +10,7 @@ export default class DeleteClientAddressService {
       .first()
 
     if (!address) {
-      throw new Error('Address not found')
+      throw new NotFoundException('Address not found')
     }
 
     // Check if it's the primary address

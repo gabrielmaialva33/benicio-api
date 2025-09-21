@@ -63,10 +63,20 @@ test.group('Client Addresses', (group) => {
   }
 
   async function createTestClient() {
+    const createdBy = await User.create({
+      full_name: 'Test Creator',
+      email: `creator-${Date.now()}@test.com`,
+      username: `creator${Date.now()}`,
+      password: 'password123',
+      user_type: 'employee',
+    })
+
     return await Client.create({
       fantasy_name: 'Test Client',
       document: `${Date.now()}`.padStart(11, '0'),
+      document_type: 'cpf',
       person_type: 'individual',
+      created_by_id: createdBy.id,
     })
   }
 
@@ -321,6 +331,7 @@ test.group('Client Addresses', (group) => {
 
     const response = await client
       .post(`/api/v1/clients/${testClient.id}/addresses`)
+      .header('Accept', 'application/json')
       .json({
         postal_code: '123', // invalid format
         street: '', // empty
@@ -414,23 +425,34 @@ test.group('Client Addresses', (group) => {
       state: 'SP',
     })
 
-    const responses = await Promise.all([
-      client.get(`/api/v1/clients/${testClient.id}/addresses`).loginAs(authUser),
-      client.post(`/api/v1/clients/${testClient.id}/addresses`).json({}).loginAs(authUser),
-      client
-        .put(`/api/v1/clients/${testClient.id}/addresses/${testAddress.id}`)
-        .json({})
-        .loginAs(authUser),
-      client
-        .delete(`/api/v1/clients/${testClient.id}/addresses/${testAddress.id}`)
-        .loginAs(authUser),
-    ])
+    // Test individual operations with specific permission messages
+    const getResponse = await client.get(`/api/v1/clients/${testClient.id}/addresses`).loginAs(authUser)
+    getResponse.assertStatus(403)
+    getResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.read',
+    })
 
-    responses.forEach((response) => {
-      response.assertStatus(403)
-      response.assertBodyContains({
-        message: 'Insufficient permissions',
-      })
+    const postResponse = await client.post(`/api/v1/clients/${testClient.id}/addresses`).json({}).loginAs(authUser)
+    postResponse.assertStatus(403)
+    postResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.create',
+    })
+
+    const putResponse = await client
+      .put(`/api/v1/clients/${testClient.id}/addresses/${testAddress.id}`)
+      .json({})
+      .loginAs(authUser)
+    putResponse.assertStatus(403)
+    putResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.update',
+    })
+
+    const deleteResponse = await client
+      .delete(`/api/v1/clients/${testClient.id}/addresses/${testAddress.id}`)
+      .loginAs(authUser)
+    deleteResponse.assertStatus(403)
+    deleteResponse.assertBodyContains({
+      message: 'Insufficient permissions. Required: clients.delete',
     })
   })
 })
