@@ -147,7 +147,7 @@ export default class FolderRepository
    * Restore a soft deleted folder
    */
   async restore(id: number, userId: number): Promise<Folder | null> {
-    // Query directly to bypass soft delete hook
+    // Check if folder exists and is soft deleted
     const result = await this.model.query().client.from('folders')
       .where('id', id)
       .whereNotNull('deleted_at')
@@ -157,29 +157,16 @@ export default class FolderRepository
       return null
     }
 
-    // Update using the model
-    const folder = await this.model.find(id)
-    if (folder) {
-      // Folder exists but hook prevents finding it, update directly
-      await this.model.query().client.from('folders')
-        .where('id', id)
-        .update({
-          deleted_at: null,
-          updated_by_id: userId,
-          updated_at: DateTime.now().toSQL()
-        })
+    // Update directly via raw query to bypass soft delete hooks
+    await this.model.query().client.from('folders')
+      .where('id', id)
+      .update({
+        deleted_at: null,
+        updated_by_id: userId,
+        updated_at: DateTime.now().toSQL()
+      })
 
-      // Return the updated folder
-      return this.model.find(id)
-    }
-
-    // If not found with normal query, create instance from raw result
-    const restoredFolder = new this.model()
-    restoredFolder.$setRaw(result)
-    restoredFolder.deletedAt = null
-    restoredFolder.updatedById = userId
-    await restoredFolder.save()
-
-    return restoredFolder
+    // Now fetch the restored folder
+    return this.model.find(id)
   }
 }
