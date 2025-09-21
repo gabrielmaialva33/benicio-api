@@ -167,7 +167,7 @@ export default class FolderParty extends BaseModel {
   })
 
   static withRelationships = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
-    query.preload('folder').preload('client').preload('createdBy')
+    query.preload('folder').preload('client').preload('created_by')
   })
 
   /**
