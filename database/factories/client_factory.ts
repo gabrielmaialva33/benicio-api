@@ -19,7 +19,7 @@ export const ClientFactory = factory
       fantasy_name: faker.company.name(),
       company_name: isIndividual ? null : faker.company.name(),
       document: document,
-      document_type: documentType,
+      document_type: documentType as 'cpf' | 'cnpj',
       client_type: faker.helpers.arrayElement([
         'prospect',
         'prospect_sic',

@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine'
-import { document } from '#validators/rules/document'
+// import { document } from '#validators/rules/document'
 
 /**
  * Validator for creating a client
@@ -10,7 +10,7 @@ export const createClientValidator = vine.compile(
     person_type: vine.enum(['individual', 'company']),
     fantasy_name: vine.string().trim().minLength(2).maxLength(255),
     company_name: vine.string().trim().minLength(2).maxLength(255).optional(),
-    document: vine.string().trim().use(document()),
+    document: vine.string().trim().minLength(11).maxLength(14),
 
     // Client Type and Classification
     client_type: vine
@@ -89,7 +89,7 @@ export const updateClientValidator = vine.compile(
     person_type: vine.enum(['individual', 'company']).optional(),
     fantasy_name: vine.string().trim().minLength(2).maxLength(255).optional(),
     company_name: vine.string().trim().minLength(2).maxLength(255).optional().nullable(),
-    document: vine.string().trim().use(document()).optional(),
+    // document field is not allowed in updates - documents should not be changed
 
     // Client Type and Classification
     client_type: vine

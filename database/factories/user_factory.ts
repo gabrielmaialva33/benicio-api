@@ -10,6 +10,7 @@ export const UserFactory = factory
       full_name: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
       password: await hash.make(faker.internet.password()),
+      user_type: 'employee' as 'employee' | 'manager' | 'client',
     }
   })
   .build()

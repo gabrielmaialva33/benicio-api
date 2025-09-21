@@ -13,6 +13,9 @@ router
     // Create new client
     router.post('/', [ClientsController, 'store'])
 
+    // CEP lookup utility (moved before :id to avoid conflicts)
+    router.get('/cep/:cep', [ClientsController, 'lookupCep'])
+
     // Get single client
     router.get('/:id', [ClientsController, 'show'])
 
@@ -21,9 +24,6 @@ router
 
     // Delete client (soft delete)
     router.delete('/:id', [ClientsController, 'destroy'])
-
-    // CEP lookup utility
-    router.get('/utils/cep/:cep', [ClientsController, 'lookupCep'])
 
     // Client addresses
     router
