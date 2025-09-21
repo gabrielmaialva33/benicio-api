@@ -1,5 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, SnakeCaseNamingStrategy } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  SnakeCaseNamingStrategy,
+} from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Client from '#models/client'
 import ClientAddress from '#models/client_address'
@@ -51,6 +57,29 @@ export default class ClientContact extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updated_at: DateTime
+
+  /**
+   * ------------------------------------------------------
+   * Hooks
+   * ------------------------------------------------------
+   */
+  @beforeCreate()
+  static async setDefaultValues(contact: ClientContact) {
+    // Set default participates_mailing if not explicitly set
+    if (contact.participates_mailing === undefined || contact.participates_mailing === null) {
+      contact.participates_mailing = false
+    }
+
+    // Set default receives_billing if not explicitly set
+    if (contact.receives_billing === undefined || contact.receives_billing === null) {
+      contact.receives_billing = true
+    }
+
+    // Set default is_blocked if not explicitly set
+    if (contact.is_blocked === undefined || contact.is_blocked === null) {
+      contact.is_blocked = false
+    }
+  }
 
   /**
    * ------------------------------------------------------

@@ -1,5 +1,12 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany, SnakeCaseNamingStrategy } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  hasMany,
+  SnakeCaseNamingStrategy,
+} from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Client from '#models/client'
 import ClientContact from '#models/client_contact'
@@ -79,6 +86,29 @@ export default class ClientAddress extends BaseModel {
     foreignKey: 'address_id',
   })
   declare contacts: HasMany<typeof ClientContact>
+
+  /**
+   * ------------------------------------------------------
+   * Hooks
+   * ------------------------------------------------------
+   */
+  @beforeCreate()
+  static async setDefaultValues(address: ClientAddress) {
+    // Set default country if not provided
+    if (!address.country) {
+      address.country = 'Brasil'
+    }
+
+    // Check if this is the first address for the client
+    if (address.client_id && (address.is_primary === undefined || address.is_primary === null)) {
+      const existingAddresses = await ClientAddress.query()
+        .where('client_id', address.client_id)
+        .count('* as total')
+
+      // If no existing addresses, make this the primary address
+      address.is_primary = existingAddresses[0]?.$extras.total === 0
+    }
+  }
 
   /**
    * ------------------------------------------------------

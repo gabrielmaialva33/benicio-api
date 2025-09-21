@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import {
   BaseModel,
+  beforeCreate,
   beforeFetch,
   beforeFind,
   beforePaginate,
@@ -147,6 +148,31 @@ export default class Client extends BaseModel {
    * Hooks
    * ------------------------------------------------------
    */
+  @beforeCreate()
+  static async setDefaultValues(client: Client) {
+    // Set default client_type if not provided
+    if (!client.client_type) {
+      client.client_type = 'prospect'
+    }
+
+    // Set default boolean values if not explicitly set
+    if (client.is_active === undefined || client.is_active === null) {
+      client.is_active = true
+    }
+
+    if (client.is_favorite === undefined || client.is_favorite === null) {
+      client.is_favorite = false
+    }
+
+    if (client.ir_retention === undefined || client.ir_retention === null) {
+      client.ir_retention = false
+    }
+
+    if (client.pcc_retention === undefined || client.pcc_retention === null) {
+      client.pcc_retention = false
+    }
+  }
+
   @beforeFind()
   @beforeFetch()
   static async softDeletes(query: model.ModelQueryBuilderContract<typeof Client>) {
