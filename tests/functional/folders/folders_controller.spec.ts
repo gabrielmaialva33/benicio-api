@@ -103,7 +103,7 @@ test.group('Folders controller', (group) => {
 
     const folder = await Folder.findOrFail(response.body().data.id)
     assert.equal(folder.title, folderData.title)
-    assert.equal(folder.createdById, user.id)
+    assert.equal(folder.created_by_id, user.id)
   })
 
   test('should create folder with valid CNJ number', async ({ client, assert }) => {
@@ -214,7 +214,7 @@ test.group('Folders controller', (group) => {
     await folder.refresh()
     assert.equal(folder.title, updateData.title)
     assert.equal(folder.status, updateData.status)
-    assert.equal(folder.updatedById, user.id)
+    assert.equal(folder.updated_by_id, user.id)
   })
 
   test('should soft delete folder', async ({ client, assert }) => {
@@ -251,7 +251,7 @@ test.group('Folders controller', (group) => {
       client_id: clientRecord.id,
       created_by_id: user.id,
       updated_by_id: user.id,
-      deletedAt: DateTime.now(),
+      deleted_at: DateTime.now(),
     }).create()
 
     const response = await client.post(`/api/v1/folders/${folder.id}/restore`).loginAs(user)
@@ -262,7 +262,7 @@ test.group('Folders controller', (group) => {
     })
 
     await folder.refresh()
-    assert.isNull(folder.deletedAt)
+    assert.isNull(folder.deleted_at)
   })
 
   test('should filter folders by date range', async ({ client }) => {

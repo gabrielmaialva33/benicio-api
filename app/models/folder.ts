@@ -2,8 +2,8 @@ import { DateTime } from 'luxon'
 import {
   BaseModel,
   beforeCreate,
-  beforeFind,
   beforeFetch,
+  beforeFind,
   beforePaginate,
   belongsTo,
   column,
@@ -13,7 +13,6 @@ import {
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
-import * as model from '@adonisjs/lucid/types/model'
 import Client from '#models/client'
 import FolderType from '#models/folder_type'
 import Court from '#models/court'
@@ -21,8 +20,6 @@ import User from '#models/user'
 import FolderDocument from '#models/folder_document'
 import FolderMovement from '#models/folder_movement'
 import FolderParty from '#models/folder_party'
-
-type FolderBuilder = ModelQueryBuilderContract<typeof Folder>
 
 export default class Folder extends BaseModel {
   static table = 'folders'
@@ -37,10 +34,10 @@ export default class Folder extends BaseModel {
   declare id: number
 
   @column()
-  declare cnjNumber: string | null
+  declare cnj_number: string | null
 
   @column()
-  declare internalClientCode: string | null
+  declare internal_client_code: string | null
 
   @column()
   declare title: string
@@ -49,19 +46,19 @@ export default class Folder extends BaseModel {
   declare description: string | null
 
   @column()
-  declare clientId: number
+  declare client_id: number
 
   @column()
-  declare folderTypeId: number
+  declare folder_type_id: number
 
   @column()
-  declare courtId: number | null
+  declare court_id: number | null
 
   @column()
-  declare responsibleLawyerId: number | null
+  declare responsible_lawyer_id: number | null
 
   @column()
-  declare parentFolderId: number | null
+  declare parent_folder_id: number | null
 
   @column()
   declare path: string | null
@@ -79,7 +76,7 @@ export default class Folder extends BaseModel {
   declare nature: string
 
   @column()
-  declare actionType: string | null
+  declare action_type: string | null
 
   @column()
   declare electronic: boolean
@@ -94,13 +91,13 @@ export default class Folder extends BaseModel {
   declare comarca: string | null
 
   @column()
-  declare distributionType: string | null
+  declare distribution_type: string | null
 
   @column()
-  declare caseValue: number | null
+  declare case_value: number | null
 
   @column()
-  declare convictionValue: number | null
+  declare conviction_value: number | null
 
   @column()
   declare costs: number | null
@@ -112,64 +109,64 @@ export default class Folder extends BaseModel {
   declare migrated: boolean
 
   @column()
-  declare searchIntimation: boolean
+  declare search_intimation: boolean
 
   @column()
-  declare searchProgress: boolean
+  declare search_progress: boolean
 
   @column()
-  declare loyIntegrationData: Record<string, any> | null
+  declare loy_integration_data: Record<string, any> | null
 
   @column.dateTime()
-  declare coverInformationUpdatedAt: DateTime | null
+  declare cover_information_updated_at: DateTime | null
 
   @column.date()
-  declare distributionDate: DateTime | null
+  declare distribution_date: DateTime | null
 
   @column.date()
-  declare citationDate: DateTime | null
+  declare citation_date: DateTime | null
 
   @column.date()
-  declare nextHearingDate: DateTime | null
+  declare next_hearing_date: DateTime | null
 
   @column.date()
-  declare prescriptionDate: DateTime | null
+  declare prescription_date: DateTime | null
 
   @column()
   declare observation: string | null
 
   @column()
-  declare objectDetail: string | null
+  declare object_detail: string | null
 
   @column()
-  declare lastMovement: string | null
+  declare last_movement: string | null
 
   @column()
-  declare billingNotes: string | null
+  declare billing_notes: string | null
 
   @column()
-  declare isActive: boolean
+  declare is_active: boolean
 
   @column()
-  declare isFavorite: boolean
+  declare is_favorite: boolean
 
   @column()
   declare priority: number
 
   @column()
-  declare createdById: number
+  declare created_by_id: number
 
   @column()
-  declare updatedById: number | null
+  declare updated_by_id: number | null
 
   @column.dateTime()
-  declare deletedAt: DateTime | null
+  declare deleted_at: DateTime | null
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare created_at: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updated_at: DateTime
 
   /**
    * ------------------------------------------------------
@@ -177,57 +174,57 @@ export default class Folder extends BaseModel {
    * ------------------------------------------------------
    */
   @belongsTo(() => Client, {
-    foreignKey: 'clientId',
+    foreignKey: 'client_id',
   })
   declare client: BelongsTo<typeof Client>
 
   @belongsTo(() => FolderType, {
-    foreignKey: 'folderTypeId',
+    foreignKey: 'folder_type_id',
   })
   declare folderType: BelongsTo<typeof FolderType>
 
   @belongsTo(() => Court, {
-    foreignKey: 'courtId',
+    foreignKey: 'court_id',
   })
   declare court: BelongsTo<typeof Court>
 
   @belongsTo(() => User, {
-    foreignKey: 'responsibleLawyerId',
+    foreignKey: 'responsible_lawyer_id',
   })
   declare responsibleLawyer: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    foreignKey: 'createdById',
+    foreignKey: 'created_by_id',
   })
   declare createdBy: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    foreignKey: 'updatedById',
+    foreignKey: 'updated_by_id',
   })
   declare updatedBy: BelongsTo<typeof User>
 
   @belongsTo(() => Folder, {
-    foreignKey: 'parentFolderId',
+    foreignKey: 'parent_folder_id',
   })
   declare parentFolder: BelongsTo<typeof Folder>
 
   @hasMany(() => Folder, {
-    foreignKey: 'parentFolderId',
+    foreignKey: 'parent_folder_id',
   })
   declare childFolders: HasMany<typeof Folder>
 
   @hasMany(() => FolderDocument, {
-    foreignKey: 'folderId',
+    foreignKey: 'folder_id',
   })
   declare documents: HasMany<typeof FolderDocument>
 
   @hasMany(() => FolderMovement, {
-    foreignKey: 'folderId',
+    foreignKey: 'folder_id',
   })
   declare movements: HasMany<typeof FolderMovement>
 
   @hasMany(() => FolderParty, {
-    foreignKey: 'folderId',
+    foreignKey: 'folder_id',
   })
   declare parties: HasMany<typeof FolderParty>
 
@@ -262,20 +259,20 @@ export default class Folder extends BaseModel {
       folder.migrated = false
     }
 
-    if (folder.searchIntimation === undefined || folder.searchIntimation === null) {
-      folder.searchIntimation = true
+    if (folder.search_intimation === undefined || folder.search_intimation === null) {
+      folder.search_intimation = true
     }
 
-    if (folder.searchProgress === undefined || folder.searchProgress === null) {
-      folder.searchProgress = false
+    if (folder.search_progress === undefined || folder.search_progress === null) {
+      folder.search_progress = false
     }
 
-    if (folder.isActive === undefined || folder.isActive === null) {
-      folder.isActive = true
+    if (folder.is_active === undefined || folder.is_active === null) {
+      folder.is_active = true
     }
 
-    if (folder.isFavorite === undefined || folder.isFavorite === null) {
-      folder.isFavorite = false
+    if (folder.is_favorite === undefined || folder.is_favorite === null) {
+      folder.is_favorite = false
     }
 
     if (!folder.priority) {
@@ -289,15 +286,15 @@ export default class Folder extends BaseModel {
 
   @beforeFind()
   @beforeFetch()
-  static async softDeletes(query: model.ModelQueryBuilderContract<typeof Folder>) {
+  static async softDeletes(query: ModelQueryBuilderContract<typeof Folder>) {
     query.whereNull('deleted_at')
   }
 
   @beforePaginate()
   static async softDeletesPaginate(
     queries: [
-      countQuery: model.ModelQueryBuilderContract<typeof Folder>,
-      fetchQuery: model.ModelQueryBuilderContract<typeof Folder>,
+      countQuery: ModelQueryBuilderContract<typeof Folder>,
+      fetchQuery: ModelQueryBuilderContract<typeof Folder>,
     ]
   ) {
     queries.forEach((query) => query.whereNull('deleted_at'))
@@ -387,8 +384,8 @@ export default class Folder extends BaseModel {
    * ------------------------------------------------------
    */
   public get displayTitle(): string {
-    if (this.cnjNumber) {
-      return `${this.title} (${this.cnjNumber})`
+    if (this.cnj_number) {
+      return `${this.title} (${this.cnj_number})`
     }
     return this.title
   }
@@ -412,13 +409,13 @@ export default class Folder extends BaseModel {
   }
 
   public get hasUpcomingHearing(): boolean {
-    if (!this.nextHearingDate) return false
-    return DateTime.fromJSDate(this.nextHearingDate) > DateTime.now()
+    if (!this.next_hearing_date) return false
+    return this.next_hearing_date > DateTime.now()
   }
 
   public get daysUntilHearing(): number | null {
-    if (!this.nextHearingDate) return null
-    const hearingDate = DateTime.fromJSDate(this.nextHearingDate)
+    if (!this.next_hearing_date) return null
+    const hearingDate = this.next_hearing_date
     return Math.ceil(hearingDate.diff(DateTime.now(), 'days').days)
   }
 

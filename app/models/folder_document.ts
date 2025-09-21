@@ -13,8 +13,6 @@ import Folder from '#models/folder'
 import File from '#models/file'
 import User from '#models/user'
 
-type FolderDocumentBuilder = ModelQueryBuilderContract<typeof FolderDocument>
-
 export default class FolderDocument extends BaseModel {
   static table = 'folder_documents'
   static namingStrategy = new SnakeCaseNamingStrategy()
@@ -28,10 +26,10 @@ export default class FolderDocument extends BaseModel {
   declare id: number
 
   @column()
-  declare folderId: number
+  declare folder_id: number
 
   @column()
-  declare fileId: number | null
+  declare file_id: number | null
 
   @column()
   declare title: string
@@ -40,61 +38,61 @@ export default class FolderDocument extends BaseModel {
   declare description: string | null
 
   @column()
-  declare documentType: string
+  declare document_type: string
 
   @column()
-  declare fileName: string | null
+  declare file_name: string | null
 
   @column()
-  declare filePath: string | null
+  declare file_path: string | null
 
   @column()
-  declare fileKey: string | null
+  declare file_key: string | null
 
   @column()
-  declare fileSize: number | null
+  declare file_size: number | null
 
   @column()
-  declare mimeType: string | null
+  declare mime_type: string | null
 
   @column()
   declare checksum: string | null
 
   @column()
-  declare confidentialityLevel: string
+  declare confidentiality_level: string
 
   @column()
-  declare documentCategory: string | null
+  declare document_category: string | null
 
   @column()
-  declare isOriginal: boolean
+  declare is_original: boolean
 
   @column()
-  declare versionNumber: number
+  declare version_number: number
 
   @column()
-  declare parentDocumentId: number | null
+  declare parent_document_id: number | null
 
   @column.date()
-  declare documentDate: DateTime | null
+  declare document_date: DateTime | null
 
   @column.date()
-  declare receivedDate: DateTime | null
+  declare received_date: DateTime | null
 
   @column()
-  declare courtProtocol: string | null
+  declare court_protocol: string | null
 
   @column()
-  declare requiresSignature: boolean
+  declare requires_signature: boolean
 
   @column()
-  declare isSigned: boolean
+  declare is_signed: boolean
 
   @column.dateTime()
-  declare signedAt: DateTime | null
+  declare signed_at: DateTime | null
 
   @column()
-  declare signedById: number | null
+  declare signed_by_id: number | null
 
   @column()
   declare tags: string[] | null
@@ -106,28 +104,28 @@ export default class FolderDocument extends BaseModel {
   declare notes: string | null
 
   @column()
-  declare isActive: boolean
+  declare is_active: boolean
 
   @column()
-  declare isArchived: boolean
+  declare is_archived: boolean
 
   @column()
-  declare sortOrder: number
+  declare sort_order: number
 
   @column()
-  declare uploadedById: number
+  declare uploaded_by_id: number
 
   @column()
-  declare updatedById: number | null
+  declare updated_by_id: number | null
 
   @column.dateTime()
-  declare deletedAt: DateTime | null
+  declare deleted_at: DateTime | null
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare created_at: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updated_at: DateTime
 
   /**
    * ------------------------------------------------------
@@ -135,32 +133,32 @@ export default class FolderDocument extends BaseModel {
    * ------------------------------------------------------
    */
   @belongsTo(() => Folder, {
-    foreignKey: 'folderId',
+    foreignKey: 'folder_id',
   })
   declare folder: BelongsTo<typeof Folder>
 
   @belongsTo(() => File, {
-    foreignKey: 'fileId',
+    foreignKey: 'file_id',
   })
   declare file: BelongsTo<typeof File>
 
   @belongsTo(() => FolderDocument, {
-    foreignKey: 'parentDocumentId',
+    foreignKey: 'parent_document_id',
   })
   declare parentDocument: BelongsTo<typeof FolderDocument>
 
   @belongsTo(() => User, {
-    foreignKey: 'uploadedById',
+    foreignKey: 'uploaded_by_id',
   })
   declare uploadedBy: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    foreignKey: 'updatedById',
+    foreignKey: 'updated_by_id',
   })
   declare updatedBy: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    foreignKey: 'signedById',
+    foreignKey: 'signed_by_id',
   })
   declare signedBy: BelongsTo<typeof User>
 
@@ -171,36 +169,36 @@ export default class FolderDocument extends BaseModel {
    */
   @beforeCreate()
   static async setDefaultValues(document: FolderDocument) {
-    if (!document.confidentialityLevel) {
-      document.confidentialityLevel = 'internal'
+    if (!document.confidentiality_level) {
+      document.confidentiality_level = 'internal'
     }
 
-    if (document.isOriginal === undefined || document.isOriginal === null) {
-      document.isOriginal = true
+    if (document.is_original === undefined || document.is_original === null) {
+      document.is_original = true
     }
 
-    if (!document.versionNumber) {
-      document.versionNumber = 1
+    if (!document.version_number) {
+      document.version_number = 1
     }
 
-    if (document.requiresSignature === undefined || document.requiresSignature === null) {
-      document.requiresSignature = false
+    if (document.requires_signature === undefined || document.requires_signature === null) {
+      document.requires_signature = false
     }
 
-    if (document.isSigned === undefined || document.isSigned === null) {
-      document.isSigned = false
+    if (document.is_signed === undefined || document.is_signed === null) {
+      document.is_signed = false
     }
 
-    if (document.isActive === undefined || document.isActive === null) {
-      document.isActive = true
+    if (document.is_active === undefined || document.is_active === null) {
+      document.is_active = true
     }
 
-    if (document.isArchived === undefined || document.isArchived === null) {
-      document.isArchived = false
+    if (document.is_archived === undefined || document.is_archived === null) {
+      document.is_archived = false
     }
 
-    if (!document.sortOrder) {
-      document.sortOrder = 0
+    if (!document.sort_order) {
+      document.sort_order = 0
     }
   }
 
@@ -213,17 +211,21 @@ export default class FolderDocument extends BaseModel {
     query.where('is_active', true)
   })
 
-  static byType = scope((query: FolderDocumentBuilder, type: string) => {
+  static byType = scope((query: ModelQueryBuilderContract<typeof FolderDocument>, type: string) => {
     query.where('document_type', type)
   })
 
-  static byFolder = scope((query: FolderDocumentBuilder, folderId: number) => {
-    query.where('folder_id', folderId)
-  })
+  static byFolder = scope(
+    (query: ModelQueryBuilderContract<typeof FolderDocument>, folderId: number) => {
+      query.where('folder_id', folderId)
+    }
+  )
 
-  static byConfidentiality = scope((query: FolderDocumentBuilder, level: string) => {
-    query.where('confidentiality_level', level)
-  })
+  static byConfidentiality = scope(
+    (query: ModelQueryBuilderContract<typeof FolderDocument>, level: string) => {
+      query.where('confidentiality_level', level)
+    }
+  )
 
   static originals = scope((query: FolderDocumentBuilder) => {
     query.where('is_original', true)
@@ -237,21 +239,25 @@ export default class FolderDocument extends BaseModel {
     query.where('requires_signature', true).where('is_signed', false)
   })
 
-  static recent = scope((query: FolderDocumentBuilder, days: number = 30) => {
-    const pastDate = DateTime.now().minus({ days })
-    query.where('created_at', '>=', pastDate.toSQL())
-  })
+  static recent = scope(
+    (query: ModelQueryBuilderContract<typeof FolderDocument>, days: number = 30) => {
+      const pastDate = DateTime.now().minus({ days })
+      query.where('created_at', '>=', pastDate.toSQL())
+    }
+  )
 
-  static search = scope((query: FolderDocumentBuilder, searchTerm: string) => {
-    query.where((q) => {
-      q.whereILike('title', `%${searchTerm}%`)
-        .orWhereILike('description', `%${searchTerm}%`)
-        .orWhereILike('file_name', `%${searchTerm}%`)
-        .orWhereILike('court_protocol', `%${searchTerm}%`)
-    })
-  })
+  static search = scope(
+    (query: ModelQueryBuilderContract<typeof FolderDocument>, searchTerm: string) => {
+      query.where((q) => {
+        q.whereILike('title', `%${searchTerm}%`)
+          .orWhereILike('description', `%${searchTerm}%`)
+          .orWhereILike('file_name', `%${searchTerm}%`)
+          .orWhereILike('court_protocol', `%${searchTerm}%`)
+      })
+    }
+  )
 
-  static withRelationships = scope((query: FolderDocumentBuilder) => {
+  static withRelationships = scope((query: ModelQueryBuilderContract<typeof FolderDocument>) => {
     query.preload('folder').preload('uploadedBy').preload('signedBy')
   })
 
@@ -265,10 +271,10 @@ export default class FolderDocument extends BaseModel {
   }
 
   public get fileSizeFormatted(): string {
-    if (!this.fileSize) return 'N/A'
+    if (!this.file_size) return 'N/A'
 
     const units = ['B', 'KB', 'MB', 'GB']
-    let size = this.fileSize
+    let size = this.file_size
     let unitIndex = 0
 
     while (size >= 1024 && unitIndex < units.length - 1) {
@@ -280,18 +286,18 @@ export default class FolderDocument extends BaseModel {
   }
 
   public get isConfidential(): boolean {
-    return ['confidential', 'restricted'].includes(this.confidentialityLevel)
+    return ['confidential', 'restricted'].includes(this.confidentiality_level)
   }
 
   public get needsSignature(): boolean {
-    return this.requiresSignature && !this.isSigned
+    return this.requires_signature && !this.is_signed
   }
 
   public get hasFile(): boolean {
-    return !!(this.fileId || this.fileKey || this.filePath)
+    return !!(this.file_id || this.file_key || this.file_path)
   }
 
   public get ageInDays(): number {
-    return Math.floor(DateTime.now().diff(this.createdAt, 'days').days)
+    return Math.floor(DateTime.now().diff(this.created_at, 'days').days)
   }
 }

@@ -141,8 +141,8 @@ export default class FolderRepository
       return null
     }
 
-    folder.deletedAt = DateTime.now()
-    folder.updatedById = userId
+    folder.deleted_at = DateTime.now()
+    folder.updated_by_id = userId
     await folder.save()
 
     return folder

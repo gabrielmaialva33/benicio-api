@@ -28,13 +28,13 @@ export default class FolderParty extends BaseModel {
   declare id: number
 
   @column()
-  declare folderId: number
+  declare folder_id: number
 
   @column()
-  declare clientId: number | null
+  declare client_id: number | null
 
   @column()
-  declare partyType: string
+  declare party_type: string
 
   @column()
   declare name: string
@@ -43,7 +43,7 @@ export default class FolderParty extends BaseModel {
   declare document: string | null
 
   @column()
-  declare documentType: string | null
+  declare document_type: string | null
 
   @column()
   declare email: string | null
@@ -58,13 +58,13 @@ export default class FolderParty extends BaseModel {
   declare role: string
 
   @column()
-  declare isActive: boolean
+  declare is_active: boolean
 
   @column()
-  declare isPrimaryParty: boolean
+  declare is_primary_party: boolean
 
   @column()
-  declare legalRepresentative: string | null
+  declare legal_representative: string | null
 
   @column()
   declare notes: string | null
@@ -73,16 +73,16 @@ export default class FolderParty extends BaseModel {
   declare metadata: Record<string, any> | null
 
   @column()
-  declare createdById: number | null
+  declare created_by_id: number | null
 
   @column()
-  declare updatedById: number | null
+  declare updated_by_id: number | null
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare created_at: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updated_at: DateTime
 
   /**
    * ------------------------------------------------------
@@ -90,22 +90,22 @@ export default class FolderParty extends BaseModel {
    * ------------------------------------------------------
    */
   @belongsTo(() => Folder, {
-    foreignKey: 'folderId',
+    foreignKey: 'folder_id',
   })
   declare folder: BelongsTo<typeof Folder>
 
   @belongsTo(() => Client, {
-    foreignKey: 'clientId',
+    foreignKey: 'client_id',
   })
   declare client: BelongsTo<typeof Client>
 
   @belongsTo(() => User, {
-    foreignKey: 'createdById',
+    foreignKey: 'created_by_id',
   })
   declare createdBy: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    foreignKey: 'updatedById',
+    foreignKey: 'updated_by_id',
   })
   declare updatedBy: BelongsTo<typeof User>
 
@@ -116,16 +116,16 @@ export default class FolderParty extends BaseModel {
    */
   @beforeCreate()
   static async setDefaultValues(party: FolderParty) {
-    if (party.isActive === undefined || party.isActive === null) {
-      party.isActive = true
+    if (party.is_active === undefined || party.is_active === null) {
+      party.is_active = true
     }
 
-    if (party.isPrimaryParty === undefined || party.isPrimaryParty === null) {
-      party.isPrimaryParty = false
+    if (party.is_primary_party === undefined || party.is_primary_party === null) {
+      party.is_primary_party = false
     }
 
-    if (!party.partyType) {
-      party.partyType = 'person'
+    if (!party.party_type) {
+      party.party_type = 'person'
     }
 
     if (!party.role) {
@@ -180,11 +180,11 @@ export default class FolderParty extends BaseModel {
   }
 
   public get isPerson(): boolean {
-    return this.partyType === 'person'
+    return this.party_type === 'person'
   }
 
   public get isCompany(): boolean {
-    return this.partyType === 'company'
+    return this.party_type === 'company'
   }
 
   public get hasContact(): boolean {
