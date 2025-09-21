@@ -13,7 +13,7 @@ import Folder from '#models/folder'
 import Client from '#models/client'
 import User from '#models/user'
 
-type FolderPartyBuilder = ModelQueryBuilderContract<typeof FolderParty>
+// type FolderPartyBuilder = ModelQueryBuilderContract<typeof FolderParty>
 
 export default class FolderParty extends BaseModel {
   static table = 'folder_parties'
@@ -138,27 +138,27 @@ export default class FolderParty extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
-  static active = scope((query: FolderPartyBuilder) => {
+  static active = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
     query.where('is_active', true)
   })
 
-  static byFolder = scope((query: FolderPartyBuilder, folderId: number) => {
+  static byFolder = scope((query: ModelQueryBuilderContract<typeof FolderParty>, folderId: number) => {
     query.where('folder_id', folderId)
   })
 
-  static byType = scope((query: FolderPartyBuilder, type: string) => {
+  static byType = scope((query: ModelQueryBuilderContract<typeof FolderParty>, type: string) => {
     query.where('party_type', type)
   })
 
-  static byRole = scope((query: FolderPartyBuilder, role: string) => {
+  static byRole = scope((query: ModelQueryBuilderContract<typeof FolderParty>, role: string) => {
     query.where('role', role)
   })
 
-  static primaryParties = scope((query: FolderPartyBuilder) => {
+  static primaryParties = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
     query.where('is_primary_party', true)
   })
 
-  static search = scope((query: FolderPartyBuilder, searchTerm: string) => {
+  static search = scope((query: ModelQueryBuilderContract<typeof FolderParty>, searchTerm: string) => {
     query.where((q) => {
       q.whereILike('name', `%${searchTerm}%`)
         .orWhereILike('document', `%${searchTerm}%`)
@@ -166,7 +166,7 @@ export default class FolderParty extends BaseModel {
     })
   })
 
-  static withRelationships = scope((query: FolderPartyBuilder) => {
+  static withRelationships = scope((query: ModelQueryBuilderContract<typeof FolderParty>) => {
     query.preload('folder').preload('client').preload('createdBy')
   })
 
