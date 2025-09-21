@@ -34,16 +34,15 @@ export default class FormDataService {
   async getEditFormData(id: number) {
     try {
       const [folder, folderTypes, clients, courts] = await Promise.all([
-        this.folderRepository
-          .findBy('id', id, {
-            modifyQuery: (query) =>
-              query
-                .whereNull('deleted_at')
-                .preload('client')
-                .preload('folderType')
-                .preload('court')
-                .preload('responsibleLawyer'),
-          }),
+        this.folderRepository.findBy('id', id, {
+          modifyQuery: (query) =>
+            query
+              .whereNull('deleted_at')
+              .preload('client')
+              .preload('folderType')
+              .preload('court')
+              .preload('responsibleLawyer'),
+        }),
         FolderType.query().where('is_active', true).orderBy('sort_order'),
         Client.query().where('is_active', true).orderBy('name'),
         Court.query().where('is_active', true).orderBy('name'),

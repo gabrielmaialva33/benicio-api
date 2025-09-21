@@ -7,7 +7,7 @@ import { CourtFactory } from '#database/factories/court_factory'
 import { UserFactory } from '#database/factories/user_factory'
 import Folder from '#models/folder'
 import testUtils from '@adonisjs/core/services/test_utils'
-import { FolderPriority } from '../../contracts/folder_enums.js'
+import { FolderPriority } from '../../../contracts/folder_enums.js'
 
 test.group('Folders controller', (group) => {
   let mockNow: DateTime

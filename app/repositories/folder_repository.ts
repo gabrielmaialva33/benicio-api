@@ -6,7 +6,8 @@ import { DateTime } from 'luxon'
 
 export default class FolderRepository
   extends LucidRepository<typeof Folder>
-  implements IFolder.Repository {
+  implements IFolder.Repository
+{
   constructor() {
     super(Folder)
   }
@@ -112,9 +113,13 @@ export default class FolderRepository
       .select([
         this.model.query().client.raw('COUNT(*) as total'),
         this.model.query().client.raw("COUNT(CASE WHEN status = 'active' THEN 1 END) as active"),
-        this.model.query().client.raw("COUNT(CASE WHEN status = 'archived' THEN 1 END) as archived"),
-        this.model.query().client.raw("COUNT(CASE WHEN priority = 3 THEN 1 END) as high_priority"),
-        this.model.query().client.raw('COUNT(CASE WHEN cnj_number IS NOT NULL THEN 1 END) as with_cnj'),
+        this.model
+          .query()
+          .client.raw("COUNT(CASE WHEN status = 'archived' THEN 1 END) as archived"),
+        this.model.query().client.raw('COUNT(CASE WHEN priority = 3 THEN 1 END) as high_priority'),
+        this.model
+          .query()
+          .client.raw('COUNT(CASE WHEN cnj_number IS NOT NULL THEN 1 END) as with_cnj'),
       ])
       .first()
 
@@ -148,7 +153,9 @@ export default class FolderRepository
    */
   async restore(id: number, userId: number): Promise<Folder | null> {
     // Check if folder exists and is soft deleted
-    const result = await this.model.query().client.from('folders')
+    const result = await this.model
+      .query()
+      .client.from('folders')
       .where('id', id)
       .whereNotNull('deleted_at')
       .first()
@@ -158,13 +165,11 @@ export default class FolderRepository
     }
 
     // Update directly via raw query to bypass soft delete hooks
-    await this.model.query().client.from('folders')
-      .where('id', id)
-      .update({
-        deleted_at: null,
-        updated_by_id: userId,
-        updated_at: DateTime.now().toSQL()
-      })
+    await this.model.query().client.from('folders').where('id', id).update({
+      deleted_at: null,
+      updated_by_id: userId,
+      updated_at: DateTime.now().toSQL(),
+    })
 
     // Now fetch the restored folder
     return this.model.find(id)
