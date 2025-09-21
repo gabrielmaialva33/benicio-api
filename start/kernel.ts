@@ -51,4 +51,5 @@ export const middleware = router.named({
   permission: () => import('#middleware/permission_middleware'),
   ownership: () => import('#middleware/ownership_middleware'),
   userType: () => import('#middleware/user_type_middleware'),
+  folderOwnership: () => import('#middleware/folder_ownership_middleware'),
 })
