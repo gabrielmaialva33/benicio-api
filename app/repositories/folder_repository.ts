@@ -2,6 +2,7 @@ import Folder from '#models/folder'
 import LucidRepository from '#shared/lucid/lucid_repository'
 import IFolder from '#interfaces/folder_interface'
 import { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import { DateTime } from 'luxon'
 
 export default class FolderRepository
   extends LucidRepository<typeof Folder>
@@ -135,8 +136,8 @@ export default class FolderRepository
       return null
     }
 
-    folder.deleted_at = new Date()
-    folder.updated_by_id = userId
+    folder.deletedAt = DateTime.now()
+    folder.updatedById = userId
     await folder.save()
 
     return folder
@@ -146,20 +147,39 @@ export default class FolderRepository
    * Restore a soft deleted folder
    */
   async restore(id: number, userId: number): Promise<Folder | null> {
-    const folder = await this.model
-      .query()
+    // Query directly to bypass soft delete hook
+    const result = await this.model.query().client.from('folders')
       .where('id', id)
       .whereNotNull('deleted_at')
       .first()
 
-    if (!folder) {
+    if (!result) {
       return null
     }
 
-    folder.deleted_at = null
-    folder.updated_by_id = userId
-    await folder.save()
+    // Update using the model
+    const folder = await this.model.find(id)
+    if (folder) {
+      // Folder exists but hook prevents finding it, update directly
+      await this.model.query().client.from('folders')
+        .where('id', id)
+        .update({
+          deleted_at: null,
+          updated_by_id: userId,
+          updated_at: DateTime.now().toSQL()
+        })
 
-    return folder
+      // Return the updated folder
+      return this.model.find(id)
+    }
+
+    // If not found with normal query, create instance from raw result
+    const restoredFolder = new this.model()
+    restoredFolder.$setRaw(result)
+    restoredFolder.deletedAt = null
+    restoredFolder.updatedById = userId
+    await restoredFolder.save()
+
+    return restoredFolder
   }
 }
