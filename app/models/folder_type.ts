@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, SnakeCaseNamingStrategy } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany, scope, SnakeCaseNamingStrategy } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import Folder from '#models/folder'
 
@@ -60,16 +60,22 @@ export default class FolderType extends BaseModel {
 
   /**
    * ------------------------------------------------------
+   * Hooks
+   * ------------------------------------------------------
+   */
+
+  /**
+   * ------------------------------------------------------
    * Query Scopes
    * ------------------------------------------------------
    */
-  static active = (query: any) => {
+  static active = scope((query) => {
     query.where('is_active', true)
-  }
+  })
 
-  static sorted = (query: any) => {
+  static sorted = scope((query) => {
     query.orderBy('sort_order').orderBy('name')
-  }
+  })
 
   /**
    * ------------------------------------------------------

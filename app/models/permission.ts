@@ -100,4 +100,17 @@ export default class Permission extends BaseModel {
   ) => {
     return query.where('resource', resource).where('action', action).where('context', context)
   }
+
+  /**
+   * ------------------------------------------------------
+   * Computed Properties
+   * ------------------------------------------------------
+   */
+  public get fullPermission(): string {
+    return `${this.resource}:${this.action}:${this.context || 'any'}`
+  }
+
+  public get isGlobal(): boolean {
+    return this.context === 'any' || !this.context
+  }
 }

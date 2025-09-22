@@ -59,4 +59,17 @@ export default class Role extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
+
+  /**
+   * ------------------------------------------------------
+   * Computed Properties
+   * ------------------------------------------------------
+   */
+  public get displayName(): string {
+    return this.name
+  }
+
+  public get isSystemRole(): boolean {
+    return ['admin', 'manager', 'employee', 'user'].includes(this.slug)
+  }
 }
