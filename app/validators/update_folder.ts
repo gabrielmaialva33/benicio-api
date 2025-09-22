@@ -19,8 +19,7 @@ export const updateFolderValidator = vine.withMetaData<{ folderId: number }>().c
       .number()
       .positive()
       .exists({ table: 'courts', column: 'id' })
-      .optional()
-      .nullable(),
+      .optional(),
 
     cnj_number: vine
       .string()
@@ -36,26 +35,26 @@ export const updateFolderValidator = vine.withMetaData<{ folderId: number }>().c
         return !row
       })
       .optional()
-      .nullable(),
+      .optional(),
 
-    case_value: vine.number().positive().decimal([0, 2]).optional().nullable(),
+    case_value: vine.number().positive().decimal([0, 2]).optional(),
 
-    opposing_party: vine.string().trim().maxLength(255).optional().nullable(),
+    opposing_party: vine.string().trim().maxLength(255).optional(),
 
-    opposing_lawyer: vine.string().trim().maxLength(255).optional().nullable(),
+    opposing_lawyer: vine.string().trim().maxLength(255).optional(),
 
     responsible_lawyer_id: vine
       .number()
       .positive()
       .exists({ table: 'users', column: 'id' })
       .optional()
-      .nullable(),
+      .optional(),
 
     status: vine.enum(Object.values(FolderStatus)).optional(),
 
     priority: vine.enum(Object.values(FolderPriority)).optional(),
 
-    tags: vine.array(vine.string().trim().maxLength(50)).maxLength(10).optional().nullable(),
+    tags: vine.array(vine.string().trim().maxLength(50)).maxLength(10).optional(),
 
     search_progress: vine.boolean().optional(),
 
@@ -63,9 +62,9 @@ export const updateFolderValidator = vine.withMetaData<{ folderId: number }>().c
 
     electronic: vine.boolean().optional(),
 
-    loy_system_number: vine.string().trim().maxLength(50).optional().nullable(),
+    loy_system_number: vine.string().trim().maxLength(50).optional(),
 
-    internal_notes: vine.string().trim().maxLength(2000).optional().nullable(),
+    internal_notes: vine.string().trim().maxLength(2000).optional(),
 
     is_confidential: vine.boolean().optional(),
   })

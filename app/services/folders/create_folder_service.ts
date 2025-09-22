@@ -19,7 +19,7 @@ export default class CreateFolderService {
       // Convert priority string enum to integer value if present
       const folderData: any = { ...data }
       if (data.priority) {
-        folderData.priority = FolderPriorityValues[data.priority]
+        folderData.priority = FolderPriorityValues[data.priority as keyof typeof FolderPriorityValues]
       }
 
       // Validate CNJ number if provided
@@ -31,7 +31,7 @@ export default class CreateFolderService {
         folderData.cnj_number = cnjValidation.formatted
 
         // Check if CNJ already exists
-        const exists = await this.folderRepository.cnjExists(cnjValidation.formatted)
+        const exists = await this.folderRepository.cnjExists(cnjValidation.formatted!)
         if (exists) {
           throw new Error('CNJ number already exists')
         }

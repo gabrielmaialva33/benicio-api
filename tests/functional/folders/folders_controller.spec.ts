@@ -89,7 +89,6 @@ test.group('Folders controller', (group) => {
       client_id: clientRecord.id,
       court_id: court.id,
       case_value: 50000.0,
-      observation: 'Observações do processo',
       status: 'active',
       priority: FolderPriority.NORMAL,
     }

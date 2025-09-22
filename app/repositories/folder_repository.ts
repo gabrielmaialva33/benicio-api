@@ -135,7 +135,7 @@ export default class FolderRepository
   /**
    * Soft delete a folder
    */
-  async softDelete(id: number, userId: number): Promise<Folder | null> {
+  async softDeleteFolder(id: number, userId: number): Promise<Folder | null> {
     const folder = await this.model.find(id)
     if (!folder) {
       return null

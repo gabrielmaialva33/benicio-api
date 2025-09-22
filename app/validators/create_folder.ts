@@ -18,8 +18,7 @@ export const createFolderValidator = vine.compile(
       .trim()
       .maxLength(25)
       .unique({ table: 'folders', column: 'cnj_number' })
-      .optional()
-      .nullable(),
+      .optional(),
 
     case_value: vine.number().positive().decimal([0, 2]).optional(),
 
@@ -27,9 +26,9 @@ export const createFolderValidator = vine.compile(
 
     object_detail: vine.string().trim().maxLength(500).optional(),
 
-    opposing_party: vine.string().trim().maxLength(255).optional().nullable(),
+    opposing_party: vine.string().trim().maxLength(255).optional(),
 
-    opposing_lawyer: vine.string().trim().maxLength(255).optional().nullable(),
+    opposing_lawyer: vine.string().trim().maxLength(255).optional(),
 
     responsible_lawyer_id: vine
       .number()

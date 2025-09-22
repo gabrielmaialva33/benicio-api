@@ -1,11 +1,11 @@
-import type { Transaction } from '@adonisjs/lucid/types/database'
+import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import logger from '@adonisjs/core/services/logger'
 import Client from '#models/client'
 import ClientAddress from '#models/client_address'
 import ClientContact from '#models/client_contact'
 
 export default class PopulateClientDefaultService {
-  async run(trx?: Transaction) {
+  async run(trx?: TransactionClientContract) {
     logger.info('🏗️ Populating client default values...')
 
     try {
@@ -25,7 +25,7 @@ export default class PopulateClientDefaultService {
     }
   }
 
-  private async updateClientDefaults(trx?: Transaction) {
+  private async updateClientDefaults(trx?: TransactionClientContract) {
     try {
       const query = Client.query({ client: trx })
 
@@ -57,11 +57,11 @@ export default class PopulateClientDefaultService {
         .update({ pcc_retention: false })
 
       const totalUpdated =
-        clientTypeUpdated +
-        isActiveUpdated +
-        isFavoriteUpdated +
-        irRetentionUpdated +
-        pccRetentionUpdated
+        clientTypeUpdated.length +
+        isActiveUpdated.length +
+        isFavoriteUpdated.length +
+        irRetentionUpdated.length +
+        pccRetentionUpdated.length
 
       logger.info(`✅ Client defaults updated (${totalUpdated} fields updated)`)
     } catch (error) {
@@ -70,7 +70,7 @@ export default class PopulateClientDefaultService {
     }
   }
 
-  private async updateClientAddressDefaults(trx?: Transaction) {
+  private async updateClientAddressDefaults(trx?: TransactionClientContract) {
     try {
       const query = ClientAddress.query({ client: trx })
 
@@ -108,7 +108,7 @@ export default class PopulateClientDefaultService {
     }
   }
 
-  private async updateClientContactDefaults(trx?: Transaction) {
+  private async updateClientContactDefaults(trx?: TransactionClientContract) {
     try {
       const query = ClientContact.query({ client: trx })
 

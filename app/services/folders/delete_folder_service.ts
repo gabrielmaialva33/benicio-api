@@ -20,7 +20,7 @@ export default class DeleteFolderService {
         logger.info(`🗑️ Folder permanently deleted: ID ${id} by user ${user.id}`)
       } else {
         // Soft delete
-        const folder = await this.folderRepository.softDelete(id, user.id)
+        const folder = await this.folderRepository.softDeleteFolder(id, user.id)
         if (!folder) {
           throw new NotFoundException('Folder not found')
         }

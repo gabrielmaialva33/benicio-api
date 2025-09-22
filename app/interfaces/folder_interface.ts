@@ -9,7 +9,7 @@ namespace IFolder {
     findWithRelations(id: number): Promise<Folder | null>
     search(filters: ListFilters): any
     getStatistics(): Promise<Statistics>
-    softDelete(id: number, userId: number): Promise<Folder | null>
+    softDeleteFolder(id: number, userId: number): Promise<Folder | null>
     restore(id: number, userId: number): Promise<Folder | null>
   }
 

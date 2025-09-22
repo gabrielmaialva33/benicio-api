@@ -21,6 +21,8 @@ import FolderDocument from '#models/folder_document'
 import FolderMovement from '#models/folder_movement'
 import FolderParty from '#models/folder_party'
 
+type FolderBuilder = ModelQueryBuilderContract<typeof Folder>
+
 export default class Folder extends BaseModel {
   static table = 'folders'
   static namingStrategy = new SnakeCaseNamingStrategy()
@@ -361,11 +363,11 @@ export default class Folder extends BaseModel {
     })
   })
 
-  static withRelationships = scope((query) => {
+  static withRelationships = scope((query: FolderBuilder) => {
     query.preload('client').preload('folder_type').preload('court').preload('responsible_lawyer')
   })
 
-  static withCounts = scope((query) => {
+  static withCounts = scope((query: FolderBuilder) => {
     query
       .withAggregate('documents', (documentsQuery) => {
         documentsQuery.count('*').as('documents_count')
