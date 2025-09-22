@@ -113,6 +113,23 @@ export default class ClientAddress extends BaseModel {
 
   /**
    * ------------------------------------------------------
+   * Query Scopes
+   * ------------------------------------------------------
+   */
+  static primary = scope((query) => {
+    query.where('is_primary', true)
+  })
+
+  static byCity = scope((query, city: string) => {
+    query.where('city', city)
+  })
+
+  static byState = scope((query, state: string) => {
+    query.where('state', state)
+  })
+
+  /**
+   * ------------------------------------------------------
    * Computed Properties
    * ------------------------------------------------------
    */

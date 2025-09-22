@@ -4,6 +4,7 @@ import {
   beforeCreate,
   belongsTo,
   column,
+  scope,
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
@@ -93,4 +94,42 @@ export default class ClientContact extends BaseModel {
     foreignKey: 'address_id',
   })
   declare address: BelongsTo<typeof ClientAddress>
+
+  /**
+   * ------------------------------------------------------
+   * Query Scopes
+   * ------------------------------------------------------
+   */
+  static active = scope((query) => {
+    query.where('is_blocked', false)
+  })
+
+  static byType = scope((query, type: 'phone' | 'email') => {
+    query.where('contact_type', type)
+  })
+
+  static mailingList = scope((query) => {
+    query.where('participates_mailing', true)
+  })
+
+  static billingContacts = scope((query) => {
+    query.where('receives_billing', true)
+  })
+
+  /**
+   * ------------------------------------------------------
+   * Computed Properties
+   * ------------------------------------------------------
+   */
+  public get displayContact(): string {
+    return `${this.name} - ${this.contact_value}`
+  }
+
+  public get isEmail(): boolean {
+    return this.contact_type === 'email'
+  }
+
+  public get isPhone(): boolean {
+    return this.contact_type === 'phone'
+  }
 }
