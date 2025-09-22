@@ -182,11 +182,9 @@ export default class FolderMovement extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
-  static byFolder = scope(
-    (query, folderId: number) => {
-      query.where('folder_id', folderId)
-    }
-  )
+  static byFolder = scope((query, folderId: number) => {
+    query.where('folder_id', folderId)
+  })
 
   static byType = scope((query, type: string) => {
     query.where('movement_type', type)
@@ -200,20 +198,16 @@ export default class FolderMovement extends BaseModel {
     query.where('is_deadline', true).whereNotNull('deadline_date')
   })
 
-  static upcomingDeadlines = scope(
-    (query, days: number = 30) => {
-      const futureDate = DateTime.now().plus({ days }).toSQLDate()
-      query
-        .where('is_deadline', true)
-        .whereBetween('deadline_date', [DateTime.now().toSQLDate(), futureDate])
-    }
-  )
+  static upcomingDeadlines = scope((query, days: number = 30) => {
+    const futureDate = DateTime.now().plus({ days }).toSQLDate()
+    query
+      .where('is_deadline', true)
+      .whereBetween('deadline_date', [DateTime.now().toSQLDate(), futureDate])
+  })
 
-  static byUrgency = scope(
-    (query, level: string) => {
-      query.where('urgency_level', level)
-    }
-  )
+  static byUrgency = scope((query, level: string) => {
+    query.where('urgency_level', level)
+  })
 
   static urgent = scope((query) => {
     query.whereIn('urgency_level', ['high', 'urgent'])
@@ -239,24 +233,20 @@ export default class FolderMovement extends BaseModel {
     query.where('is_public', true)
   })
 
-  static recent = scope(
-    (query, days: number = 30) => {
-      const pastDate = DateTime.now().minus({ days })
-      query.where('movement_date', '>=', pastDate.toSQL())
-    }
-  )
+  static recent = scope((query, days: number = 30) => {
+    const pastDate = DateTime.now().minus({ days })
+    query.where('movement_date', '>=', pastDate.toSQL())
+  })
 
-  static search = scope(
-    (query, searchTerm: string) => {
-      query.where((q) => {
-        q.whereILike('title', `%${searchTerm}%`)
-          .orWhereILike('description', `%${searchTerm}%`)
-          .orWhereILike('full_text', `%${searchTerm}%`)
-          .orWhereILike('court_protocol', `%${searchTerm}%`)
-          .orWhereILike('responsible_party', `%${searchTerm}%`)
-      })
-    }
-  )
+  static search = scope((query, searchTerm: string) => {
+    query.where((q) => {
+      q.whereILike('title', `%${searchTerm}%`)
+        .orWhereILike('description', `%${searchTerm}%`)
+        .orWhereILike('full_text', `%${searchTerm}%`)
+        .orWhereILike('court_protocol', `%${searchTerm}%`)
+        .orWhereILike('responsible_party', `%${searchTerm}%`)
+    })
+  })
 
   static withRelationships = scope((query) => {
     query.preload('folder').preload('created_by')

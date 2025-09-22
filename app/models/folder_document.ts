@@ -214,17 +214,13 @@ export default class FolderDocument extends BaseModel {
     query.where('document_type', type)
   })
 
-  static byFolder = scope(
-    (query, folderId: number) => {
-      query.where('folder_id', folderId)
-    }
-  )
+  static byFolder = scope((query, folderId: number) => {
+    query.where('folder_id', folderId)
+  })
 
-  static byConfidentiality = scope(
-    (query, level: string) => {
-      query.where('confidentiality_level', level)
-    }
-  )
+  static byConfidentiality = scope((query, level: string) => {
+    query.where('confidentiality_level', level)
+  })
 
   static originals = scope((query) => {
     query.where('is_original', true)
@@ -238,23 +234,19 @@ export default class FolderDocument extends BaseModel {
     query.where('requires_signature', true).where('is_signed', false)
   })
 
-  static recent = scope(
-    (query, days: number = 30) => {
-      const pastDate = DateTime.now().minus({ days })
-      query.where('created_at', '>=', pastDate.toSQL())
-    }
-  )
+  static recent = scope((query, days: number = 30) => {
+    const pastDate = DateTime.now().minus({ days })
+    query.where('created_at', '>=', pastDate.toSQL())
+  })
 
-  static search = scope(
-    (query, searchTerm: string) => {
-      query.where((q) => {
-        q.whereILike('title', `%${searchTerm}%`)
-          .orWhereILike('description', `%${searchTerm}%`)
-          .orWhereILike('file_name', `%${searchTerm}%`)
-          .orWhereILike('court_protocol', `%${searchTerm}%`)
-      })
-    }
-  )
+  static search = scope((query, searchTerm: string) => {
+    query.where((q) => {
+      q.whereILike('title', `%${searchTerm}%`)
+        .orWhereILike('description', `%${searchTerm}%`)
+        .orWhereILike('file_name', `%${searchTerm}%`)
+        .orWhereILike('court_protocol', `%${searchTerm}%`)
+    })
+  })
 
   static withRelationships = scope((query) => {
     query.preload('folder').preload('uploaded_by').preload('signed_by')
