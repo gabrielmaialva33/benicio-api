@@ -88,8 +88,4 @@ export const FolderFactory = factory
   .state('archived', (folder) => {
     folder.status = 'archived'
   })
-  .state('confidential', (folder) => {
-    folder.is_confidential = true
-    folder.internal_notes = 'Confidential case - restricted access'
-  })
   .build()

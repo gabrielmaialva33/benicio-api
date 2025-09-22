@@ -128,7 +128,7 @@ export default class extends BaseSchema {
 
     for (const slug of slugs) {
       try {
-        await this.db.table('folder_types').where('slug', slug).delete()
+        await this.db.from('folder_types').where('slug', slug).delete()
         logger.info(`🗑️  Tipo de pasta "${slug}" removido`)
       } catch (error) {
         logger.error(`❌ Erro ao remover tipo de pasta "${slug}": ${error.message}`)
