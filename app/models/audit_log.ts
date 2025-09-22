@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, SnakeCaseNamingStrategy } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, scope, SnakeCaseNamingStrategy } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 
@@ -86,17 +86,17 @@ export default class AuditLog extends BaseModel {
    * Query Scopes
    * ------------------------------------------------------
    */
-  static byUser = (query: any, userId: number) => {
-    return query.where('user_id', userId)
-  }
+  static byUser = scope((query, userId: number) => {
+    query.where('user_id', userId)
+  })
 
-  static byResource = (query: any, resource: string) => {
-    return query.where('resource', resource)
-  }
+  static byResource = scope((query, resource: string) => {
+    query.where('resource', resource)
+  })
 
-  static byAction = (query: any, action: string) => {
-    return query.where('action', action)
-  }
+  static byAction = scope((query, action: string) => {
+    query.where('action', action)
+  })
 
   static byResult = (query: any, result: 'granted' | 'denied') => {
     return query.where('result', result)
