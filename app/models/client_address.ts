@@ -5,6 +5,7 @@ import {
   belongsTo,
   column,
   hasMany,
+  scope,
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
