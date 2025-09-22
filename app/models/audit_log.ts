@@ -103,7 +103,7 @@ export default class AuditLog extends BaseModel {
   })
 
   static byDateRange = scope((query, startDate: DateTime, endDate: DateTime) => {
-    query.whereBetween('created_at', [startDate.toSQL(), endDate.toSQL()])
+    query.whereBetween('created_at', [startDate.toSQL()!, endDate.toSQL()!])
   })
 
   static byIpAddress = scope((query, ipAddress: string) => {
