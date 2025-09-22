@@ -119,7 +119,7 @@ namespace IClient {
     fantasy_name?: string | null
     document?: string | null
     person_type?: 'individual' | 'company' | null
-    postal_code: string
+    postal_code?: string
     street: string
     number: string
     complement?: string | null

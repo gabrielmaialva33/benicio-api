@@ -130,7 +130,7 @@ export default class PopulateClientDefaultService {
         .whereNull('is_blocked')
         .update({ is_blocked: false })
 
-      const totalUpdated = mailingUpdated + billingUpdated + blockedUpdated
+      const totalUpdated = mailingUpdated.length + billingUpdated.length + blockedUpdated.length
 
       logger.info(`✅ Client contact defaults updated (${totalUpdated} fields updated)`)
     } catch (error) {

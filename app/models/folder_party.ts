@@ -8,11 +8,10 @@ import {
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import * as model from '@adonisjs/lucid/types/model'
 import Folder from '#models/folder'
 import Client from '#models/client'
 import User from '#models/user'
-
-// type FolderPartyBuilder = ModelQueryBuilderContract<typeof FolderParty>
 
 export default class FolderParty extends BaseModel {
   static table = 'folder_parties'
@@ -165,9 +164,9 @@ export default class FolderParty extends BaseModel {
     })
   })
 
-  static withRelationships = scope((query) => {
+  static withRelationships(query: model.ModelQueryBuilderContract<typeof FolderParty>) {
     query.preload('folder').preload('client').preload('created_by')
-  })
+  }
 
   /**
    * ------------------------------------------------------

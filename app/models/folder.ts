@@ -12,7 +12,7 @@ import {
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
-import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import * as model from '@adonisjs/lucid/types/model'
 import Client from '#models/client'
 import FolderType from '#models/folder_type'
 import Court from '#models/court'
@@ -20,8 +20,6 @@ import User from '#models/user'
 import FolderDocument from '#models/folder_document'
 import FolderMovement from '#models/folder_movement'
 import FolderParty from '#models/folder_party'
-
-type FolderBuilder = ModelQueryBuilderContract<typeof Folder>
 
 export default class Folder extends BaseModel {
   static table = 'folders'
@@ -288,15 +286,15 @@ export default class Folder extends BaseModel {
 
   @beforeFind()
   @beforeFetch()
-  static async softDeletes(query: ModelQueryBuilderContract<typeof Folder>) {
+  static async softDeletes(query: model.ModelQueryBuilderContract<typeof Folder>) {
     query.whereNull('deleted_at')
   }
 
   @beforePaginate()
   static async softDeletesPaginate(
     queries: [
-      countQuery: ModelQueryBuilderContract<typeof Folder>,
-      fetchQuery: ModelQueryBuilderContract<typeof Folder>,
+      countQuery: model.ModelQueryBuilderContract<typeof Folder>,
+      fetchQuery: model.ModelQueryBuilderContract<typeof Folder>,
     ]
   ) {
     queries.forEach((query) => query.whereNull('deleted_at'))
@@ -363,11 +361,11 @@ export default class Folder extends BaseModel {
     })
   })
 
-  static withRelationships = scope((query: FolderBuilder) => {
+  static withRelationships(query: model.ModelQueryBuilderContract<typeof Folder>) {
     query.preload('client').preload('folder_type').preload('court').preload('responsible_lawyer')
-  })
+  }
 
-  static withCounts = scope((query: FolderBuilder) => {
+  static withCounts(query: model.ModelQueryBuilderContract<typeof Folder>) {
     query
       .withAggregate('documents', (documentsQuery) => {
         documentsQuery.count('*').as('documents_count')
@@ -378,7 +376,7 @@ export default class Folder extends BaseModel {
       .withAggregate('parties', (partiesQuery) => {
         partiesQuery.count('*').as('parties_count')
       })
-  })
+  }
 
   /**
    * ------------------------------------------------------

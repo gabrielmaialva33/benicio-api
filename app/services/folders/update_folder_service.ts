@@ -28,7 +28,8 @@ export default class UpdateFolderService {
       // Convert priority string enum to integer value if present
       const folderData: any = { ...data }
       if (data.priority) {
-        folderData.priority = FolderPriorityValues[data.priority as keyof typeof FolderPriorityValues]
+        folderData.priority =
+          FolderPriorityValues[data.priority as keyof typeof FolderPriorityValues]
       }
 
       // Validate CNJ number if provided and different from current

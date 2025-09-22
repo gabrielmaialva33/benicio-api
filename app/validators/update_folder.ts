@@ -15,11 +15,7 @@ export const updateFolderValidator = vine.withMetaData<{ folderId: number }>().c
 
     client_id: vine.number().positive().exists({ table: 'clients', column: 'id' }).optional(),
 
-    court_id: vine
-      .number()
-      .positive()
-      .exists({ table: 'courts', column: 'id' })
-      .optional(),
+    court_id: vine.number().positive().exists({ table: 'courts', column: 'id' }).optional(),
 
     cnj_number: vine
       .string()

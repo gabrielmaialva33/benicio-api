@@ -21,7 +21,8 @@ export default class FolderOwnershipMiddleware {
     }
 
     try {
-      const folder = await Folder.query()
+      // Verify folder exists and is not deleted
+      await Folder.query()
         .where('id', folderId)
         .whereNull('deleted_at')
         .preload('client')
