@@ -13,6 +13,8 @@ import Folder from '#models/folder'
 import File from '#models/file'
 import User from '#models/user'
 
+type FolderDocumentBuilder = model.ModelQueryBuilderContract<typeof FolderDocument>
+
 export default class FolderDocument extends BaseModel {
   static table = 'folder_documents'
   static namingStrategy = new SnakeCaseNamingStrategy()
@@ -249,7 +251,7 @@ export default class FolderDocument extends BaseModel {
     })
   })
 
-  static withRelationships = scope((query) => {
+  static withRelationships = scope((query: FolderDocumentBuilder) => {
     query.preload('folder').preload('uploaded_by').preload('signed_by')
   })
 
