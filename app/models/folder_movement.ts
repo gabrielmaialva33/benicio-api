@@ -249,9 +249,9 @@ export default class FolderMovement extends BaseModel {
     })
   })
 
-  static withRelationships(query: model.ModelQueryBuilderContract<typeof FolderMovement>) {
+  static withRelationships = scope((query) => {
     query.preload('folder').preload('created_by')
-  }
+  })
 
   /**
    * ------------------------------------------------------

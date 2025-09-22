@@ -361,11 +361,11 @@ export default class Folder extends BaseModel {
     })
   })
 
-  static withRelationships(query: model.ModelQueryBuilderContract<typeof Folder>) {
+  static withRelationships = scope((query) => {
     query.preload('client').preload('folder_type').preload('court').preload('responsible_lawyer')
-  }
+  })
 
-  static withCounts(query: model.ModelQueryBuilderContract<typeof Folder>) {
+  static withCounts = scope((query) => {
     query
       .withAggregate('documents', (documentsQuery) => {
         documentsQuery.count('*').as('documents_count')
@@ -376,7 +376,7 @@ export default class Folder extends BaseModel {
       .withAggregate('parties', (partiesQuery) => {
         partiesQuery.count('*').as('parties_count')
       })
-  }
+  })
 
   /**
    * ------------------------------------------------------

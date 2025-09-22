@@ -249,9 +249,9 @@ export default class FolderDocument extends BaseModel {
     })
   })
 
-  static withRelationships(query: model.ModelQueryBuilderContract<typeof FolderDocument>) {
+  static withRelationships = scope((query) => {
     query.preload('folder').preload('uploaded_by').preload('signed_by')
-  }
+  })
 
   /**
    * ------------------------------------------------------
