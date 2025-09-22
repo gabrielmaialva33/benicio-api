@@ -52,7 +52,7 @@ test.group('Folders controller', (group) => {
     const folderType = await FolderTypeFactory.create()
     const clientRecord = await ClientFactory.merge({ created_by_id: user.id }).create()
 
-    const targetFolder = await FolderFactory.merge({
+    await FolderFactory.merge({
       title: 'Processo Importante',
       folder_type_id: folderType.id,
       client_id: clientRecord.id,
