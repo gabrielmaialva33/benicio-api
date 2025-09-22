@@ -248,4 +248,21 @@ export default class Client extends BaseModel {
   static byBusinessSector = scope((query, businessSectorId: number) => {
     query.where('business_sector_id', businessSectorId)
   })
+
+  /**
+   * ------------------------------------------------------
+   * Computed Properties
+   * ------------------------------------------------------
+   */
+  public get displayName(): string {
+    return this.company_name || this.fantasy_name
+  }
+
+  public get isIndividual(): boolean {
+    return this.person_type === 'individual'
+  }
+
+  public get isCompany(): boolean {
+    return this.person_type === 'company'
+  }
 }

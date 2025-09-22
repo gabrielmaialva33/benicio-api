@@ -98,19 +98,19 @@ export default class AuditLog extends BaseModel {
     query.where('action', action)
   })
 
-  static byResult = (query: any, result: 'granted' | 'denied') => {
-    return query.where('result', result)
-  }
+  static byResult = scope((query, result: 'granted' | 'denied') => {
+    query.where('result', result)
+  })
 
-  static byDateRange = (query: any, startDate: DateTime, endDate: DateTime) => {
-    return query.whereBetween('created_at', [startDate.toSQL(), endDate.toSQL()])
-  }
+  static byDateRange = scope((query, startDate: DateTime, endDate: DateTime) => {
+    query.whereBetween('created_at', [startDate.toSQL(), endDate.toSQL()])
+  })
 
-  static byIpAddress = (query: any, ipAddress: string) => {
-    return query.where('ip_address', ipAddress)
-  }
+  static byIpAddress = scope((query, ipAddress: string) => {
+    query.where('ip_address', ipAddress)
+  })
 
-  static recentFirst = (query: any) => {
-    return query.orderBy('created_at', 'desc')
-  }
+  static recentFirst = scope((query) => {
+    query.orderBy('created_at', 'desc')
+  })
 }
