@@ -49,9 +49,9 @@ export default class FolderRepository
       .where('id', id)
       .whereNull('deleted_at')
       .preload('client')
-      .preload('folderType')
+      .preload('folder_type')
       .preload('court')
-      .preload('responsibleLawyer')
+      .preload('responsible_lawyer')
       .preload('documents', (query) => {
         query.where('is_active', true).orderBy('created_at', 'desc')
       })

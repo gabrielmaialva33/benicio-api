@@ -69,11 +69,11 @@ export const FolderFactory = factory
         : null,
     }
   })
-  .relation('folderType', () => FolderTypeFactory)
+  .relation('folder_type', () => FolderTypeFactory)
   .relation('client', () => ClientFactory)
   .relation('court', () => CourtFactory)
-  .relation('createdBy', () => UserFactory)
-  .relation('updatedBy', () => UserFactory)
+  .relation('created_by', () => UserFactory)
+  .relation('updated_by', () => UserFactory)
   .state('active', (folder) => {
     folder.status = 'active'
     folder.priority = 2

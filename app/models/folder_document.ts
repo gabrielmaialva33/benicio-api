@@ -8,7 +8,6 @@ import {
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import Folder from '#models/folder'
 import File from '#models/file'
 import User from '#models/user'
@@ -145,22 +144,22 @@ export default class FolderDocument extends BaseModel {
   @belongsTo(() => FolderDocument, {
     foreignKey: 'parent_document_id',
   })
-  declare parentDocument: BelongsTo<typeof FolderDocument>
+  declare parent_document: BelongsTo<typeof FolderDocument>
 
   @belongsTo(() => User, {
     foreignKey: 'uploaded_by_id',
   })
-  declare uploadedBy: BelongsTo<typeof User>
+  declare uploaded_by: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
     foreignKey: 'updated_by_id',
   })
-  declare updatedBy: BelongsTo<typeof User>
+  declare updated_by: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
     foreignKey: 'signed_by_id',
   })
-  declare signedBy: BelongsTo<typeof User>
+  declare signed_by: BelongsTo<typeof User>
 
   /**
    * ------------------------------------------------------

@@ -8,7 +8,6 @@ import {
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import Folder from '#models/folder'
 import User from '#models/user'
 
@@ -127,12 +126,12 @@ export default class FolderMovement extends BaseModel {
   @belongsTo(() => User, {
     foreignKey: 'created_by_id',
   })
-  declare createdBy: BelongsTo<typeof User>
+  declare created_by: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
     foreignKey: 'updated_by_id',
   })
-  declare updatedBy: BelongsTo<typeof User>
+  declare updated_by: BelongsTo<typeof User>
 
   /**
    * ------------------------------------------------------

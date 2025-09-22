@@ -181,7 +181,7 @@ export default class Folder extends BaseModel {
   @belongsTo(() => FolderType, {
     foreignKey: 'folder_type_id',
   })
-  declare folderType: BelongsTo<typeof FolderType>
+  declare folder_type: BelongsTo<typeof FolderType>
 
   @belongsTo(() => Court, {
     foreignKey: 'court_id',
@@ -191,27 +191,27 @@ export default class Folder extends BaseModel {
   @belongsTo(() => User, {
     foreignKey: 'responsible_lawyer_id',
   })
-  declare responsibleLawyer: BelongsTo<typeof User>
+  declare responsible_lawyer: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
     foreignKey: 'created_by_id',
   })
-  declare createdBy: BelongsTo<typeof User>
+  declare created_by: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
     foreignKey: 'updated_by_id',
   })
-  declare updatedBy: BelongsTo<typeof User>
+  declare updated_by: BelongsTo<typeof User>
 
   @belongsTo(() => Folder, {
     foreignKey: 'parent_folder_id',
   })
-  declare parentFolder: BelongsTo<typeof Folder>
+  declare parent_folder: BelongsTo<typeof Folder>
 
   @hasMany(() => Folder, {
     foreignKey: 'parent_folder_id',
   })
-  declare childFolders: HasMany<typeof Folder>
+  declare child_folders: HasMany<typeof Folder>
 
   @hasMany(() => FolderDocument, {
     foreignKey: 'folder_id',
@@ -362,7 +362,7 @@ export default class Folder extends BaseModel {
   })
 
   static withRelationships = scope((query) => {
-    query.preload('client').preload('folderType').preload('court').preload('responsibleLawyer')
+    query.preload('client').preload('folder_type').preload('court').preload('responsible_lawyer')
   })
 
   static withCounts = scope((query) => {
