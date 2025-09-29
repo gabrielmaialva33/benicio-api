@@ -38,7 +38,8 @@
     "#start/*": "./start/*.js",
     "#config/*": "./config/*.js",
     "#shared/*": "./app/shared/*.js",
-    "#validations/*": "./app/validations/*.js"
+    "#validations/*": "./app/validations/*.js",
+    "#defaults/*": "./app/defaults/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
