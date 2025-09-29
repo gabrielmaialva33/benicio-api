@@ -31,7 +31,12 @@ export const BenicioFirmData = {
 
 // Real partners and key personnel
 export const BenicioLawyers = [
-  { name: 'Celso Benício', role: 'Director', specialization: 'Corporate Law', seniority: 'partner' },
+  {
+    name: 'Celso Benício',
+    role: 'Director',
+    specialization: 'Corporate Law',
+    seniority: 'partner',
+  },
   {
     name: 'Alessandro Barreto Borges',
     role: 'Partner',

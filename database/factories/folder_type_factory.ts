@@ -23,16 +23,16 @@ export const FolderTypeFactory = factory
       color: faker.color.rgb(),
       is_active: true,
       sort_order: faker.number.int({ min: 1, max: 10 }),
-      workflow_config: JSON.stringify({
+      workflow_config: {
         states: ['pre_registration', 'awaiting_info', 'registered', 'active', 'archived'],
         initial_state: 'pre_registration',
-      }),
-      required_fields: JSON.stringify(['title', 'client_id']),
-      default_values: JSON.stringify({
+      },
+      required_fields: ['title', 'client_id'],
+      default_values: {
         search_progress: faker.datatype.boolean(),
         search_intimation: true,
         electronic: faker.datatype.boolean(),
-      }),
+      },
     }
   })
   .build()

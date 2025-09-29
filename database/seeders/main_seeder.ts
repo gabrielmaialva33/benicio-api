@@ -1,5 +1,6 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { DateTime } from 'luxon'
+import logger from '@adonisjs/core/services/logger'
 import { UserFactory } from '#database/factories/user_factory'
 import { ClientFactory } from '#database/factories/client_factory'
 import { CourtFactory } from '#database/factories/court_factory'
@@ -36,30 +37,30 @@ export default class MainSeeder extends BaseSeeder {
   private sequentialCnjNumber = 1
 
   async run() {
-    console.log('🌱 Starting Brazilian Legal Data Seeding...\n')
+    logger.info('🌱 Starting Brazilian Legal Data Seeding...\n')
 
     // 1. Criar usuários (managers e employees)
-    console.log('👥 Creating users...')
+    logger.info('👥 Creating users...')
     const { managers, employees } = await this.createUsers()
-    console.log(`   ✅ Created ${managers.length} managers and ${employees.length} employees\n`)
+    logger.info(`   ✅ Created ${managers.length} managers and ${employees.length} employees\n`)
 
     // 2. Criar tribunais brasileiros
-    console.log('⚖️  Creating Brazilian courts...')
+    logger.info('⚖️  Creating Brazilian courts...')
     const courts = await this.createCourts()
-    console.log(`   ✅ Created ${courts.length} courts\n`)
+    logger.info(`   ✅ Created ${courts.length} courts\n`)
 
     // 3. Criar empresas brasileiras como clientes
-    console.log('🏢 Creating company clients...')
+    logger.info('🏢 Creating company clients...')
     const companies = await this.createCompanyClients(managers)
-    console.log(`   ✅ Created ${companies.length} companies\n`)
+    logger.info(`   ✅ Created ${companies.length} companies\n`)
 
     // 4. Criar pessoas físicas como clientes
-    console.log('👤 Creating individual clients...')
+    logger.info('👤 Creating individual clients...')
     const individuals = await this.createIndividualClients(managers)
-    console.log(`   ✅ Created ${individuals.length} individuals\n`)
+    logger.info(`   ✅ Created ${individuals.length} individuals\n`)
 
     // 5. Criar processos jurídicos com CNJ numbers válidos
-    console.log('📁 Creating legal cases (folders) with realistic data...')
+    logger.info('📁 Creating legal cases (folders) with realistic data...')
     const allClients = [...companies, ...individuals]
     const foldersCount = await this.createFolders({
       clients: allClients,
@@ -67,17 +68,17 @@ export default class MainSeeder extends BaseSeeder {
       employees,
       managers,
     })
-    console.log(`   ✅ Created ${foldersCount} folders with movements, parties, and documents\n`)
+    logger.info(`   ✅ Created ${foldersCount} folders with movements, parties, and documents\n`)
 
-    console.log('🎉 Seeding completed successfully!\n')
-    console.log('📊 Summary:')
-    console.log(`   - Users: ${managers.length + employees.length}`)
-    console.log(`   - Courts: ${courts.length}`)
-    console.log(`   - Clients: ${allClients.length}`)
-    console.log(`   - Folders: ${foldersCount}`)
-    console.log(`   - Estimated movements: ~${foldersCount * 10}`)
-    console.log(`   - Estimated documents: ~${foldersCount * 6}`)
-    console.log(`   - Estimated parties: ~${foldersCount * 3}`)
+    logger.info('🎉 Seeding completed successfully!\n')
+    logger.info('📊 Summary:')
+    logger.info(`   - Users: ${managers.length + employees.length}`)
+    logger.info(`   - Courts: ${courts.length}`)
+    logger.info(`   - Clients: ${allClients.length}`)
+    logger.info(`   - Folders: ${foldersCount}`)
+    logger.info(`   - Estimated movements: ~${foldersCount * 10}`)
+    logger.info(`   - Estimated documents: ~${foldersCount * 6}`)
+    logger.info(`   - Estimated parties: ~${foldersCount * 3}`)
   }
 
   /**
@@ -104,7 +105,7 @@ export default class MainSeeder extends BaseSeeder {
     const existingCourts = await Court.query().select('*')
 
     if (existingCourts.length > 0) {
-      console.log(`   ℹ️  Using ${existingCourts.length} existing courts`)
+      logger.info(`   ℹ️  Using ${existingCourts.length} existing courts`)
       return existingCourts
     }
 
@@ -113,14 +114,14 @@ export default class MainSeeder extends BaseSeeder {
     for (const courtData of BrazilianCourts) {
       const court = await CourtFactory.merge({
         name: courtData.name,
-        cnjCode: courtData.cnjCode,
-        tribunalCode: courtData.tribunalCode,
-        courtType: courtData.courtType,
-        instance: courtData.instance,
-        stateCode: courtData.stateCode,
+        cnj_code: courtData.cnjCode,
+        tribunal_code: courtData.tribunalCode,
+        court_type: courtData.courtType,
+        instance: courtData.instance as 'first' | 'second' | 'superior',
+        state_code: courtData.stateCode,
         jurisdiction: courtData.jurisdiction,
-        isActive: true,
-        electronicProcessing: true,
+        is_active: true,
+        electronic_processing: true,
       }).create()
 
       courts.push(court)
@@ -336,8 +337,8 @@ export default class MainSeeder extends BaseSeeder {
    * Helper: Retorna tipo de cliente aleatório
    */
   private randomClientType(): 'prospect' | 'client' | 'prospect_sic' | 'prospect_dbm' {
-    const types = ['prospect', 'client', 'prospect_sic', 'prospect_dbm'] as const
-    return this.randomElement(types)
+    const types = ['prospect', 'client', 'prospect_sic', 'prospect_dbm']
+    return this.randomElement(types) as 'prospect' | 'client' | 'prospect_sic' | 'prospect_dbm'
   }
 
   /**

@@ -32,7 +32,7 @@ export const FolderDocumentFactory = factory
       file_name: fileName,
       file_path: `/documents/${faker.string.uuid()}`,
       file_key: faker.string.uuid(),
-      file_size: BigInt(faker.number.int({ min: 50000, max: 5000000 })),
+      file_size: faker.number.int({ min: 50000, max: 5000000 }),
       mime_type: 'application/pdf',
       checksum: faker.string.alphanumeric(64),
       confidentiality_level: faker.helpers.weightedArrayElement([

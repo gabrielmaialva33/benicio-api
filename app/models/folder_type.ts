@@ -28,25 +28,25 @@ export default class FolderType extends BaseModel {
   declare color: string
 
   @column()
-  declare isActive: boolean
+  declare is_active: boolean
 
   @column()
-  declare sortOrder: number
+  declare sort_order: number
 
   @column()
-  declare workflowConfig: Record<string, any> | null
+  declare workflow_config: Record<string, any> | null
 
   @column()
-  declare requiredFields: string[] | null
+  declare required_fields: string[] | null
 
   @column()
-  declare defaultValues: Record<string, any> | null
+  declare default_values: Record<string, any> | null
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare created_at: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updated_at: DateTime
 
   /**
    * ------------------------------------------------------
@@ -54,7 +54,7 @@ export default class FolderType extends BaseModel {
    * ------------------------------------------------------
    */
   @hasMany(() => Folder, {
-    foreignKey: 'folderTypeId',
+    foreignKey: 'folder_type_id',
   })
   declare folders: HasMany<typeof Folder>
 
@@ -87,6 +87,6 @@ export default class FolderType extends BaseModel {
   }
 
   public get isConfigured(): boolean {
-    return !!(this.workflowConfig || this.requiredFields || this.defaultValues)
+    return !!(this.workflow_config || this.required_fields || this.default_values)
   }
 }

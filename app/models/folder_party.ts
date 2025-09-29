@@ -119,10 +119,6 @@ export default class FolderParty extends BaseModel {
     if (!party.party_type) {
       party.party_type = 'person'
     }
-
-    if (!party.role) {
-      party.role = 'other'
-    }
   }
 
   /**

@@ -26,13 +26,13 @@ export default class Court extends BaseModel {
   declare name: string
 
   @column()
-  declare cnjCode: string
+  declare cnj_code: string
 
   @column()
-  declare tribunalCode: string
+  declare tribunal_code: string
 
   @column()
-  declare courtType: 'federal' | 'state' | 'military' | 'electoral' | 'labor'
+  declare court_type: 'federal' | 'state' | 'military' | 'electoral' | 'labor'
 
   @column()
   declare instance: 'first' | 'second' | 'superior'
@@ -41,7 +41,7 @@ export default class Court extends BaseModel {
   declare jurisdiction: string | null
 
   @column()
-  declare stateCode: string | null
+  declare state_code: string | null
 
   @column()
   declare city: string | null
@@ -59,13 +59,13 @@ export default class Court extends BaseModel {
   declare website: string | null
 
   @column()
-  declare isActive: boolean
+  declare is_active: boolean
 
   @column()
-  declare electronicProcessing: boolean
+  declare electronic_processing: boolean
 
   @column()
-  declare parentCourtId: number | null
+  declare parent_court_id: number | null
 
   @column()
   declare path: string | null
@@ -74,7 +74,7 @@ export default class Court extends BaseModel {
   declare level: number
 
   @column()
-  declare businessHours: Record<string, any> | null
+  declare business_hours: Record<string, any> | null
 
   @column()
   declare specialties: string[] | null
@@ -83,10 +83,10 @@ export default class Court extends BaseModel {
   declare notes: string | null
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare created_at: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updated_at: DateTime
 
   /**
    * ------------------------------------------------------
@@ -94,17 +94,17 @@ export default class Court extends BaseModel {
    * ------------------------------------------------------
    */
   @belongsTo(() => Court, {
-    foreignKey: 'parentCourtId',
+    foreignKey: 'parent_court_id',
   })
-  declare parentCourt: BelongsTo<typeof Court>
+  declare parent_court: BelongsTo<typeof Court>
 
   @hasMany(() => Court, {
-    foreignKey: 'parentCourtId',
+    foreignKey: 'parent_court_id',
   })
-  declare childCourts: HasMany<typeof Court>
+  declare child_courts: HasMany<typeof Court>
 
   @hasMany(() => Folder, {
-    foreignKey: 'courtId',
+    foreignKey: 'court_id',
   })
   declare folders: HasMany<typeof Folder>
 
@@ -151,19 +151,19 @@ export default class Court extends BaseModel {
   public get fullName(): string {
     const parts = [this.name]
     if (this.city) parts.push(this.city)
-    if (this.stateCode) parts.push(this.stateCode)
+    if (this.state_code) parts.push(this.state_code)
     return parts.join(' - ')
   }
 
   public get displayCode(): string {
-    return this.cnjCode || this.tribunalCode
+    return this.cnj_code || this.tribunal_code
   }
 
   public get isTopLevel(): boolean {
-    return !this.parentCourtId
+    return !this.parent_court_id
   }
 
   public get hasElectronicProcessing(): boolean {
-    return this.electronicProcessing
+    return this.electronic_processing
   }
 }

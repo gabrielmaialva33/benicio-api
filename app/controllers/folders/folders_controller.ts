@@ -7,6 +7,8 @@ import ListFoldersService from '#services/folders/list_folder_service'
 import ShowFolderService from '#services/folders/show_folder_service'
 import FormDataService from '#services/folders/form_data_service'
 import CnjValidationService from '#services/folders/cnj_validation_service'
+import ToggleFavoriteService from '#services/folders/toggle_favorite_service'
+import ListFavoritesService from '#services/folders/list_favorite_service'
 import { createFolderValidator } from '#validators/create_folder'
 import { updateFolderValidator } from '#validators/update_folder'
 import { validateCnjValidator } from '#validators/validate_cnj'
@@ -21,7 +23,9 @@ export default class FoldersController {
     private listFoldersService: ListFoldersService,
     private showFolderService: ShowFolderService,
     private formDataService: FormDataService,
-    private cnjValidationService: CnjValidationService
+    private cnjValidationService: CnjValidationService,
+    private toggleFavoriteService: ToggleFavoriteService,
+    private listFavoritesService: ListFavoritesService
   ) {}
 
   /**
@@ -293,6 +297,52 @@ export default class FoldersController {
       logger.error(`💥 Error getting folder stats: ${error.message}`)
       return response.internalServerError({
         message: 'Error retrieving statistics',
+      })
+    }
+  }
+
+  /**
+   * Toggle folder favorite status
+   */
+  async toggleFavorite({ params, response }: HttpContext) {
+    try {
+      const folder = await this.toggleFavoriteService.execute(params.id)
+
+      return response.ok({
+        message: 'Folder favorite status updated successfully',
+        data: folder,
+      })
+    } catch (error) {
+      if (error.name === 'NotFoundException') {
+        return response.notFound({
+          message: error.message,
+        })
+      }
+      logger.error(`💥 Error toggling folder favorite: ${error.message}`)
+      return response.internalServerError({
+        message: 'Error updating favorite status',
+      })
+    }
+  }
+
+  /**
+   * Get list of favorite folders with pagination
+   */
+  async getFavorites({ request, response }: HttpContext) {
+    try {
+      const page = request.input('page', 1)
+      const perPage = request.input('per_page', 20)
+
+      const favorites = await this.listFavoritesService.execute({ page, perPage })
+
+      return response.ok({
+        message: 'Favorite folders retrieved successfully',
+        data: favorites,
+      })
+    } catch (error) {
+      logger.error(`💥 Error getting favorite folders: ${error.message}`)
+      return response.internalServerError({
+        message: 'Error retrieving favorite folders',
       })
     }
   }

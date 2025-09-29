@@ -5,9 +5,48 @@ import { FolderTypeFactory } from '#database/factories/folder_type_factory'
 import { ClientFactory } from '#database/factories/client_factory'
 import { CourtFactory } from '#database/factories/court_factory'
 import { UserFactory } from '#database/factories/user_factory'
-import Folder from '#models/folder'
 import testUtils from '@adonisjs/core/services/test_utils'
 import { FolderPriority } from '../../../contracts/folder_enums.js'
+
+// Type definitions for API responses
+interface FolderData {
+  id: number
+  title: string
+  description: string | null
+  cnj_number: string | null
+  internal_client_code: string | null
+  folder_type_id: number
+  client_id: number
+  court_id: number | null
+  responsible_lawyer_id: number | null
+  status: string
+  priority: string
+  case_value: number | null
+  is_active: boolean
+  is_favorite: boolean
+  created_at: string
+  updated_at: string
+}
+
+interface PaginatedResponse<T> {
+  data: T[]
+  meta: {
+    total: number
+    per_page: number
+    current_page: number
+    last_page: number
+    first_page: number
+    first_page_url: string
+    last_page_url: string
+    next_page_url: string | null
+    previous_page_url: string | null
+  }
+}
+
+interface ApiResponse<T> {
+  message: string
+  data: T
+}
 
 test.group('Folder Basic Tests (Validation)', (group) => {
   let mockNow: DateTime
@@ -177,11 +216,12 @@ test.group('Folder Basic Tests (Validation)', (group) => {
       .qs({ search: 'Cobrança' })
 
     searchResponse.assertStatus(200)
-    const searchResults = searchResponse.body().data.data
+    const responseBody = searchResponse.body() as ApiResponse<PaginatedResponse<FolderData>>
+    const searchResults: FolderData[] = responseBody.data.data
 
     assert.isAtLeast(searchResults.length, 1)
 
-    const foundFolder = searchResults.find((f) => f.title.includes('Cobrança'))
+    const foundFolder = searchResults.find((f: FolderData) => f.title.includes('Cobrança'))
     assert.isNotNull(foundFolder)
   })
 
@@ -258,18 +298,25 @@ test.group('Folder Basic Tests (Validation)', (group) => {
 
   test('should validate authentication requirement', async ({ client }) => {
     // Test all endpoints require authentication
-    const endpoints = [
-      { method: 'get', url: '/api/v1/folders' },
-      { method: 'post', url: '/api/v1/folders' },
-      { method: 'get', url: '/api/v1/folders/1' },
-      { method: 'put', url: '/api/v1/folders/1' },
-      { method: 'delete', url: '/api/v1/folders/1' },
-    ]
+    // Test GET /api/v1/folders
+    const getListResponse = await client.get('/api/v1/folders')
+    getListResponse.assertStatus(401)
 
-    for (const endpoint of endpoints) {
-      const response = await client[endpoint.method](endpoint.url)
-      response.assertStatus(401)
-    }
+    // Test POST /api/v1/folders
+    const postResponse = await client.post('/api/v1/folders')
+    postResponse.assertStatus(401)
+
+    // Test GET /api/v1/folders/1
+    const getOneResponse = await client.get('/api/v1/folders/1')
+    getOneResponse.assertStatus(401)
+
+    // Test PUT /api/v1/folders/1
+    const putResponse = await client.put('/api/v1/folders/1')
+    putResponse.assertStatus(401)
+
+    // Test DELETE /api/v1/folders/1
+    const deleteResponse = await client.delete('/api/v1/folders/1')
+    deleteResponse.assertStatus(401)
   })
 
   test('should validate folder statistics endpoint', async ({ client, assert }) => {

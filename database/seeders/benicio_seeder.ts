@@ -1,5 +1,6 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { DateTime } from 'luxon'
+import logger from '@adonisjs/core/services/logger'
 import { UserFactory } from '#database/factories/user_factory'
 import { ClientFactory } from '#database/factories/client_factory'
 import { CourtFactory } from '#database/factories/court_factory'
@@ -16,7 +17,6 @@ import {
   BenicioTypicalClients,
   BenicioActionTypes,
   BenicioTypicalCaseValues,
-  BenicioMovementDescriptions,
   type BenicioClientData,
 } from '#defaults/benicio_legal_data'
 import { BrazilianCourts, type CourtData } from '#defaults/brazilian_legal_data'
@@ -38,32 +38,32 @@ export default class BenicioSeeder extends BaseSeeder {
   private sequentialCnjNumber = 1
 
   async run() {
-    console.log('🏛️  Starting Benicio Advogados Seeding...\n')
+    logger.info('🏛️  Starting Benicio Advogados Seeding...\n')
 
     // 1. Create Benicio lawyers (partners, associates, juniors)
-    console.log('👥 Creating Benicio lawyers...')
+    logger.info('👥 Creating Benicio lawyers...')
     const { partners, associates, juniors } = await this.createBenicioLawyers()
-    console.log(
+    logger.info(
       `   ✅ Created ${partners.length} partners, ${associates.length} associates, ${juniors.length} juniors\n`
     )
 
     // 2. Create courts (use existing if available)
-    console.log('⚖️  Creating Brazilian courts...')
+    logger.info('⚖️  Creating Brazilian courts...')
     const courts = await this.getOrCreateCourts()
-    console.log(`   ✅ Using ${courts.length} courts\n`)
+    logger.info(`   ✅ Using ${courts.length} courts\n`)
 
     // 3. Create Benicio as a client
-    console.log('🏢 Creating Benicio Advogados as client...')
-    const benicioClient = await this.createBenicioAsClient(partners[0])
-    console.log(`   ✅ Created Benicio with addresses and contacts\n`)
+    logger.info('🏢 Creating Benicio Advogados as client...')
+    await this.createBenicioAsClient(partners[0])
+    logger.info(`   ✅ Created Benicio with addresses and contacts\n`)
 
     // 4. Create corporate clients
-    console.log('💼 Creating corporate clients...')
+    logger.info('💼 Creating corporate clients...')
     const clients = await this.createCorporateClients(partners)
-    console.log(`   ✅ Created ${clients.length} corporate clients\n`)
+    logger.info(`   ✅ Created ${clients.length} corporate clients\n`)
 
     // 5. Create legal cases by practice area
-    console.log('📁 Creating legal cases by practice area...')
+    logger.info('📁 Creating legal cases by practice area...')
     const foldersCount = await this.createLegalCases({
       clients,
       courts,
@@ -71,19 +71,17 @@ export default class BenicioSeeder extends BaseSeeder {
       juniors,
       managers: partners,
     })
-    console.log(
-      `   ✅ Created ${foldersCount} folders with movements, parties, and documents\n`
-    )
+    logger.info(`   ✅ Created ${foldersCount} folders with movements, parties, and documents\n`)
 
-    console.log('🎉 Benicio Seeding completed successfully!\n')
-    console.log('📊 Summary:')
-    console.log(`   - Lawyers: ${partners.length + associates.length + juniors.length}`)
-    console.log(`   - Courts: ${courts.length}`)
-    console.log(`   - Clients: ${clients.length + 1} (including Benicio)`)
-    console.log(`   - Folders: ${foldersCount}`)
-    console.log(`   - Estimated movements: ~${foldersCount * 15}`)
-    console.log(`   - Estimated documents: ~${foldersCount * 6}`)
-    console.log(`   - Estimated parties: ~${foldersCount * 3}`)
+    logger.info('🎉 Benicio Seeding completed successfully!\n')
+    logger.info('📊 Summary:')
+    logger.info(`   - Lawyers: ${partners.length + associates.length + juniors.length}`)
+    logger.info(`   - Courts: ${courts.length}`)
+    logger.info(`   - Clients: ${clients.length + 1} (including Benicio)`)
+    logger.info(`   - Folders: ${foldersCount}`)
+    logger.info(`   - Estimated movements: ~${foldersCount * 15}`)
+    logger.info(`   - Estimated documents: ~${foldersCount * 6}`)
+    logger.info(`   - Estimated parties: ~${foldersCount * 3}`)
   }
 
   /**
@@ -96,12 +94,7 @@ export default class BenicioSeeder extends BaseSeeder {
       const lawyer = BenicioLawyers[i] || {
         name: this.generateLawyerName(),
         role: 'Partner',
-        specialization: this.randomElement([
-          'Tax Law',
-          'Corporate Law',
-          'Labor Law',
-          'Regulatory',
-        ]),
+        specialization: this.randomElement(['Tax Law', 'Corporate Law', 'Labor Law', 'Regulatory']),
         seniority: 'partner',
       }
 
@@ -158,7 +151,7 @@ export default class BenicioSeeder extends BaseSeeder {
     const existingCourts = await Court.query().select('*')
 
     if (existingCourts.length > 0) {
-      console.log(`   ℹ️  Using ${existingCourts.length} existing courts`)
+      logger.info(`   ℹ️  Using ${existingCourts.length} existing courts`)
       return existingCourts
     }
 
@@ -167,14 +160,14 @@ export default class BenicioSeeder extends BaseSeeder {
     for (const courtData of BrazilianCourts) {
       const court = await CourtFactory.merge({
         name: courtData.name,
-        cnjCode: courtData.cnjCode,
-        tribunalCode: courtData.tribunalCode,
-        courtType: courtData.courtType,
-        instance: courtData.instance,
-        stateCode: courtData.stateCode,
+        cnj_code: courtData.cnjCode,
+        tribunal_code: courtData.tribunalCode,
+        court_type: courtData.courtType,
+        instance: courtData.instance as 'first' | 'second' | 'superior',
+        state_code: courtData.stateCode,
         jurisdiction: courtData.jurisdiction,
-        isActive: true,
-        electronicProcessing: true,
+        is_active: true,
+        electronic_processing: true,
       }).create()
 
       courts.push(court)
@@ -516,14 +509,7 @@ export default class BenicioSeeder extends BaseSeeder {
    */
   private generateCompanyName(): string {
     const prefixes = ['Grupo', 'Indústria', 'Comércio', 'Distribuidora', 'Empresa']
-    const names = [
-      'Nacional',
-      'Brasileira',
-      'Paulista',
-      'Comercial',
-      'Industrial',
-      'Serviços',
-    ]
+    const names = ['Nacional', 'Brasileira', 'Paulista', 'Comercial', 'Industrial', 'Serviços']
     const suffixes = ['S.A.', 'Ltda', 'S/A', 'Ltda.']
 
     return `${this.randomElement(prefixes)} ${this.randomElement(names)} ${this.randomInt(1, 999)} ${this.randomElement(suffixes)}`
