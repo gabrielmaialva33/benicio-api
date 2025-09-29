@@ -225,10 +225,9 @@ export default class Client extends BaseModel {
     const cleanedTerm = searchTerm.replace(/\D/g, '')
 
     query.where((q) => {
-      q.whereILike('fantasy_name', `%${searchTerm}%`).orWhereILike(
-        'company_name',
-        `%${searchTerm}%`
-      )
+      q.whereRaw('fantasy_name ILIKE ?', [`%${searchTerm}%`]).orWhereRaw('company_name ILIKE ?', [
+        `%${searchTerm}%`,
+      ])
 
       // Check if it might be a document
       if (cleanedTerm.length === 11 || cleanedTerm.length === 14) {

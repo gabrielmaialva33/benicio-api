@@ -148,9 +148,9 @@ export default class FolderParty extends BaseModel {
 
   static search = scope((query, searchTerm: string) => {
     query.where((q) => {
-      q.whereILike('name', `%${searchTerm}%`)
-        .orWhereILike('document', `%${searchTerm}%`)
-        .orWhereILike('email', `%${searchTerm}%`)
+      q.whereRaw('name ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('document ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('email ILIKE ?', [`%${searchTerm}%`])
     })
   })
 

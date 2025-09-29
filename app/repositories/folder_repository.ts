@@ -73,13 +73,13 @@ export default class FolderRepository
     if (filters.search) {
       const cleanedTerm = filters.search.replace(/\D/g, '')
       query = query.where((q) => {
-        q.whereILike('title', `%${filters.search}%`)
-          .orWhereILike('cnj_number', `%${filters.search}%`)
-          .orWhereILike('internal_client_code', `%${filters.search}%`)
-          .orWhereILike('description', `%${filters.search}%`)
+        q.whereRaw('title ILIKE ?', [`%${filters.search}%`])
+          .orWhereRaw('cnj_number ILIKE ?', [`%${filters.search}%`])
+          .orWhereRaw('internal_client_code ILIKE ?', [`%${filters.search}%`])
+          .orWhereRaw('description ILIKE ?', [`%${filters.search}%`])
 
         if (cleanedTerm.length >= 15) {
-          q.orWhere('cnj_number', 'LIKE', `%${cleanedTerm}%`)
+          q.orWhereRaw('cnj_number LIKE ?', [`%${cleanedTerm}%`])
         }
       })
     }

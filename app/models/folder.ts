@@ -350,13 +350,13 @@ export default class Folder extends BaseModel {
     const cleanedTerm = searchTerm.replace(/\D/g, '')
 
     query.where((q) => {
-      q.whereILike('title', `%${searchTerm}%`)
-        .orWhereILike('cnj_number', `%${searchTerm}%`)
-        .orWhereILike('internal_client_code', `%${searchTerm}%`)
-        .orWhereILike('description', `%${searchTerm}%`)
+      q.whereRaw('title ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('cnj_number ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('internal_client_code ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('description ILIKE ?', [`%${searchTerm}%`])
 
       if (cleanedTerm.length >= 15) {
-        q.orWhere('cnj_number', 'LIKE', `%${cleanedTerm}%`)
+        q.orWhereRaw('cnj_number LIKE ?', [`%${cleanedTerm}%`])
       }
     })
   })

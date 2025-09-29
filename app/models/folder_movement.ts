@@ -241,11 +241,11 @@ export default class FolderMovement extends BaseModel {
 
   static search = scope((query, searchTerm: string) => {
     query.where((q) => {
-      q.whereILike('title', `%${searchTerm}%`)
-        .orWhereILike('description', `%${searchTerm}%`)
-        .orWhereILike('full_text', `%${searchTerm}%`)
-        .orWhereILike('court_protocol', `%${searchTerm}%`)
-        .orWhereILike('responsible_party', `%${searchTerm}%`)
+      q.whereRaw('title ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('description ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('full_text ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('court_protocol ILIKE ?', [`%${searchTerm}%`])
+        .orWhereRaw('responsible_party ILIKE ?', [`%${searchTerm}%`])
     })
   })
 
