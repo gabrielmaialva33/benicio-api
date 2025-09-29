@@ -16,7 +16,7 @@ export default class UsersController {
     const page = request.input('page', 1)
     const perPage = request.input('per_page', 10)
     const sortBy = request.input('sort_by', 'id')
-    const direction = request.input('order', 'asc')
+    const direction = request.input('sort_order', 'asc')
     const search = request.input('search', undefined)
 
     const service = await app.container.make(PaginateUserService)

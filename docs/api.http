@@ -1,5 +1,6 @@
-### Base ACL API HTTP Requests
+### Benicio Advogados API - HTTP Test File
 ### Base URL: http://localhost:3333
+### This file contains examples for testing all API endpoints
 ###
 ### Authentication: Most endpoints require JWT Bearer token
 ### Include header: Authorization: Bearer <token>
@@ -8,425 +9,446 @@
 ### - Content-Type: application/json (except file uploads)
 ### - Timestamps: ISO 8601 format
 ### - Database fields: snake_case naming
-### - Pagination: ?page=1&perPage=10
+### - Pagination: ?page=1&limit=20
 ### - Sorting: ?sortBy=field&order=asc|desc
 ### - Search: ?search=term
 
-### Variables (replace with actual values)
-@baseUrl = http://localhost:3333
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1MjE5MDY4NywiZXhwIjoxNzUyMTkxNTg3fQ.mN5_LyaxP1nZ46wWjRFVVB26E-0FD9vXJ7J5JlkE8AE
-@userId = 3
-@roleId = 3
+### Variables (replace with actual values after login)
+@baseUrl = http://localhost:3333/api/v1
+@contentType = application/json
 
-###############################################################################
-### HEALTH ENDPOINTS
-###############################################################################
+### Update these after successful login
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+@refreshToken = refresh_token_here
+@userId = 1
+@roleId = 1
+@clientId = 1
+@folderId = 1
 
-### Get API Information
-GET {{baseUrl}}/
-Accept: application/json
+################################################################################
+# AUTHENTICATION
+################################################################################
 
-### Health Check
-GET {{baseUrl}}/api/v1/health
-Accept: application/json
-
-###############################################################################
-### AUTHENTICATION ENDPOINTS
-###############################################################################
-
-### Sign In (Login)
-# Returns access_token and refresh_token
-POST {{baseUrl}}/api/v1/sessions/sign-in
-Content-Type: application/json
+### Login - Get Access Token (Email)
+# @name loginResponse
+POST {{baseUrl}}/sessions/sign-in
+Content-Type: {{contentType}}
 
 {
-  "uid": "john@example.com",
-  "password": "password123"
+  "uid": "employee@benicio.com.br",
+  "password": "benicio123"
 }
 
-### Sign In with Username
-POST {{baseUrl}}/api/v1/sessions/sign-in
-Content-Type: application/json
+### Login with Username
+POST {{baseUrl}}/sessions/sign-in
+Content-Type: {{contentType}}
 
 {
-  "uid": "johndoe",
-  "password": "password123"
+  "uid": "employee",
+  "password": "benicio123"
 }
 
-### Sign Up (Register)
-# Creates new user account and returns tokens
-POST {{baseUrl}}/api/v1/sessions/sign-up
-Content-Type: application/json
+### Login Admin
+POST {{baseUrl}}/sessions/sign-in
+Content-Type: {{contentType}}
 
 {
-  "full_name": "John Doe",
-  "email": "john@example.com",
-  "username": "johndoe",
-  "password": "password123",
-  "password_confirmation": "password123"
+  "uid": "admin@benicio.com.br",
+  "password": "benicio123"
 }
 
-### Sign Up (Minimal - without username)
-POST {{baseUrl}}/api/v1/sessions/sign-up
-Content-Type: application/json
+### Refresh Token
+POST {{baseUrl}}/sessions/refresh
+Content-Type: {{contentType}}
 
 {
-  "full_name": "Jane Smith",
-  "email": "jane@example.com",
-  "password": "password123",
-  "password_confirmation": "password123"
+  "refresh_token": "{{refreshToken}}"
 }
 
-###############################################################################
-### PROFILE ENDPOINTS (Requires Authentication)
-###############################################################################
+### Logout
+POST {{baseUrl}}/sessions/sign-out
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
-### Get Current User Profile
-GET {{baseUrl}}/api/v1/me
-Authorization: Bearer {{token}}
-Accept: application/json
+### Get Current User
+GET {{baseUrl}}/sessions/me
+Authorization: Bearer {{accessToken}}
 
-### Get Current User Permissions
-GET {{baseUrl}}/api/v1/me/permissions
-Authorization: Bearer {{token}}
-Accept: application/json
+### Register New User
+POST {{baseUrl}}/sessions/sign-up
+Content-Type: {{contentType}}
 
-### Get Current User Roles
-GET {{baseUrl}}/api/v1/me/roles
-Authorization: Bearer {{token}}
-Accept: application/json
+{
+  "full_name": "João Silva",
+  "email": "joao.silva@benicio.com.br",
+  "username": "joaosilva",
+  "password": "senha123",
+  "password_confirmation": "senha123"
+}
 
-###############################################################################
-### EMAIL VERIFICATION ENDPOINTS
-###############################################################################
+################################################################################
+# FOLDERS (Cases/Processes)
+################################################################################
 
-### Verify Email
-# This endpoint is typically opened from a link in an email
-GET {{baseUrl}}/api/v1/verify-email?token=VERIFICATION_TOKEN
-Accept: application/json
+### List All Folders (Paginated)
+GET {{baseUrl}}/folders?page=1&per_page=20
+Authorization: Bearer {{accessToken}}
 
-### Resend Verification Email (Requires Authentication)
-POST {{baseUrl}}/api/v1/resend-verification-email
-Authorization: Bearer {{token}}
-Accept: application/json
+### List Folders with Filters
+GET {{baseUrl}}/folders?status=active&priority=high&page=1&per_page=10
+Authorization: Bearer {{accessToken}}
 
-###############################################################################
-### USER MANAGEMENT ENDPOINTS (Requires Authentication)
-###############################################################################
+### Search Folders
+GET {{baseUrl}}/folders?search=Cobrança&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
 
-### List Users
-# Paginated list with search and sorting
-GET {{baseUrl}}/api/v1/users
-Authorization: Bearer {{token}}
-Accept: application/json
+### Filter by Client
+GET {{baseUrl}}/folders?client_id=1&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
 
-### List Users with Pagination
-GET {{baseUrl}}/api/v1/users?page=1&perPage=20
-Authorization: Bearer {{token}}
-Accept: application/json
+### Filter by Court
+GET {{baseUrl}}/folders?court_id=1&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
 
-### List Users with Sorting
-GET {{baseUrl}}/api/v1/users?sortBy=created_at&order=desc
-Authorization: Bearer {{token}}
-Accept: application/json
+### Filter by Folder Type
+GET {{baseUrl}}/folders?folder_type_id=1&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Sort Folders
+GET {{baseUrl}}/folders?sort_by=created_at&sort_order=desc&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Combined Filters
+GET {{baseUrl}}/folders?status=active&client_id=1&folder_type_id=1&sort_by=case_value&sort_order=desc
+Authorization: Bearer {{accessToken}}
+
+### Get Folder Statistics
+GET {{baseUrl}}/folders/stats
+Authorization: Bearer {{accessToken}}
+
+### Get Favorite Folders
+GET {{baseUrl}}/folders/favorites?page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Get Single Folder with Relationships
+GET {{baseUrl}}/folders/{{folderId}}
+Authorization: Bearer {{accessToken}}
+
+### Create New Folder
+POST {{baseUrl}}/folders
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Processo de Cobrança - Cliente XYZ",
+  "description": "Ação de cobrança de valores devidos",
+  "cnj_number": "0000001-23.2024.8.26.0100",
+  "internal_client_code": "CLI-2024-001",
+  "folder_type_id": 1,
+  "client_id": 1,
+  "court_id": 1,
+  "responsible_lawyer_id": 2,
+  "status": "active",
+  "priority": "high",
+  "case_value": 150000.00,
+  "action_type": "Ação de Cobrança",
+  "distribution_date": "2024-03-15",
+  "distribution_type": "Sorteio"
+}
+
+### Update Folder
+PUT {{baseUrl}}/folders/{{folderId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Processo de Cobrança - Atualizado",
+  "description": "Descrição atualizada do processo",
+  "status": "pending",
+  "priority": "medium",
+  "case_value": 175000.00
+}
+
+### Toggle Favorite
+PATCH {{baseUrl}}/folders/{{folderId}}/favorite
+Authorization: Bearer {{accessToken}}
+
+### Soft Delete Folder
+DELETE {{baseUrl}}/folders/{{folderId}}
+Authorization: Bearer {{accessToken}}
+
+### Restore Deleted Folder
+POST {{baseUrl}}/folders/{{folderId}}/restore
+Authorization: Bearer {{accessToken}}
+
+################################################################################
+# CLIENTS
+################################################################################
+
+### List All Clients (Paginated)
+GET {{baseUrl}}/clients?page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Search Clients
+GET {{baseUrl}}/clients?search=Benicio&page=1&per_page=10
+Authorization: Bearer {{accessToken}}
+
+### Filter Clients by Type
+GET {{baseUrl}}/clients?person_type=company&client_type=client
+Authorization: Bearer {{accessToken}}
+
+### Sort Clients
+GET {{baseUrl}}/clients?sort_by=fantasy_name&sort_order=asc&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Get Client Details
+GET {{baseUrl}}/clients/{{clientId}}
+Authorization: Bearer {{accessToken}}
+
+### Create Company Client
+POST {{baseUrl}}/clients
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "fantasy_name": "Tech Solutions Ltda",
+  "company_name": "Tech Solutions Tecnologia Ltda",
+  "document": "12.345.678/0001-90",
+  "document_type": "cnpj",
+  "person_type": "company",
+  "client_type": "client",
+  "email": "contato@techsolutions.com.br",
+  "phone": "(11) 3456-7890",
+  "mobile": "(11) 98765-4321",
+  "website": "https://techsolutions.com.br",
+  "revenue_range": "medium",
+  "employee_count": 50,
+  "notes": "Cliente desde 2024"
+}
+
+### Create Individual Client
+POST {{baseUrl}}/clients
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "fantasy_name": "João Silva",
+  "full_name": "João Carlos da Silva",
+  "document": "123.456.789-00",
+  "document_type": "cpf",
+  "person_type": "individual",
+  "client_type": "prospect",
+  "email": "joao.silva@email.com",
+  "phone": "(11) 3456-7890",
+  "mobile": "(11) 98765-4321",
+  "birth_date": "1985-05-15",
+  "gender": "M",
+  "marital_status": "married",
+  "profession": "Empresário",
+  "notes": "Prospect via indicação"
+}
+
+### Update Client
+PUT {{baseUrl}}/clients/{{clientId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "fantasy_name": "Tech Solutions Updated",
+  "email": "novo@techsolutions.com.br",
+  "client_type": "client",
+  "notes": "Cliente VIP - Atualizado em 2024"
+}
+
+### Delete Client
+DELETE {{baseUrl}}/clients/{{clientId}}
+Authorization: Bearer {{accessToken}}
+
+################################################################################
+# USERS
+################################################################################
+
+### List All Users (Admin Only)
+GET {{baseUrl}}/users?page=1&per_page=20
+Authorization: Bearer {{accessToken}}
 
 ### Search Users
-GET {{baseUrl}}/api/v1/users?search=john
-Authorization: Bearer {{token}}
-Accept: application/json
+GET {{baseUrl}}/users?search=joão&page=1&per_page=10
+Authorization: Bearer {{accessToken}}
 
-### Get User by ID
-GET {{baseUrl}}/api/v1/users/{{userId}}
-Authorization: Bearer {{token}}
-Accept: application/json
+### Filter by User Type
+GET {{baseUrl}}/users?user_type=employee&is_active=true
+Authorization: Bearer {{accessToken}}
 
-### Create User (Requires USER role)
-POST {{baseUrl}}/api/v1/users
-Authorization: Bearer {{token}}
-Content-Type: application/json
+### Sort Users
+GET {{baseUrl}}/users?sort_by=created_at&sort_order=desc&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Get User Details
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{accessToken}}
+
+### Create New User (Admin Only)
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "full_name": "New User",
-  "email": "newuser@example.com",
-  "username": "newuser",
-  "password": "password123",
-  "password_confirmation": "password123"
+  "full_name": "Carlos Oliveira",
+  "email": "carlos.oliveira@benicio.com.br",
+  "username": "carlosoliveira",
+  "password": "senha123",
+  "user_type": "employee",
+  "cpf": "987.654.321-00",
+  "phone": "(11) 98765-4321",
+  "birth_date": "1990-08-20",
+  "hire_date": "2024-01-15",
+  "department": "Jurídico",
+  "position": "Advogado Júnior",
+  "oab_number": "SP123456"
 }
 
 ### Update User
-# Note: email and username cannot be changed
-PUT {{baseUrl}}/api/v1/users/{{userId}}
-Authorization: Bearer {{token}}
-Content-Type: application/json
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "full_name": "John Updated Doe"
-}
-
-### Update User Password
-PUT {{baseUrl}}/api/v1/users/{{userId}}
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "password": "newpassword123",
-  "password_confirmation": "newpassword123"
+  "full_name": "Carlos Oliveira Santos",
+  "position": "Advogado Pleno",
+  "department": "Jurídico - Cível",
+  "phone": "(11) 91234-5678"
 }
 
 ### Delete User (Soft Delete)
-DELETE {{baseUrl}}/api/v1/users/{{userId}}
-Authorization: Bearer {{token}}
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{accessToken}}
 
-###############################################################################
-### ROLE MANAGEMENT ENDPOINTS (Requires ADMIN or ROOT role)
-###############################################################################
+### Get Current User Profile
+GET {{baseUrl}}/me
+Authorization: Bearer {{accessToken}}
 
-### List Roles
-GET {{baseUrl}}/api/v1/admin/roles
-Authorization: Bearer {{token}}
-Accept: application/json
+### Get Current User Permissions
+GET {{baseUrl}}/me/permissions
+Authorization: Bearer {{accessToken}}
 
-### List Roles with Pagination
-GET {{baseUrl}}/api/v1/admin/roles?page=1&perPage=10
-Authorization: Bearer {{token}}
-Accept: application/json
+### Get Current User Roles
+GET {{baseUrl}}/me/roles
+Authorization: Bearer {{accessToken}}
+
+################################################################################
+# ROLES & PERMISSIONS
+################################################################################
+
+### List All Roles
+GET {{baseUrl}}/admin/roles?page=1&per_page=10
+Authorization: Bearer {{accessToken}}
+
+### Get Role Details
+GET {{baseUrl}}/admin/roles/{{roleId}}
+Authorization: Bearer {{accessToken}}
 
 ### Attach Roles to User
-PUT {{baseUrl}}/api/v1/admin/roles/attach
-Authorization: Bearer {{token}}
-Content-Type: application/json
+PUT {{baseUrl}}/admin/roles/attach
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "user_id": 1,
-  "role_ids": [
-    1,
-    2,
-    3
-  ]
+  "user_id": {{userId}},
+  "role_ids": [1, 2]
 }
 
-### Attach Single Role to User
-PUT {{baseUrl}}/api/v1/admin/roles/attach
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "user_id": 2,
-  "role_ids": [
-    2
-  ]
-}
-
-###############################################################################
-### PERMISSION MANAGEMENT ENDPOINTS (Requires ADMIN or ROOT role)
-###############################################################################
-
-### List Permissions
-GET {{baseUrl}}/api/v1/admin/permissions
-Authorization: Bearer {{token}}
-Accept: application/json
+### List All Permissions
+GET {{baseUrl}}/admin/permissions?page=1&per_page=10
+Authorization: Bearer {{accessToken}}
 
 ### Create Permission
-POST {{baseUrl}}/api/v1/admin/permissions
-Authorization: Bearer {{token}}
-Content-Type: application/json
+POST {{baseUrl}}/admin/permissions
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "resource": "posts",
-  "action": "create",
-  "description": "Allow creating posts"
+  "resource": "folders",
+  "action": "approve",
+  "description": "Allow approving folders"
 }
 
 ### Sync Role Permissions
-PUT {{baseUrl}}/api/v1/admin/roles/permissions/sync
-Authorization: Bearer {{token}}
-Content-Type: application/json
+PUT {{baseUrl}}/admin/roles/permissions/sync
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "role_id": 2,
-  "permission_ids": [
-    1,
-    2,
-    3
-  ]
+  "role_id": {{roleId}},
+  "permission_ids": [1, 2, 3, 4, 5]
 }
 
 ### Attach Permissions to Role
-PUT {{baseUrl}}/api/v1/admin/roles/permissions/attach
-Authorization: Bearer {{token}}
-Content-Type: application/json
+PUT {{baseUrl}}/admin/roles/permissions/attach
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "role_id": 2,
-  "permission_ids": [
-    4,
-    5
-  ]
+  "role_id": {{roleId}},
+  "permission_ids": [6, 7]
 }
 
 ### Detach Permissions from Role
-PUT {{baseUrl}}/api/v1/admin/roles/permissions/detach
-Authorization: Bearer {{token}}
-Content-Type: application/json
+PUT {{baseUrl}}/admin/roles/permissions/detach
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "role_id": 2,
-  "permission_ids": [
-    1
-  ]
+  "role_id": {{roleId}},
+  "permission_ids": [1]
 }
 
 ### Sync User Direct Permissions
-PUT {{baseUrl}}/api/v1/admin/users/permissions/sync
-Authorization: Bearer {{token}}
-Content-Type: application/json
+PUT {{baseUrl}}/admin/users/permissions/sync
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "user_id": 3,
-  "permission_ids": [
-    10,
-    11
-  ]
+  "user_id": {{userId}},
+  "permission_ids": [10, 11, 12]
 }
 
 ### Get User's Direct Permissions
-GET {{baseUrl}}/api/v1/admin/users/{{userId}}/permissions
-Authorization: Bearer {{token}}
-Accept: application/json
+GET {{baseUrl}}/admin/users/{{userId}}/permissions
+Authorization: Bearer {{accessToken}}
 
 ### Check User Permissions
-POST {{baseUrl}}/api/v1/admin/users/{{userId}}/permissions/check
-Authorization: Bearer {{token}}
-Content-Type: application/json
+POST {{baseUrl}}/admin/users/{{userId}}/permissions/check
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
 
 {
-  "permissions": [
-    "users.create",
-    "files.delete"
-  ]
+  "permissions": ["folders.create", "folders.delete"],
+  "require_all": false
 }
 
-###############################################################################
-### FILE MANAGEMENT ENDPOINTS (Requires Authentication)
-###############################################################################
+################################################################################
+# FILE UPLOADS
+################################################################################
 
 ### Upload File
-# Maximum size: 5MB
-# Allowed extensions: jpeg, jpg, png, pdf, doc, docx, txt, csv, xls, xlsx, mp3, mp4, zip
-# File is automatically categorized: image, document, video, audio, file
-POST {{baseUrl}}/api/v1/files/upload
-Authorization: Bearer {{token}}
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+POST {{baseUrl}}/files/upload
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
-------WebKitFormBoundary7MA4YWxkTrZu0gW
+------WebKitFormBoundary
 Content-Disposition: form-data; name="file"; filename="document.pdf"
 Content-Type: application/pdf
 
 < ./document.pdf
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
+------WebKitFormBoundary--
 
-### Upload Image
-POST {{baseUrl}}/api/v1/files/upload
-Authorization: Bearer {{token}}
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+################################################################################
+# HEALTH & SYSTEM
+################################################################################
 
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="photo.jpg"
-Content-Type: image/jpeg
+### Health Check
+GET {{baseUrl}}/health
 
-< ./photo.jpg
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-###############################################################################
-### EXAMPLE RESPONSES
-###############################################################################
-
-### Success Response - User Object
-# {
-#   "id": 1,
-#   "full_name": "John Doe",
-#   "email": "john@example.com",
-#   "username": "johndoe",
-#   "created_at": "2024-01-01T00:00:00.000Z",
-#   "updated_at": "2024-01-01T00:00:00.000Z",
-#   "roles": [
-#     {
-#       "id": 1,
-#       "name": "User",
-#       "description": "Regular user role",
-#       "slug": "user",
-#       "created_at": "2024-01-01T00:00:00.000Z",
-#       "updated_at": "2024-01-01T00:00:00.000Z"
-#     }
-#   ]
-# }
-
-### Success Response - Auth Response
-# {
-#   "id": 1,
-#   "full_name": "John Doe",
-#   "email": "john@example.com",
-#   "username": "johndoe",
-#   "created_at": "2024-01-01T00:00:00.000Z",
-#   "updated_at": "2024-01-01T00:00:00.000Z",
-#   "roles": [...],
-#   "auth": {
-#     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-#     "refresh_token": "refresh_token_string"
-#   }
-# }
-
-### Success Response - Paginated List
-# {
-#   "meta": {
-#     "total": 100,
-#     "per_page": 10,
-#     "current_page": 1,
-#     "last_page": 10,
-#     "first_page": 1,
-#     "first_page_url": "/?page=1",
-#     "last_page_url": "/?page=10",
-#     "next_page_url": "/?page=2",
-#     "previous_page_url": null
-#   },
-#   "data": [...]
-# }
-
-### Success Response - File Upload
-# {
-#   "url": "https://storage.example.com/files/abc123.pdf",
-#   "clientName": "document.pdf",
-#   "fileCategory": "document",
-#   "fileType": "application/pdf",
-#   "size": 12345,
-#   "extname": "pdf"
-# }
-
-### Error Response - Validation Error
-# {
-#   "errors": [
-#     {
-#       "message": "The email field must be a valid email",
-#       "field": "email",
-#       "rule": "email"
-#     }
-#   ]
-# }
-
-### Error Response - Unauthorized
-# {
-#   "errors": [
-#     {
-#       "message": "Unauthorized"
-#     }
-#   ]
-# }
-
-### Error Response - Not Found
-# {
-#   "errors": [
-#     {
-#       "message": "Resource not found"
-#     }
-#   ]
-# }
+### API Version
+GET http://localhost:3333/

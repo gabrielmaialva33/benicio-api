@@ -13,7 +13,7 @@ export default class RolesController {
   async list({ request, response }: HttpContext) {
     const service = await app.container.make(ListRolesService)
     const page = request.input('page', 1)
-    const perPage = request.input('perPage', 10)
+    const perPage = request.input('per_page', 10)
 
     const roles = await service.run({ page, perPage })
     return response.json(roles)

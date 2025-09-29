@@ -16,7 +16,10 @@ export default class PermissionsController {
    * List all permissions with pagination
    */
   async list({ request }: HttpContext) {
-    const { page = 1, perPage = 10, resource, action } = request.qs()
+    const page = request.input('page', 1)
+    const perPage = request.input('per_page', 10)
+    const resource = request.input('resource')
+    const action = request.input('action')
 
     const service = await app.container.make(ListPermissionsService)
     return await service.handle(page, perPage, resource, action)
@@ -105,10 +108,8 @@ export default class PermissionsController {
    */
   async checkUserPermissions({ request, params }: HttpContext) {
     const userId = params.id
-    const { permissions, require_all: requireAll = false } = request.only([
-      'permissions',
-      'require_all',
-    ])
+    const permissions = request.input('permissions')
+    const requireAll = request.input('require_all', false)
 
     const service = await app.container.make(CheckUserPermissionService)
     const hasPermission = await service.handle(userId, permissions, requireAll)

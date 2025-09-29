@@ -21,7 +21,7 @@ export default class ClientsController {
     const page = request.input('page', 1)
     const perPage = request.input('per_page', 20)
     const sortBy = request.input('sort_by', 'fantasy_name')
-    const direction = request.input('order', 'asc')
+    const direction = request.input('sort_order', 'asc')
 
     const service = await app.container.make(ListClientsService)
     const clients = await service.run({
