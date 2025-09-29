@@ -52,16 +52,10 @@ export default class FolderParty extends BaseModel {
   declare address: string | null
 
   @column()
-  declare role: string
-
-  @column()
   declare is_active: boolean
 
-  @column()
+  @column({ columnName: 'is_main_party' })
   declare is_primary_party: boolean
-
-  @column()
-  declare legal_representative: string | null
 
   @column()
   declare notes: string | null

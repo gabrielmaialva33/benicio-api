@@ -16,7 +16,13 @@ export const AvailableUsers: DefaultUserData[] = [
     username: 'employee',
     password: 'benicio123',
     user_type: 'employee',
-    role_slugs: [IRole.Slugs.ROOT, IRole.Slugs.ADMIN, IRole.Slugs.USER, IRole.Slugs.EDITOR, IRole.Slugs.EMPLOYEE],
+    role_slugs: [
+      IRole.Slugs.ROOT,
+      IRole.Slugs.ADMIN,
+      IRole.Slugs.USER,
+      IRole.Slugs.EDITOR,
+      IRole.Slugs.EMPLOYEE,
+    ],
   },
   {
     full_name: 'Manager Benício',
@@ -24,7 +30,13 @@ export const AvailableUsers: DefaultUserData[] = [
     username: 'manager',
     password: 'benicio123',
     user_type: 'manager',
-    role_slugs: [IRole.Slugs.ROOT, IRole.Slugs.ADMIN, IRole.Slugs.USER, IRole.Slugs.EDITOR, IRole.Slugs.MANAGER],
+    role_slugs: [
+      IRole.Slugs.ROOT,
+      IRole.Slugs.ADMIN,
+      IRole.Slugs.USER,
+      IRole.Slugs.EDITOR,
+      IRole.Slugs.MANAGER,
+    ],
   },
   {
     full_name: 'Client Benício',

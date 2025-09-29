@@ -25,7 +25,10 @@ test.group('Folder Basic Tests (Validation)', (group) => {
 
   group.each.setup(() => testUtils.db().withGlobalTransaction())
 
-  test('should create folder with basic data and validate relationships', async ({ client, assert }) => {
+  test('should create folder with basic data and validate relationships', async ({
+    client,
+    assert,
+  }) => {
     const user = await UserFactory.create()
     const folderType = await FolderTypeFactory.create()
     const clientRecord = await ClientFactory.merge({ created_by_id: user.id }).create()
@@ -37,14 +40,11 @@ test.group('Folder Basic Tests (Validation)', (group) => {
       folder_type_id: folderType.id,
       client_id: clientRecord.id,
       court_id: court.id,
-      case_value: 50000.00,
+      case_value: 50000.0,
       priority: FolderPriority.NORMAL,
     }
 
-    const createResponse = await client
-      .post('/api/v1/folders')
-      .loginAs(user)
-      .json(folderData)
+    const createResponse = await client.post('/api/v1/folders').loginAs(user).json(folderData)
 
     createResponse.assertStatus(201)
     const createdFolder = createResponse.body().data
@@ -54,9 +54,7 @@ test.group('Folder Basic Tests (Validation)', (group) => {
     assert.equal(createdFolder.created_by_id, user.id)
 
     // Test folder detail with relationships
-    const detailResponse = await client
-      .get(`/api/v1/folders/${createdFolder.id}`)
-      .loginAs(user)
+    const detailResponse = await client.get(`/api/v1/folders/${createdFolder.id}`).loginAs(user)
 
     detailResponse.assertStatus(200)
     const folderDetail = detailResponse.body().data
@@ -88,9 +86,7 @@ test.group('Folder Basic Tests (Validation)', (group) => {
     }).create()
 
     // Owner should access their folder
-    const ownerAccessResponse = await client
-      .get(`/api/v1/folders/${folder.id}`)
-      .loginAs(ownerUser)
+    const ownerAccessResponse = await client.get(`/api/v1/folders/${folder.id}`).loginAs(ownerUser)
 
     ownerAccessResponse.assertStatus(200)
     assert.equal(ownerAccessResponse.body().data.created_by.id, ownerUser.id)
@@ -129,9 +125,7 @@ test.group('Folder Basic Tests (Validation)', (group) => {
     }).create()
 
     // Test listing all folders (should respect user access)
-    const listResponse = await client
-      .get('/api/v1/folders')
-      .loginAs(user)
+    const listResponse = await client.get('/api/v1/folders').loginAs(user)
 
     listResponse.assertStatus(200)
     const folders = listResponse.body().data.data
@@ -187,7 +181,7 @@ test.group('Folder Basic Tests (Validation)', (group) => {
 
     assert.isAtLeast(searchResults.length, 1)
 
-    const foundFolder = searchResults.find(f => f.title.includes('Cobrança'))
+    const foundFolder = searchResults.find((f) => f.title.includes('Cobrança'))
     assert.isNotNull(foundFolder)
   })
 
@@ -205,24 +199,18 @@ test.group('Folder Basic Tests (Validation)', (group) => {
     }).create()
 
     // Test basic update
-    const updateResponse = await client
-      .put(`/api/v1/folders/${folder.id}`)
-      .loginAs(user)
-      .json({
-        title: 'Pasta Atualizada',
-        description: 'Descrição atualizada',
-      })
+    const updateResponse = await client.put(`/api/v1/folders/${folder.id}`).loginAs(user).json({
+      title: 'Pasta Atualizada',
+      description: 'Descrição atualizada',
+    })
 
     updateResponse.assertStatus(200)
     assert.equal(updateResponse.body().data.title, 'Pasta Atualizada')
 
     // Test status transition
-    const statusResponse = await client
-      .put(`/api/v1/folders/${folder.id}`)
-      .loginAs(user)
-      .json({
-        status: 'active',
-      })
+    const statusResponse = await client.put(`/api/v1/folders/${folder.id}`).loginAs(user).json({
+      status: 'active',
+    })
 
     statusResponse.assertStatus(200)
     assert.equal(statusResponse.body().data.status, 'active')
@@ -247,30 +235,22 @@ test.group('Folder Basic Tests (Validation)', (group) => {
     }).create()
 
     // Test soft delete
-    const deleteResponse = await client
-      .delete(`/api/v1/folders/${folder.id}`)
-      .loginAs(user)
+    const deleteResponse = await client.delete(`/api/v1/folders/${folder.id}`).loginAs(user)
 
     deleteResponse.assertStatus(200)
 
     // Verify folder is soft deleted (should not appear in normal queries)
-    const afterDeleteResponse = await client
-      .get(`/api/v1/folders/${folder.id}`)
-      .loginAs(user)
+    const afterDeleteResponse = await client.get(`/api/v1/folders/${folder.id}`).loginAs(user)
 
     afterDeleteResponse.assertStatus(404)
 
     // Test restore
-    const restoreResponse = await client
-      .post(`/api/v1/folders/${folder.id}/restore`)
-      .loginAs(user)
+    const restoreResponse = await client.post(`/api/v1/folders/${folder.id}/restore`).loginAs(user)
 
     restoreResponse.assertStatus(200)
 
     // Verify folder is restored
-    const restoredResponse = await client
-      .get(`/api/v1/folders/${folder.id}`)
-      .loginAs(user)
+    const restoredResponse = await client.get(`/api/v1/folders/${folder.id}`).loginAs(user)
 
     restoredResponse.assertStatus(200)
     assert.equal(restoredResponse.body().data.title, 'Pasta para Exclusão')
@@ -313,9 +293,7 @@ test.group('Folder Basic Tests (Validation)', (group) => {
     }).createMany(2)
 
     // Test statistics endpoint
-    const statsResponse = await client
-      .get('/api/v1/folders/stats')
-      .loginAs(user)
+    const statsResponse = await client.get('/api/v1/folders/stats').loginAs(user)
 
     statsResponse.assertStatus(200)
     const stats = statsResponse.body().data
