@@ -38,15 +38,17 @@ export default class ClientsRepository
     // Check if search term might be a document
     const cleanedTerm = searchTerm.replace(/\D/g, '')
 
-    if (cleanedTerm.length === 11 || cleanedTerm.length === 14) {
-      // Might be a document
-      query.orWhere('document', cleanedTerm)
-    }
+    query.where((q) => {
+      if (cleanedTerm.length === 11 || cleanedTerm.length === 14) {
+        // Might be a document
+        q.orWhere('document', cleanedTerm)
+      }
 
-    // Search by name
-    query
-      .orWhereILike('fantasy_name', `%${searchTerm}%`)
-      .orWhereILike('company_name', `%${searchTerm}%`)
+      // Search by name
+      q.orWhereRaw('fantasy_name ILIKE ?', [`%${searchTerm}%`]).orWhereRaw('company_name ILIKE ?', [
+        `%${searchTerm}%`,
+      ])
+    })
 
     return query
   }
