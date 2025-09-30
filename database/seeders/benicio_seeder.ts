@@ -428,7 +428,7 @@ export default class BenicioSeeder extends BaseSeeder {
    */
   private findCourtData(court: any): CourtData | undefined {
     return BrazilianCourts.find(
-      (c) => c.cnjCode === court.cnjCode && c.tribunalCode === court.tribunalCode
+      (c) => c.cnjCode === court.cnj_code && c.tribunalCode === court.tribunal_code
     )
   }
 
