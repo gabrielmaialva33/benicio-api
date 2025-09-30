@@ -29,6 +29,7 @@ info:
     url: https://benicio.com.br
   license:
     name: Proprietary
+    identifier: Proprietary
 
 servers:
   - url: http://localhost:3333
@@ -129,7 +130,7 @@ components:
           example: 1
         folder_id:
           type: integer
-          nullable: true
+          x-nullable: true
           example: 123
         title:
           type: string
@@ -224,12 +225,12 @@ components:
           example: 'Qual o prazo para recurso de apelação cível?'
         conversation_id:
           type: integer
-          nullable: true
+          x-nullable: true
           example: 1
           description: 'ID de conversa existente para continuar diálogo'
         folder_id:
           type: integer
-          nullable: true
+          x-nullable: true
           example: 123
           description: 'ID da pasta (processo) para contexto'
         mode:
@@ -292,7 +293,7 @@ components:
           example: 'Analisar viabilidade de recurso'
         folder_id:
           type: integer
-          nullable: true
+          x-nullable: true
           example: 123
 
     AiWorkflowResponse:
@@ -375,7 +376,7 @@ components:
           example: 'admin'
         description:
           type: string
-          nullable: true
+          x-nullable: true
         created_at:
           type: string
           format: date-time
@@ -433,7 +434,7 @@ components:
           type: string
         company_name:
           type: string
-          nullable: true
+          x-nullable: true
         document:
           type: string
           description: CPF or CNPJ
@@ -442,10 +443,10 @@ components:
           enum: [cpf, cnpj]
         state_registration:
           type: string
-          nullable: true
+          x-nullable: true
         municipal_registration:
           type: string
-          nullable: true
+          x-nullable: true
         email:
           type: string
           format: email
@@ -455,10 +456,10 @@ components:
           type: string
         website:
           type: string
-          nullable: true
+          x-nullable: true
         notes:
           type: string
-          nullable: true
+          x-nullable: true
         client_type:
           type: string
           enum: [prospect, client, prospect_sic, prospect_dbm]
@@ -487,29 +488,29 @@ components:
           description: CNJ (Conselho Nacional de Justiça) case number
         internal_client_code:
           type: string
-          nullable: true
+          x-nullable: true
         title:
           type: string
           example: 'Ação Ordinária - Restituição PIS/COFINS'
         description:
           type: string
-          nullable: true
+          x-nullable: true
         client_id:
           type: integer
         folder_type_id:
           type: integer
         court_id:
           type: integer
-          nullable: true
+          x-nullable: true
         responsible_lawyer_id:
           type: integer
-          nullable: true
+          x-nullable: true
         parent_folder_id:
           type: integer
-          nullable: true
+          x-nullable: true
         path:
           type: string
-          nullable: true
+          x-nullable: true
         level:
           type: integer
         status:
@@ -530,28 +531,28 @@ components:
           enum: [knowledge, compliance, appeal]
         prognosis:
           type: string
-          nullable: true
+          x-nullable: true
         comarca:
           type: string
-          nullable: true
+          x-nullable: true
         distribution_type:
           type: string
         case_value:
           type: string
           format: decimal
-          nullable: true
+          x-nullable: true
         conviction_value:
           type: string
           format: decimal
-          nullable: true
+          x-nullable: true
         costs:
           type: string
           format: decimal
-          nullable: true
+          x-nullable: true
         fees:
           type: string
           format: decimal
-          nullable: true
+          x-nullable: true
         is_active:
           type: boolean
         is_favorite:
@@ -567,31 +568,31 @@ components:
           type: boolean
         loy_integration_data:
           type: object
-          nullable: true
+          x-nullable: true
         cover_information_updated_at:
           type: string
           format: date-time
-          nullable: true
+          x-nullable: true
         distribution_date:
           type: string
           format: date
-          nullable: true
+          x-nullable: true
         citation_date:
           type: string
           format: date
-          nullable: true
+          x-nullable: true
         next_hearing_date:
           type: string
           format: date
-          nullable: true
+          x-nullable: true
         prescription_date:
           type: string
           format: date
-          nullable: true
+          x-nullable: true
         closure_date:
           type: string
           format: date
-          nullable: true
+          x-nullable: true
         created_at:
           type: string
           format: date-time
@@ -601,7 +602,7 @@ components:
         deleted_at:
           type: string
           format: date-time
-          nullable: true
+          x-nullable: true
 
     PaginationMeta:
       type: object
@@ -622,10 +623,10 @@ components:
           type: string
         next_page_url:
           type: string
-          nullable: true
+          x-nullable: true
         previous_page_url:
           type: string
-          nullable: true
+          x-nullable: true
 
     FolderStats:
       type: object
@@ -693,6 +694,24 @@ paths:
                   timestamp:
                     type: string
                     format: date-time
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'unhealthy'
+                  error:
+                    type: string
 
   # ===== AUTHENTICATION =====
   /api/v1/sessions/sign-in:
