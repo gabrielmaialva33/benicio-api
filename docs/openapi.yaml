@@ -39,6 +39,8 @@ servers:
 tags:
   - name: Authentication
     description: User authentication and session management
+  - name: AI
+    description: AI-powered legal assistance with specialized agents
   - name: Folders
     description: Legal case (folder) management
   - name: Clients
@@ -79,6 +81,246 @@ components:
                 type: string
               rule:
                 type: string
+
+    AiAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Pesquisador Jurídico'
+        slug:
+          type: string
+          example: 'legal-research'
+        description:
+          type: string
+          example: 'Especialista em pesquisa de jurisprudência e legislação brasileira'
+        model:
+          type: string
+          example: 'meta/llama-3.1-70b-instruct'
+        capabilities:
+          type: array
+          items:
+            type: string
+          example: ['web_search', 'vector_search', 'citation_tracking']
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    AiConversation:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        agent_id:
+          type: integer
+          example: 1
+        folder_id:
+          type: integer
+          nullable: true
+          example: 123
+        title:
+          type: string
+          example: 'Qual o prazo para recurso de apelação?'
+        mode:
+          type: string
+          enum: [single_agent, multi_agent]
+          example: 'single_agent'
+        total_tokens:
+          type: integer
+          example: 1500
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        agent:
+          $ref: '#/components/schemas/AiAgent'
+
+    AiMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        conversation_id:
+          type: integer
+          example: 1
+        role:
+          type: string
+          enum: [user, assistant, system, tool]
+          example: 'assistant'
+        content:
+          type: string
+          example: 'O prazo para recurso de apelação cível é de 15 dias úteis (CPC Art. 1.003, §5º).'
+        agent_id:
+          type: integer
+          example: 1
+        model_used:
+          type: string
+          example: 'meta/llama-3.1-70b-instruct'
+        tokens:
+          type: integer
+          example: 150
+        finish_reason:
+          type: string
+          example: 'stop'
+        created_at:
+          type: string
+          format: date-time
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AiCitation'
+
+    AiCitation:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        source_type:
+          type: string
+          example: 'legislation'
+        source_title:
+          type: string
+          example: 'CPC - Código de Processo Civil'
+        source_url:
+          type: string
+          example: 'http://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm'
+        excerpt:
+          type: string
+          example: 'Art. 1.003. O prazo para interposição de recurso conta-se...'
+        confidence_score:
+          type: number
+          format: float
+          example: 0.95
+
+    AiChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          example: 'Qual o prazo para recurso de apelação cível?'
+        conversation_id:
+          type: integer
+          nullable: true
+          example: 1
+          description: 'ID de conversa existente para continuar diálogo'
+        folder_id:
+          type: integer
+          nullable: true
+          example: 123
+          description: 'ID da pasta (processo) para contexto'
+        mode:
+          type: string
+          enum: [single, multi]
+          default: single
+          example: 'single'
+          description: 'single = um agent | multi = múltiplos agents colaborando'
+
+    AiChatResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            conversation_id:
+              type: integer
+              example: 1
+            message_id:
+              type: integer
+              example: 5
+            agent:
+              type: string
+              example: 'legal-research'
+            output:
+              type: string
+              example: 'O prazo para recurso de apelação cível é de 15 dias úteis...'
+            tokens_used:
+              type: integer
+              example: 150
+            citations:
+              type: array
+              items:
+                $ref: '#/components/schemas/AiCitation'
+            tool_calls:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  arguments:
+                    type: object
+
+    AiWorkflowRequest:
+      type: object
+      required:
+        - workflow
+      properties:
+        workflow:
+          type: string
+          enum: [full-case-analysis, contract-review, litigation-strategy]
+          example: 'full-case-analysis'
+        message:
+          type: string
+          maxLength: 10000
+          example: 'Analisar viabilidade de recurso'
+        folder_id:
+          type: integer
+          nullable: true
+          example: 123
+
+    AiWorkflowResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            workflow:
+              type: string
+              example: 'full-case-analysis'
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  agent:
+                    type: string
+                  output:
+                    type: string
+                  tokens_used:
+                    type: integer
+            summary:
+              type: string
+              example: '# Resumo do Workflow...'
 
     User:
       type: object
@@ -1440,6 +1682,382 @@ paths:
           description: Invalid or expired token
         '401':
           description: Unauthorized
+
+  # ========================
+  # AI ENDPOINTS
+  # ========================
+
+  # ===== AI CHAT =====
+  /api/v1/ai/chat:
+    post:
+      tags:
+        - AI
+      summary: Send message to AI agent
+      description: |
+        Send a message to an AI agent and get a response. The system automatically selects
+        the most appropriate agent based on the message content.
+
+        **Available Agent Types:**
+        - Legal Research: Jurisprudência, legislação, súmulas
+        - Document Analyzer: Análise de contratos, petições
+        - Case Strategy: Estratégia processual, chances de êxito
+        - Deadline Manager: Cálculo de prazos processuais
+        - Legal Writer: Redação de petições, pareceres
+        - Client Communicator: Comunicação simplificada
+      operationId: aiChat
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiChatRequest'
+            examples:
+              simple_question:
+                summary: Pergunta simples
+                value:
+                  message: "Qual o prazo para recurso de apelação cível?"
+                  mode: "single"
+              with_context:
+                summary: Com contexto de processo
+                value:
+                  message: "Analise a viabilidade de recurso neste caso"
+                  folder_id: 123
+                  mode: "single"
+              continue_conversation:
+                summary: Continuar conversa
+                value:
+                  message: "E para recursos trabalhistas?"
+                  conversation_id: 5
+                  mode: "single"
+      responses:
+        '200':
+          description: AI response generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiChatResponse'
+              example:
+                success: true
+                data:
+                  conversation_id: 1
+                  message_id: 5
+                  agent: "legal-research"
+                  output: "O prazo para recurso de apelação cível é de 15 dias úteis, conforme o Art. 1.003, §5º do CPC/2015."
+                  tokens_used: 150
+                  citations:
+                    - source_type: "legislation"
+                      source_title: "CPC - Código de Processo Civil"
+                      source_url: "http://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm"
+                      excerpt: "Art. 1.003. O prazo para interposição de recurso..."
+                      confidence_score: 0.98
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded
+        '500':
+          description: Internal server error
+
+  # ===== AI STREAMING =====
+  /api/v1/ai/chat/stream:
+    post:
+      tags:
+        - AI
+      summary: Send message to AI agent (streaming)
+      description: |
+        Same as `/ai/chat` but returns response as Server-Sent Events (SSE) for real-time streaming.
+
+        **SSE Event Types:**
+        - `content`: Chunks of AI response
+        - `done`: Final event with metadata
+        - `error`: Error event
+      operationId: aiChatStream
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiChatRequest'
+      responses:
+        '200':
+          description: Streaming response
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              example: |
+                data: {"type":"content","content":"O prazo para"}
+
+                data: {"type":"content","content":" recurso de apelação"}
+
+                data: {"type":"content","content":" é de 15 dias úteis."}
+
+                data: {"type":"done","metadata":{"tokens":150,"citations":1}}
+
+                event: done
+                data: {}
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  # ===== AI WORKFLOWS =====
+  /api/v1/ai/workflows:
+    post:
+      tags:
+        - AI
+      summary: Execute multi-agent workflow
+      description: |
+        Execute a predefined workflow that coordinates multiple AI agents working together.
+
+        **Available Workflows:**
+
+        **1. full-case-analysis** (Análise Completa de Caso)
+        - Document Analyzer → Legal Research → Case Strategy → Client Communicator
+        - Use: Análise completa de processo com estratégia
+
+        **2. contract-review** (Revisão de Contrato)
+        - Document Analyzer → Legal Research → Legal Writer
+        - Use: Análise e sugestões de melhorias em contratos
+
+        **3. litigation-strategy** (Estratégia Processual)
+        - Legal Research → Case Strategy → Deadline Manager
+        - Use: Desenvolvimento de estratégia e cálculo de prazos
+      operationId: aiExecuteWorkflow
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiWorkflowRequest'
+            examples:
+              case_analysis:
+                summary: Análise completa de caso
+                value:
+                  workflow: "full-case-analysis"
+                  message: "Avaliar viabilidade de recurso"
+                  folder_id: 123
+              contract_review:
+                summary: Revisão de contrato
+                value:
+                  workflow: "contract-review"
+                  folder_id: 456
+      responses:
+        '200':
+          description: Workflow executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiWorkflowResponse'
+              example:
+                success: true
+                data:
+                  workflow: "full-case-analysis"
+                  results:
+                    - agent: "document-analyzer"
+                      output: "Análise documental: 3 documentos analisados..."
+                      tokens_used: 500
+                    - agent: "legal-research"
+                      output: "Pesquisa jurisprudencial: 5 precedentes encontrados..."
+                      tokens_used: 800
+                    - agent: "case-strategy"
+                      output: "Estratégia recomendada: Propor acordo..."
+                      tokens_used: 600
+                  summary: "# Resumo do Workflow\n\nTotal de agentes: 4..."
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  # ===== AI AGENTS LIST =====
+  /api/v1/ai/agents:
+    get:
+      tags:
+        - AI
+      summary: List available AI agents
+      description: Get list of all active AI agents with their capabilities
+      operationId: listAiAgents
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of AI agents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AiAgent'
+              example:
+                success: true
+                data:
+                  - id: 1
+                    name: "Pesquisador Jurídico"
+                    slug: "legal-research"
+                    description: "Especialista em pesquisa de jurisprudência..."
+                    model: "meta/llama-3.1-70b-instruct"
+                    capabilities: ["web_search", "vector_search"]
+                    is_active: true
+                  - id: 2
+                    name: "Analisador de Documentos"
+                    slug: "document-analyzer"
+                    description: "Analisa petições, contratos..."
+                    model: "microsoft/phi-4-multimodal-instruct"
+                    capabilities: ["pdf_parsing", "ocr"]
+                    is_active: true
+        '401':
+          description: Unauthorized
+
+  # ===== AI CONVERSATIONS LIST =====
+  /api/v1/ai/conversations:
+    get:
+      tags:
+        - AI
+      summary: List user conversations
+      description: Get paginated list of user's AI conversations
+      operationId: listAiConversations
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: folder_id
+          in: query
+          description: Filter by folder/case ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AiConversation'
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+        '401':
+          description: Unauthorized
+
+  # ===== AI CONVERSATION DETAILS =====
+  /api/v1/ai/conversations/{id}:
+    get:
+      tags:
+        - AI
+      summary: Get conversation details
+      description: Get conversation details including all messages and citations
+      operationId: getAiConversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Conversation ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Conversation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      conversation:
+                        $ref: '#/components/schemas/AiConversation'
+                      messages:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AiMessage'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Conversation not found
+
+    delete:
+      tags:
+        - AI
+      summary: Delete conversation
+      description: Delete a conversation and all its messages
+      operationId: deleteAiConversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Conversation ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Conversation deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Conversation deleted successfully"
+        '401':
+          description: Unauthorized
+        '404':
+          description: Conversation not found
 
 security:
   - bearerAuth: []

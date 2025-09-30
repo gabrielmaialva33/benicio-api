@@ -24,6 +24,7 @@
 @roleId = 1
 @clientId = 1
 @folderId = 1
+@conversationId = 1
 
 ################################################################################
 # AUTHENTICATION
@@ -452,3 +453,138 @@ GET {{baseUrl}}/health
 
 ### API Version
 GET http://localhost:3333/
+
+################################################################################
+# AI AGENTS & CHAT
+################################################################################
+
+### List Available AI Agents
+GET {{baseUrl}}/ai/agents
+Authorization: Bearer {{accessToken}}
+
+### Send Simple Message to AI (Single Agent Mode)
+# @name chatSimple
+POST {{baseUrl}}/ai/chat
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "Qual o prazo para recurso de apelação cível?",
+  "mode": "single"
+}
+
+### Send Message with Process Context
+POST {{baseUrl}}/ai/chat
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "Analise a viabilidade de recurso neste caso",
+  "folder_id": {{folderId}},
+  "mode": "single"
+}
+
+### Continue Existing Conversation
+POST {{baseUrl}}/ai/chat
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "E quais são os riscos dessa estratégia?",
+  "conversation_id": {{conversationId}},
+  "folder_id": {{folderId}},
+  "mode": "single"
+}
+
+### Multi-Agent Collaboration Mode
+POST {{baseUrl}}/ai/chat
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "Preciso de uma análise completa deste processo com estratégia jurídica",
+  "folder_id": {{folderId}},
+  "mode": "multi"
+}
+
+### Streaming Chat with SSE (Server-Sent Events)
+POST {{baseUrl}}/ai/chat/stream
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "Explique detalhadamente os fundamentos jurídicos da prescrição intercorrente",
+  "mode": "single"
+}
+
+### Streaming with Conversation Context
+POST {{baseUrl}}/ai/chat/stream
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "Continue explicando com exemplos práticos",
+  "conversation_id": {{conversationId}},
+  "mode": "single"
+}
+
+################################################################################
+# AI WORKFLOWS
+################################################################################
+
+### Execute Full Case Analysis Workflow
+POST {{baseUrl}}/ai/workflows
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "workflow": "full-case-analysis",
+  "folder_id": {{folderId}},
+  "message": "Analise completa do processo para apresentação ao cliente"
+}
+
+### Execute Contract Review Workflow
+POST {{baseUrl}}/ai/workflows
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "workflow": "contract-review",
+  "folder_id": {{folderId}},
+  "message": "Revisar contrato e identificar cláusulas problemáticas"
+}
+
+### Execute Litigation Strategy Workflow
+POST {{baseUrl}}/ai/workflows
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "workflow": "litigation-strategy",
+  "folder_id": {{folderId}},
+  "message": "Desenvolver estratégia processual completa"
+}
+
+################################################################################
+# AI CONVERSATIONS
+################################################################################
+
+### List User Conversations (Paginated)
+GET {{baseUrl}}/ai/conversations?page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### List Conversations by Folder
+GET {{baseUrl}}/ai/conversations?folder_id={{folderId}}&page=1&per_page=10
+Authorization: Bearer {{accessToken}}
+
+### Sort Conversations by Date
+GET {{baseUrl}}/ai/conversations?sort_by=updated_at&sort_order=desc&page=1&per_page=20
+Authorization: Bearer {{accessToken}}
+
+### Get Conversation Details with Messages
+GET {{baseUrl}}/ai/conversations/{{conversationId}}
+Authorization: Bearer {{accessToken}}
+
+### Delete Conversation
+DELETE {{baseUrl}}/ai/conversations/{{conversationId}}
+Authorization: Bearer {{accessToken}}
