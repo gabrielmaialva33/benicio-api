@@ -23,6 +23,9 @@ info:
     ### Rate Limiting
     Authentication endpoints are rate-limited to 5 requests per minute.
 
+  x-logo:
+    url: https://raw.githubusercontent.com/gabrielmaialva33/yol-benicio-api/master/.github/assets/images/logo.svg
+    altText: Benício Advogados Logo
   contact:
     name: Benicio Advogados
     email: contato@benicio.com.br
@@ -37,21 +40,45 @@ servers:
   - url: https://api.benicio.com.br
     description: Production server
 
+x-tagGroups:
+  - name: 🏥 System Health
+    tags:
+      - Health
+  - name: 🔐 Authentication & Access
+    tags:
+      - Authentication
+      - Users
+  - name: 📁 Core Management
+    tags:
+      - Folders
+      - Clients
+  - name: 🤖 AI Features
+    tags:
+      - AI
+  - name: 👥 User Management
+    tags:
+      - Roles
+  - name: 📊 Dashboard
+    tags:
+      - Dashboard
+
 tags:
+  - name: Health
+    description: System health check and monitoring
   - name: Authentication
-    description: User authentication and session management
-  - name: AI
-    description: AI-powered legal assistance with specialized agents
+    description: User authentication and session management (JWT tokens)
+  - name: Users
+    description: User profile, roles, permissions and email verification
   - name: Folders
-    description: Legal case (folder) management
+    description: Legal case (folder) management with CNJ validation
   - name: Clients
     description: Client management with addresses and contacts
-  - name: Users
-    description: User profile and management
+  - name: AI
+    description: AI-powered legal assistance with specialized agents, streaming chat and workflows
   - name: Roles
-    description: Role and permission management
-  - name: Health
-    description: System health check
+    description: Role and permission management (RBAC)
+  - name: Dashboard
+    description: Dashboard widgets and statistics
 
 components:
   securitySchemes:
@@ -1211,7 +1238,7 @@ paths:
         - Folders
       summary: List favorite folders
       description: Get paginated list of folders marked as favorites
-      operationId: getFavoriteFolders
+      operationId: listFavoriteFolders
       security:
         - bearerAuth: []
       parameters:
@@ -2077,6 +2104,456 @@ paths:
           description: Unauthorized
         '404':
           description: Conversation not found
+
+  # ===== DASHBOARD =====
+  /api/dashboard/active-folders:
+    get:
+      tags:
+        - Dashboard
+      summary: Get active folders statistics
+      description: |
+        Get statistics about active legal cases (folders) with historical data.
+        Returns current count and comparison with previous period.
+      operationId: getActiveFolders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Active folders statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current:
+                    type: integer
+                    example: 31
+                    description: Current number of active folders
+                  previous:
+                    type: integer
+                    example: 28
+                    description: Number from previous period
+                  change:
+                    type: number
+                    format: float
+                    example: 10.7
+                    description: Percentage change
+                  trend:
+                    type: string
+                    enum: [up, down, stable]
+                    example: 'up'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/dashboard/favorite-folders:
+    get:
+      tags:
+        - Dashboard
+      summary: Get favorite folders
+      description: Get list of folders marked as favorites by the authenticated user
+      operationId: getFavoriteFolders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of favorite folders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/dashboard/favorite-folders/{folderId}:
+    post:
+      tags:
+        - Dashboard
+      summary: Add folder to favorites
+      description: Mark a folder as favorite for the authenticated user
+      operationId: addFavoriteFolder
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: folderId
+          in: path
+          required: true
+          description: Folder ID to add to favorites
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Folder added to favorites successfully
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+    delete:
+      tags:
+        - Dashboard
+      summary: Remove folder from favorites
+      description: Unmark a folder as favorite for the authenticated user
+      operationId: removeFavoriteFolder
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: folderId
+          in: path
+          required: true
+          description: Folder ID to remove from favorites
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Folder removed from favorites successfully
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/area-division:
+    get:
+      tags:
+        - Dashboard
+      summary: Get folder distribution by area
+      description: |
+        Get statistics about folder distribution across different legal areas/types.
+        Useful for visualizing workload distribution.
+      operationId: getAreaDivision
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Area division statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    area:
+                      type: string
+                      example: 'Trabalhista'
+                    count:
+                      type: integer
+                      example: 45
+                    percentage:
+                      type: number
+                      format: float
+                      example: 32.8
+              example:
+                - area: 'Trabalhista'
+                  count: 45
+                  percentage: 32.8
+                - area: 'Cível'
+                  count: 30
+                  percentage: 21.9
+                - area: 'Tributária'
+                  count: 25
+                  percentage: 18.2
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/folder-activity:
+    get:
+      tags:
+        - Dashboard
+      summary: Get folder activity statistics
+      description: |
+        Get statistics about folder activity over time.
+        Shows trends in folder creation, updates, and status changes.
+      operationId: getFolderActivity
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Folder activity data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  daily:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date
+                        created:
+                          type: integer
+                        updated:
+                          type: integer
+                  weekly:
+                    type: array
+                    items:
+                      type: object
+                  monthly:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/tasks:
+    get:
+      tags:
+        - Dashboard
+      summary: Get tasks list
+      description: |
+        Get paginated list of tasks with filters.
+        Supports filtering by status, priority, assignee, and more.
+      operationId: getTasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            default: due_date
+            enum: [due_date, created_at, priority, status]
+        - name: direction
+          in: query
+          schema:
+            type: string
+            default: asc
+            enum: [asc, desc]
+        - name: search
+          in: query
+          description: Search in task title and description
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by task status
+          schema:
+            type: string
+            enum: [pending, in_progress, completed, cancelled]
+        - name: priority
+          in: query
+          description: Filter by priority
+          schema:
+            type: string
+            enum: [low, medium, high, urgent]
+        - name: assigned_to_id
+          in: query
+          description: Filter by assignee user ID
+          schema:
+            type: integer
+        - name: folder_id
+          in: query
+          description: Filter by folder ID
+          schema:
+            type: integer
+        - name: overdue
+          in: query
+          description: Show only overdue tasks
+          schema:
+            type: boolean
+        - name: upcoming
+          in: query
+          description: Show only upcoming tasks (due in next 7 days)
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Paginated list of tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        status:
+                          type: string
+                        priority:
+                          type: string
+                        due_date:
+                          type: string
+                          format: date-time
+                        assigned_to_id:
+                          type: integer
+                        folder_id:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: date-time
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/requests:
+    get:
+      tags:
+        - Dashboard
+      summary: Get requests statistics
+      description: Get statistics about client requests and pending actions
+      operationId: getRequests
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Requests statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 15
+                  pending:
+                    type: integer
+                    example: 8
+                  in_progress:
+                    type: integer
+                    example: 5
+                  completed:
+                    type: integer
+                    example: 2
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/hearings:
+    get:
+      tags:
+        - Dashboard
+      summary: Get hearings and deadlines statistics
+      description: |
+        Get upcoming hearings and important deadlines.
+        Shows next 30 days by default.
+      operationId: getHearings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Hearings and deadlines data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  upcoming:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                        date:
+                          type: string
+                          format: date-time
+                        type:
+                          type: string
+                          enum: [hearing, deadline, appointment]
+                        folder_id:
+                          type: integer
+                  total:
+                    type: integer
+                    example: 12
+                  thisWeek:
+                    type: integer
+                    example: 3
+                  nextWeek:
+                    type: integer
+                    example: 5
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /api/birthdays:
+    get:
+      tags:
+        - Dashboard
+      summary: Get birthdays for current month
+      description: Get list of client and employee birthdays for the current month
+      operationId: getBirthdays
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of birthdays
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                      example: 'João Silva'
+                    type:
+                      type: string
+                      enum: [client, employee]
+                    birthday:
+                      type: string
+                      format: date
+                      example: '1985-09-15'
+                    age:
+                      type: integer
+                      example: 38
+              example:
+                - id: 1
+                  name: 'João Silva'
+                  type: 'client'
+                  birthday: '1985-09-15'
+                  age: 38
+                - id: 2
+                  name: 'Maria Santos'
+                  type: 'employee'
+                  birthday: '1990-09-22'
+                  age: 33
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
 
 security:
   - bearerAuth: []

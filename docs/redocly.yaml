@@ -1,31 +1,49 @@
+# Redocly Configuration for Benício Advogados API Documentation
+# This configuration follows best practices for enterprise API documentation
+
+# API definitions
 apis:
   main:
     root: ./openapi.yaml
 
+# Extend recommended ruleset for a consistent, user-friendly API
 extends:
-  - minimal
+  - recommended
 
-# Validation rules
+# Linting rules configuration
 rules:
+  # Core validation rules (errors)
   operation-tag-defined: error
   no-invalid-schema-examples: error
   no-invalid-media-type-examples: error
+  scalar-property-missing-example: off # Too strict - we have examples in main schemas
+  operation-operationId-unique: error
+  path-declaration-must-exist: error
+  path-not-include-query: error
+  path-parameters-defined: error
   operation-summary: error
   operation-description: warn
-  operation-operationId: error
-  operation-2xx-response: error
-  operation-4xx-response: warn
-  spec-strict-refs: error
-  no-server-example.com: off # Allow localhost for development
+  tag-description: warn
 
-  # Custom rules for sentence case
+  # Quality rules (warnings)
+  no-ambiguous-paths: warn
+  no-unused-components: warn
+  no-unresolved-refs: error
+
+  # Server configuration rules
+  no-server-example.com: off # Allow localhost for local development
+
+  # Security rules
+  security-defined: warn
+
+  # Custom configurable rules
   rule/operation-summary-sentence-case:
     subject:
       type: Operation
       property: summary
     message: Operation summary must be sentence cased.
     assertions:
-      pattern: /^([A-Z]{2,}|[A-Z][^A-Z]*)\b(\s+(?:[A-Z]{2,}|[^A-Z]*)\b)*$/
+      pattern: /^([A-Z]{2,}|[A-Z][^A-Z]*)\b(\s+(?:[A-Z]{2,}|[^A-Z]*)\b)*$/ # Sentence case but allow acronyms
 
   rule/example-summary-sentence-case:
     subject:
@@ -33,18 +51,97 @@ rules:
       property: summary
     message: Example summary must be sentence cased.
     assertions:
-      pattern: /^([A-Z]{2,}|[A-Z][^A-Z]*)\b(\s+(?:[A-Z]{2,}|[^A-Z]*)\b)*$/
+      pattern: /^([A-Z]{2,}|[A-Z][^A-Z]*)\b(\s+(?:[A-Z]{2,}|[^A-Z]*)\b)*$/ # Sentence case but allow acronyms
 
-# Files to ignore
+  rule/operation-description-length:
+    subject:
+      type: Operation
+      property: description
+    message: Operation description should be between 10 and 1000 characters.
+    assertions:
+      minLength: 10
+      maxLength: 1000
+
+# Files and directories to ignore during linting
 ignore:
   - .github
   - node_modules
-  - .git
-  - '*.md'
-  - '*.http'
+  - dist
+  - build
+  - coverage
+  - logs
+  - tmp
+  - '*.log'
+  - '*.tmp'
 
-# Metadata
-metadata:
-  title: Benicio Advogados API
-  description: Sistema completo de gestão jurídica com AI
-  version: 1.0.0
+# OpenAPI documentation configuration
+openapi:
+  # Schema expansion and display settings
+  schemasExpansionLevel: 2
+  jsonSamplesExpandLevel: 2
+  sortRequiredPropsFirst: true
+
+  # Documentation features
+  showExtensions: true
+  hideDownloadButtons: false
+
+# SEO and metadata
+seo:
+  title: 'Benício Advogados API - Legal Management System'
+  description: "Professional API documentation for Benício Advogados' legal management platform. Features AI-powered legal assistance, case management, document handling, and client management. Built with AdonisJS v6, PostgreSQL, and modern best practices."
+  keywords:
+    # Core API terms
+    - API Documentation
+    - REST API
+    - OpenAPI 3.1
+    - Legal Tech API
+    - Law Firm Software
+
+    # Architecture terms
+    - Legal Management System
+    - Enterprise API
+    - AdonisJS Backend
+    - PostgreSQL Database
+    - AI-Powered Legal Tech
+
+    # Features
+    - Case Management
+    - Legal Document Management
+    - Client Management API
+    - AI Legal Assistant
+    - Jurisprudence Search
+    - Brazilian Law API
+    - CNJ Integration
+
+    # Technical
+    - JWT Authentication
+    - Role-based Access Control
+    - SSE Streaming
+    - Real-time AI Chat
+    - Brazilian Legal System
+
+    # Developer experience
+    - Developer Portal
+    - API Reference
+    - Code Examples
+    - Interactive Documentation
+    - Legal Applications
+
+# Custom navigation items
+navbar:
+  items:
+    - label: '🏠 Home'
+      href: '#'
+      external: false
+    - label: '📚 API Reference'
+      href: './openapi.yaml'
+      external: false
+    - label: '🤖 AI Features'
+      href: '#tag/AI'
+      external: false
+    - label: '💻 GitHub'
+      href: 'https://github.com/gabrielmaialva33/yol-benicio-api'
+      external: true
+    - label: '📧 Contact'
+      href: 'mailto:contato@benicio.com.br'
+      external: true

@@ -106,7 +106,7 @@ Para desenvolvedores que preferem testar via REST Client (VS Code), temos um arq
 - 📋 Exemplos práticos de uso
 - 🤖 Exemplos de AI (chat, streaming, workflows)
 
-Baixe: [api.http](./api.http)
+Baixe: [api.http](https://raw.githubusercontent.com/gabrielmaialva33/benicio-api/refs/heads/main/docs/api.http)
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -161,7 +161,7 @@ A API segue versionamento semântico e mantém compatibilidade retroativa dentro
 
 ## 📝 Licença
 
-**Proprietary** - © 2024 Benicio Advogados Associados. Todos os direitos reservados.
+**Proprietary** - © 2025 Benicio Advogados Associados. Todos os direitos reservados.
 
 ---
 
