@@ -256,19 +256,28 @@ export default class MainSeeder extends BaseSeeder {
         // Define status e datas
         const distributionDate = DateTime.local(year, this.randomInt(1, 12), this.randomInt(1, 28))
 
-        const folder = await FolderFactory.merge({
-          cnj_number: cnjNumber,
-          client_id: client.id,
-          folder_type_id: folderTypeId,
-          court_id: court.id,
-          responsible_lawyer_id: this.randomElement(employees).id,
-          created_by_id: this.randomElement(managers).id,
-          title: `${actionType} - ${client.fantasy_name}`,
-          action_type: actionType,
-          status: this.randomElement(['active', 'pending', 'completed'] as const),
-          distribution_date: distributionDate,
-          distribution_type: this.randomElement(['Sorteio', 'Dependência', 'Prevenção']),
-        }).create()
+        let folder
+        try {
+          folder = await FolderFactory.merge({
+            cnj_number: cnjNumber,
+            client_id: client.id,
+            folder_type_id: folderTypeId,
+            court_id: court.id,
+            responsible_lawyer_id: this.randomElement(employees).id,
+            created_by_id: this.randomElement(managers).id,
+            title: `${actionType} - ${client.fantasy_name}`,
+            action_type: actionType,
+            status: this.randomElement(['active', 'pending', 'completed'] as const),
+            distribution_date: distributionDate,
+            distribution_type: this.randomElement(['Sorteio', 'Dependência', 'Prevenção']),
+          }).create()
+        } catch (error) {
+          // Skip duplicate CNJ numbers
+          if (error.code === '23505') {
+            continue
+          }
+          throw error
+        }
 
         // Criar andamentos processuais (8-15 por processo)
         const movementCount = this.randomInt(8, 15)
