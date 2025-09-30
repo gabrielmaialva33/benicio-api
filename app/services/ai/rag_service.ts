@@ -88,8 +88,12 @@ export default class RagService {
 
       return searchResults
     } catch (error) {
-      logger.error('RAG search failed', { error, query })
-      throw new BadRequestException(`RAG search failed: ${error.message}`)
+      // Don't throw - just return empty results to allow graceful degradation
+      logger.debug('RAG search skipped', {
+        reason: error.message,
+        query: query.substring(0, 50),
+      })
+      return []
     }
   }
 
@@ -136,7 +140,10 @@ export default class RagService {
         hasContext: results.length > 0,
       }
     } catch (error) {
-      logger.error('Get context failed', { error, query })
+      // Only log as debug - RAG failure is expected when knowledge base is empty
+      logger.debug('RAG context unavailable, proceeding without context', {
+        query: query.substring(0, 50),
+      })
       return {
         context: '',
         sources: [],
