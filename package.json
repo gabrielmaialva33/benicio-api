@@ -18,6 +18,7 @@
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
+    "#defaults/*": "./app/defaults/*.js",
     "#events/*": "./app/events/*.js",
     "#exceptions/*": "./app/exceptions/*.js",
     "#extensions/*": "./app/extensions/*.js",
@@ -26,6 +27,7 @@
     "#services/*": "./app/services/*.js",
     "#listeners/*": "./app/listeners/*.js",
     "#interfaces/*": "./app/interfaces/*.js",
+    "#jobs/*": "./app/jobs/*.js",
     "#middleware/*": "./app/middleware/*.js",
     "#validators/*": "./app/validators/*.js",
     "#providers/*": "./providers/*.js",
@@ -38,8 +40,7 @@
     "#start/*": "./start/*.js",
     "#config/*": "./config/*.js",
     "#shared/*": "./app/shared/*.js",
-    "#validations/*": "./app/validations/*.js",
-    "#defaults/*": "./app/defaults/*.js"
+    "#validations/*": "./app/validations/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
