@@ -33,7 +33,7 @@ namespace IAiAgent {
   }
 
   export interface ExecutePayload {
-    agent_slug: string
+    agent_slug?: string
     user_id: number
     conversation_id?: number
     folder_id?: number
@@ -47,6 +47,10 @@ namespace IAiAgent {
     tool_calls?: ToolCall[]
     citations?: Citation[]
     metadata?: Record<string, any>
+    agent_slug?: string
+    model_used?: string
+    execution_time_ms?: number
+    sources?: Citation[]
   }
 
   export interface ToolCall {

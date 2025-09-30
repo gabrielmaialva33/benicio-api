@@ -22,6 +22,7 @@ import '#routes/health/index'
 import '#routes/clients/index'
 import '#routes/folders/index'
 import '#routes/dashboard/index'
+import '#routes/ai/index'
 
 router
   .get('/version', async () => {
