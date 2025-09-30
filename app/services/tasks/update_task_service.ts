@@ -52,8 +52,8 @@ export default class UpdateTaskService {
 
       // Reload task with relationships
       const updatedTask = await this.taskRepository.findBy('id', taskId)
-      await updatedTask?.load('assignedTo')
-      await updatedTask?.load('createdBy')
+      await updatedTask?.load('assigned_to')
+      await updatedTask?.load('created_by')
       if (updatedTask?.folder_id) {
         await updatedTask.load('folder')
       }

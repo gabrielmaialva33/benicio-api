@@ -46,7 +46,16 @@ export default class Task extends BaseModel {
 
   @column({
     prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : null),
+    consume: (value: string | string[] | null) => {
+      if (!value) return null
+      if (Array.isArray(value)) return value
+      try {
+        return JSON.parse(value)
+      } catch (error) {
+        console.error('[Task Model] Failed to parse tags:', value, error)
+        return null
+      }
+    },
   })
   declare tags: string[] | null
 
@@ -64,12 +73,12 @@ export default class Task extends BaseModel {
   @belongsTo(() => User, {
     foreignKey: 'assigned_to_id',
   })
-  declare assignedTo: BelongsTo<typeof User>
+  declare assigned_to: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
     foreignKey: 'created_by_id',
   })
-  declare createdBy: BelongsTo<typeof User>
+  declare created_by: BelongsTo<typeof User>
 
   @belongsTo(() => Folder, {
     foreignKey: 'folder_id',

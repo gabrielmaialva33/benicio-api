@@ -81,6 +81,15 @@ export default class MainSeeder extends BaseSeeder {
     })
     logger.info(`   ✅ Created ${tasksCount} realistic tasks\n`)
 
+    // 7. Criar pastas favoritas para os usuários
+    logger.info('✅ Creating favorite folders for users...')
+    const favoritesCount = await this.createFavoriteFolders({
+      folders,
+      employees,
+      managers,
+    })
+    logger.info(`   ✅ Created ${favoritesCount} favorite folder relationships\n`)
+
     logger.info('🎉 Seeding completed successfully!\n')
     logger.info('📊 Summary:')
     logger.info(`   - Users: ${managers.length + employees.length}`)
@@ -383,6 +392,37 @@ export default class MainSeeder extends BaseSeeder {
     }
 
     return tasksCreated
+  }
+
+  /**
+   * Cria pastas favoritas para os usuários
+   * Cada usuário terá 3-7 pastas favoritas aleatórias
+   */
+  private async createFavoriteFolders(params: {
+    folders: any[]
+    employees: any[]
+    managers: any[]
+  }) {
+    const { folders, employees, managers } = params
+    const allUsers = [...employees, ...managers]
+    let favoritesCreated = 0
+
+    for (const user of allUsers) {
+      // Cada usuário terá entre 3 e 7 pastas favoritas
+      const favoriteCount = this.randomInt(3, 7)
+
+      // Selecionar pastas aleatórias sem repetição
+      const shuffled = [...folders].sort(() => 0.5 - Math.random())
+      const selectedFolders = shuffled.slice(0, Math.min(favoriteCount, folders.length))
+
+      // Criar a relação many-to-many
+      const folderIds = selectedFolders.map((f) => f.id)
+      await user.related('favorite_folders').attach(folderIds)
+
+      favoritesCreated += folderIds.length
+    }
+
+    return favoritesCreated
   }
 
   /**

@@ -42,7 +42,11 @@ export default class DashboardController {
       const folders = await this.getFavoriteFoldersService.execute(auth.user!.id)
       return response.ok(folders)
     } catch (error) {
-      return response.internalServerError({ message: 'Failed to get favorite folders' })
+      console.error('[FavoriteFoldersController] Error:', error)
+      return response.internalServerError({
+        message: 'Failed to get favorite folders',
+        error: error.message,
+      })
     }
   }
 
@@ -51,7 +55,7 @@ export default class DashboardController {
    */
   async addFavorite({ auth, params, response }: HttpContext) {
     try {
-      await auth.user!.related('favoriteFolders').attach([params.folderId])
+      await auth.user!.related('favorite_folders').attach([params.folderId])
       return response.noContent()
     } catch (error) {
       return response.internalServerError({ message: 'Failed to add favorite' })
@@ -63,7 +67,7 @@ export default class DashboardController {
    */
   async removeFavorite({ auth, params, response }: HttpContext) {
     try {
-      await auth.user!.related('favoriteFolders').detach([params.folderId])
+      await auth.user!.related('favorite_folders').detach([params.folderId])
       return response.noContent()
     } catch (error) {
       return response.internalServerError({ message: 'Failed to remove favorite' })
@@ -78,7 +82,11 @@ export default class DashboardController {
       const division = await this.getAreaDivisionService.execute()
       return response.ok(division)
     } catch (error) {
-      return response.internalServerError({ message: 'Failed to get area division' })
+      console.error('[AreaDivisionController] Error:', error)
+      return response.internalServerError({
+        message: 'Failed to get area division',
+        error: error.message,
+      })
     }
   }
 
@@ -126,7 +134,8 @@ export default class DashboardController {
 
       return response.ok(tasks)
     } catch (error) {
-      return response.internalServerError({ message: 'Failed to get tasks' })
+      console.error('[TasksController] Error:', error)
+      return response.internalServerError({ message: 'Failed to get tasks', error: error.message })
     }
   }
 

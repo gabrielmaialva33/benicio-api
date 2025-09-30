@@ -49,6 +49,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_USER: Env.schema.string.optional(),
   DB_PASSWORD: Env.schema.string.optional(),
   DB_DATABASE: Env.schema.string.optional(),
+  DB_DEBUG: Env.schema.boolean.optional(),
   /*
   |----------------------------------------------------------
   | Variables for configuring the cache package

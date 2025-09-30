@@ -142,8 +142,8 @@ export const TaskFactory = factory
       tags,
     }
   })
-  .relation('assignedTo', () => UserFactory)
-  .relation('createdBy', () => UserFactory)
+  .relation('assigned_to', () => UserFactory)
+  .relation('created_by', () => UserFactory)
   .relation('folder', () => FolderFactory)
   .state('urgent', (task) => {
     task.priority = 'urgent'

@@ -4,6 +4,7 @@ import { defineConfig } from '@adonisjs/lucid'
 import env from '#start/env'
 
 const dbConfig = defineConfig({
+  prettyPrintDebugQueries: true,
   connection: env.get('DB_CONNECTION', 'postgres'),
   connections: {
     sqlite: {
@@ -36,6 +37,7 @@ const dbConfig = defineConfig({
       seeders: {
         paths: ['database/seeders'],
       },
+      debug: env.get('DB_DEBUG', false),
     },
   },
 })

@@ -109,7 +109,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotTable: 'user_favorite_folders',
     pivotTimestamps: { createdAt: 'created_at', updatedAt: false },
   })
-  declare favoriteFolders: ManyToMany<typeof Folder>
+  declare favorite_folders: ManyToMany<typeof Folder>
 
   /**
    * ------------------------------------------------------

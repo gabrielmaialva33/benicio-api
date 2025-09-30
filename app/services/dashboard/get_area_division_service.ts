@@ -18,10 +18,10 @@ export default class GetAreaDivisionService {
       return []
     }
 
-    // Get folder type details
+    // Get folder type details - access from $attributes
     const folderTypeIds = folderCounts
-      .map((f) => f.$extras.folder_type_id)
-      .filter((id) => id !== null)
+      .map((f) => f.$attributes.folder_type_id)
+      .filter((id) => id !== null && id !== undefined)
 
     if (folderTypeIds.length === 0) {
       return []
@@ -40,7 +40,7 @@ export default class GetAreaDivisionService {
 
     // Map and format the results
     const areaDivision = folderCounts.map((count) => {
-      const folderType = folderTypes.find((type) => type.id === count.$extras.folder_type_id)
+      const folderType = folderTypes.find((type) => type.id === count.$attributes.folder_type_id)
       const value = Math.round((Number(count.$extras.total) / total) * 100)
 
       return {

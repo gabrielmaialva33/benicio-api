@@ -5,10 +5,10 @@ export default class GetFavoriteFoldersService {
     const user = await User.findOrFail(userId)
 
     const folders = await user
-      .related('favoriteFolders')
+      .related('favorite_folders')
       .query()
       .preload('client')
-      .preload('folderType')
+      .preload('folder_type')
       .orderBy('user_favorite_folders.created_at', 'desc')
 
     return folders.map((folder) => ({
@@ -16,7 +16,7 @@ export default class GetFavoriteFoldersService {
       code: folder.cnjNumber || folder.internalClientCode || `F-${folder.id}`,
       title: folder.title,
       client_name: folder.client.fantasyName,
-      color: folder.folderType.color,
+      color: folder.folder_type.color,
     }))
   }
 }

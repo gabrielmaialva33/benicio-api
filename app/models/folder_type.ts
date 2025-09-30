@@ -33,13 +33,49 @@ export default class FolderType extends BaseModel {
   @column()
   declare sort_order: number
 
-  @column()
+  @column({
+    prepare: (value: Record<string, any> | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | Record<string, any> | null) => {
+      if (!value) return null
+      if (typeof value === 'object') return value
+      try {
+        return JSON.parse(value)
+      } catch (error) {
+        console.error('[FolderType Model] Failed to parse workflow_config:', value, error)
+        return null
+      }
+    },
+  })
   declare workflow_config: Record<string, any> | null
 
-  @column()
+  @column({
+    prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | string[] | null) => {
+      if (!value) return null
+      if (Array.isArray(value)) return value
+      try {
+        return JSON.parse(value)
+      } catch (error) {
+        console.error('[FolderType Model] Failed to parse required_fields:', value, error)
+        return null
+      }
+    },
+  })
   declare required_fields: string[] | null
 
-  @column()
+  @column({
+    prepare: (value: Record<string, any> | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | Record<string, any> | null) => {
+      if (!value) return null
+      if (typeof value === 'object') return value
+      try {
+        return JSON.parse(value)
+      } catch (error) {
+        console.error('[FolderType Model] Failed to parse default_values:', value, error)
+        return null
+      }
+    },
+  })
   declare default_values: Record<string, any> | null
 
   @column.dateTime({ autoCreate: true })

@@ -11,8 +11,8 @@ export default class GetTasksService {
 
     const query = this.taskRepository
       .search(filters)
-      .preload('assignedTo', (q) => q.select(['id', 'full_name', 'email']))
-      .preload('createdBy', (q) => q.select(['id', 'full_name', 'email']))
+      .preload('assigned_to', (q) => q.select(['id', 'full_name', 'email']))
+      .preload('created_by', (q) => q.select(['id', 'full_name', 'email']))
       .preload('folder', (q) => q.select(['id', 'title', 'cnj_number']))
       .orderBy(sortBy, direction)
 
@@ -34,12 +34,12 @@ export default class GetTasksService {
         ],
       },
       relations: {
-        assignedTo: {
+        assigned_to: {
           fields: {
             pick: ['id', 'full_name', 'email'],
           },
         },
-        createdBy: {
+        created_by: {
           fields: {
             pick: ['id', 'full_name', 'email'],
           },
