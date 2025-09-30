@@ -1,11 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
-import { DateTime } from 'luxon'
 import GetActiveFoldersStatService from '#services/dashboard/get_active_folders_stat_service'
 import GetAreaDivisionService from '#services/dashboard/get_area_division_service'
 import GetFolderActivityService from '#services/dashboard/get_folder_activity_service'
 import GetBirthdayService from '#services/dashboard/get_birthday_service'
 import GetFavoriteFoldersService from '#services/dashboard/get_favorite_folder_service'
+import GetRequestsStatsService from '#services/dashboard/get_requests_stat_service'
+import GetHearingsStatsService from '#services/dashboard/get_hearings_stat_service'
+import GetTasksService from '#services/tasks/get_tasks_service'
 
 @inject()
 export default class DashboardController {
@@ -14,7 +16,10 @@ export default class DashboardController {
     private getAreaDivisionService: GetAreaDivisionService,
     private getFolderActivityService: GetFolderActivityService,
     private getBirthdayService: GetBirthdayService,
-    private getFavoriteFoldersService: GetFavoriteFoldersService
+    private getFavoriteFoldersService: GetFavoriteFoldersService,
+    private getRequestsStatsService: GetRequestsStatsService,
+    private getHearingsStatsService: GetHearingsStatsService,
+    private getTasksService: GetTasksService
   ) {}
 
   /**
@@ -90,148 +95,60 @@ export default class DashboardController {
   }
 
   /**
-   * Get tasks list (mock data for now)
+   * Get tasks list with filters and pagination
    */
   async tasks({ request, response }: HttpContext) {
     try {
       const page = request.input('page', 1)
       const perPage = request.input('per_page', 10)
+      const sortBy = request.input('sort_by', 'due_date')
+      const direction = request.input('direction', 'asc')
 
-      // Mock data until tasks model is implemented
-      const mockTasks = [
-        {
-          id: 1,
-          title: 'Revisar contrato de prestação de serviços',
-          description: 'Análise completa do contrato com foco nas cláusulas de rescisão',
-          due_date: DateTime.now().plus({ days: 2 }).toISO(),
-          status: 'pending',
-          priority: 'high',
-          assigned_to: { id: 1, full_name: 'João Silva', email: 'joao@benicio.com.br' },
-          created_by: { id: 2, full_name: 'Maria Santos', email: 'maria@benicio.com.br' },
-          created_at: DateTime.now().minus({ days: 5 }).toISO(),
-          updated_at: DateTime.now().minus({ days: 1 }).toISO(),
-        },
-        {
-          id: 2,
-          title: 'Preparar defesa administrativa',
-          description: 'Elaborar peça de defesa para processo administrativo',
-          due_date: DateTime.now().plus({ days: 5 }).toISO(),
-          status: 'in_progress',
-          priority: 'medium',
-          assigned_to: { id: 1, full_name: 'João Silva', email: 'joao@benicio.com.br' },
-          created_by: { id: 3, full_name: 'Pedro Costa', email: 'pedro@benicio.com.br' },
-          created_at: DateTime.now().minus({ days: 3 }).toISO(),
-          updated_at: DateTime.now().toISO(),
-        },
-        {
-          id: 3,
-          title: 'Protocolar petição inicial',
-          due_date: DateTime.now().plus({ days: 1 }).toISO(),
-          status: 'pending',
-          priority: 'urgent',
-          assigned_to: { id: 2, full_name: 'Maria Santos', email: 'maria@benicio.com.br' },
-          created_by: { id: 1, full_name: 'João Silva', email: 'joao@benicio.com.br' },
-          created_at: DateTime.now().minus({ days: 1 }).toISO(),
-          updated_at: DateTime.now().toISO(),
-        },
-        {
-          id: 4,
-          title: 'Reunião com cliente - Caso trabalhista',
-          due_date: DateTime.now().plus({ days: 3 }).toISO(),
-          status: 'pending',
-          priority: 'medium',
-          assigned_to: { id: 3, full_name: 'Pedro Costa', email: 'pedro@benicio.com.br' },
-          created_by: { id: 1, full_name: 'João Silva', email: 'joao@benicio.com.br' },
-          created_at: DateTime.now().minus({ days: 2 }).toISO(),
-          updated_at: DateTime.now().minus({ hours: 5 }).toISO(),
-        },
-        {
-          id: 5,
-          title: 'Análise de documentos fiscais',
-          description: 'Verificar conformidade dos documentos apresentados',
-          due_date: DateTime.now().plus({ days: 7 }).toISO(),
-          status: 'completed',
-          priority: 'low',
-          assigned_to: { id: 1, full_name: 'João Silva', email: 'joao@benicio.com.br' },
-          created_by: { id: 2, full_name: 'Maria Santos', email: 'maria@benicio.com.br' },
-          completed_at: DateTime.now().minus({ hours: 2 }).toISO(),
-          created_at: DateTime.now().minus({ days: 4 }).toISO(),
-          updated_at: DateTime.now().minus({ hours: 2 }).toISO(),
-        },
-      ]
+      // Extract filters from query params
+      const filters = {
+        search: request.input('search'),
+        status: request.input('status'),
+        priority: request.input('priority'),
+        assignedToId: request.input('assigned_to_id'),
+        createdById: request.input('created_by_id'),
+        folderId: request.input('folder_id'),
+        overdue: request.input('overdue'),
+        upcoming: request.input('upcoming'),
+      }
 
-      return response.ok({
-        data: mockTasks.slice((page - 1) * perPage, page * perPage),
-        meta: {
-          total: mockTasks.length,
-          per_page: perPage,
-          current_page: page,
-          last_page: Math.ceil(mockTasks.length / perPage),
-          first_page: 1,
-        },
+      const tasks = await this.getTasksService.execute({
+        filters,
+        page,
+        perPage,
+        sortBy,
+        direction,
       })
+
+      return response.ok(tasks)
     } catch (error) {
       return response.internalServerError({ message: 'Failed to get tasks' })
     }
   }
 
   /**
-   * Get requests statistics (mock data for now)
+   * Get requests statistics
    */
   async requests({ response }: HttpContext) {
     try {
-      // Mock data with monthly statistics
-      const months = []
-      for (let i = 5; i >= 0; i--) {
-        const date = DateTime.now().minus({ months: i })
-        months.push({
-          month: date.monthShort,
-          value: 15 + Math.floor(Math.random() * 10),
-          new: Math.floor(Math.random() * 8) + 2,
-          percentage: 60 + Math.floor(Math.random() * 30),
-        })
-      }
-
-      return response.ok(months)
+      const stats = await this.getRequestsStatsService.execute()
+      return response.ok(stats)
     } catch (error) {
       return response.internalServerError({ message: 'Failed to get requests' })
     }
   }
 
   /**
-   * Get hearings and deadlines statistics (mock data for now)
+   * Get hearings and deadlines statistics
    */
   async hearings({ response }: HttpContext) {
     try {
-      // Mock data for hearings
-      const mockHearings = [
-        {
-          label: 'Audiências',
-          percentage: 75,
-          total: 12,
-          completed: 9,
-          color: '#00B8D9',
-          date: DateTime.now().plus({ days: 7 }).toISO(),
-        },
-        {
-          label: 'Prazos',
-          percentage: 60,
-          total: 20,
-          completed: 12,
-          color: '#FFAB00',
-          date: DateTime.now().plus({ days: 14 }).toISO(),
-        },
-        {
-          label: 'Recursos',
-          percentage: 45,
-          total: 8,
-          completed: 4,
-          color: '#FF5630',
-          date: DateTime.now().plus({ days: 21 }).toISO(),
-        },
-      ]
-
-      return response.ok(mockHearings)
+      const stats = await this.getHearingsStatsService.execute()
+      return response.ok(stats)
     } catch (error) {
       return response.internalServerError({ message: 'Failed to get hearings' })
     }

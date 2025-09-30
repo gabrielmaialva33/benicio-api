@@ -10,6 +10,7 @@ import { FolderPartyFactory } from '#database/factories/folder_party_factory'
 import { FolderDocumentFactory } from '#database/factories/folder_document_factory'
 import { ClientAddressFactory } from '#database/factories/client_address_factory'
 import { ClientContactFactory } from '#database/factories/client_contact_factory'
+import { TaskFactory } from '#database/factories/task_factory'
 import { RealisticCnjGeneratorService } from '#services/seeders/realistic_cnj_generator_service'
 import {
   BrazilianCompanies,
@@ -29,6 +30,7 @@ import {
  * - ~1500 movimentos processuais
  * - ~450 partes do processo
  * - ~900 documentos
+ * - ~300 tarefas realistas
  */
 export default class MainSeeder extends BaseSeeder {
   static environment = ['development', 'testing']
@@ -62,7 +64,7 @@ export default class MainSeeder extends BaseSeeder {
     // 5. Criar processos jurídicos com CNJ numbers válidos
     logger.info('📁 Creating legal cases (folders) with realistic data...')
     const allClients = [...companies, ...individuals]
-    const foldersCount = await this.createFolders({
+    const { foldersCount, folders } = await this.createFolders({
       clients: allClients,
       courts,
       employees,
@@ -70,12 +72,22 @@ export default class MainSeeder extends BaseSeeder {
     })
     logger.info(`   ✅ Created ${foldersCount} folders with movements, parties, and documents\n`)
 
+    // 6. Criar tarefas vinculadas aos processos e usuários
+    logger.info('✅ Creating tasks linked to folders and users...')
+    const tasksCount = await this.createTasks({
+      folders,
+      employees,
+      managers,
+    })
+    logger.info(`   ✅ Created ${tasksCount} realistic tasks\n`)
+
     logger.info('🎉 Seeding completed successfully!\n')
     logger.info('📊 Summary:')
     logger.info(`   - Users: ${managers.length + employees.length}`)
     logger.info(`   - Courts: ${courts.length}`)
     logger.info(`   - Clients: ${allClients.length}`)
     logger.info(`   - Folders: ${foldersCount}`)
+    logger.info(`   - Tasks: ${tasksCount}`)
     logger.info(`   - Estimated movements: ~${foldersCount * 10}`)
     logger.info(`   - Estimated documents: ~${foldersCount * 6}`)
     logger.info(`   - Estimated parties: ~${foldersCount * 3}`)
@@ -216,6 +228,7 @@ export default class MainSeeder extends BaseSeeder {
   }) {
     const { clients, courts, employees, managers } = params
     let foldersCreated = 0
+    const folders: any[] = []
 
     for (const client of clients) {
       // Cada cliente tem 1-3 processos
@@ -327,10 +340,49 @@ export default class MainSeeder extends BaseSeeder {
         }
 
         foldersCreated++
+        folders.push(folder)
       }
     }
 
-    return foldersCreated
+    return { foldersCount: foldersCreated, folders }
+  }
+
+  /**
+   * Cria tarefas vinculadas aos processos e usuários
+   */
+  private async createTasks(params: { folders: any[]; employees: any[]; managers: any[] }) {
+    const { folders, employees, managers } = params
+    let tasksCreated = 0
+
+    // Criar 2-3 tasks para cada folder
+    for (const folder of folders) {
+      const taskCount = this.randomInt(2, 3)
+
+      for (let i = 0; i < taskCount; i++) {
+        await TaskFactory.merge({
+          folder_id: folder.id,
+          assigned_to_id: this.randomElement(employees).id,
+          created_by_id: this.randomElement(managers).id,
+        }).create()
+
+        tasksCreated++
+      }
+    }
+
+    // Criar tasks sem folder (tarefas gerais de escritório) - 10-15% do total
+    const generalTasksCount = Math.ceil(tasksCreated * 0.15)
+
+    for (let i = 0; i < generalTasksCount; i++) {
+      await TaskFactory.merge({
+        folder_id: null,
+        assigned_to_id: this.randomElement(employees).id,
+        created_by_id: this.randomElement(managers).id,
+      }).create()
+
+      tasksCreated++
+    }
+
+    return tasksCreated
   }
 
   /**
