@@ -10,14 +10,14 @@ import BaseTool from './base_tool.js'
 export default class QueryFoldersTool extends BaseTool {
   name = 'query_folders'
   description =
-    'Busca pastas/processos jur�dicos no banco de dados. Use para encontrar processos por t�tulo, n�mero CNJ, cliente, tipo ou status.'
+    'Busca pastas/processos jurídicos no banco de dados. Use para encontrar processos por título, número CNJ, cliente, tipo ou status.'
 
   parameters = {
     type: 'object',
     properties: {
       search: {
         type: 'string',
-        description: 'Termo de busca (t�tulo, n�mero CNJ, observa��o)',
+        description: 'Termo de busca (título, número CNJ, observação)',
       },
       client_id: {
         type: 'number',
@@ -25,7 +25,7 @@ export default class QueryFoldersTool extends BaseTool {
       },
       folder_type_id: {
         type: 'number',
-        description: 'ID do tipo de pasta (C�vel, Trabalhista, Criminal, etc)',
+        description: 'ID do tipo de pasta (Cível, Trabalhista, Criminal, etc)',
       },
       status: {
         type: 'string',
@@ -34,7 +34,7 @@ export default class QueryFoldersTool extends BaseTool {
       },
       limit: {
         type: 'number',
-        description: 'Limite de resultados (padr�o: 10, m�ximo: 50)',
+        description: 'Limite de resultados (padrão: 10, máximo: 50)',
         default: 10,
       },
     },

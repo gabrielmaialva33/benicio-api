@@ -4,7 +4,7 @@ import BaseTool from './base_tool.js'
 
 /**
  * SearchJurisprudenceTool
- * Busca jurisprud�ncia dos tribunais brasileiros usando RAG
+ * Busca jurisprudência dos tribunais brasileiros usando RAG
  */
 @inject()
 export default class SearchJurisprudenceTool extends BaseTool {
@@ -14,7 +14,7 @@ export default class SearchJurisprudenceTool extends BaseTool {
 
   name = 'search_jurisprudence'
   description =
-    'Busca jurisprud�ncia dos tribunais superiores (STF, STJ, TST, TRFs, TJs). Use para encontrar precedentes e decis�es relevantes.'
+    'Busca jurisprudência dos tribunais superiores (STF, STJ, TST, TRFs, TJs). Use para encontrar precedentes e decisões relevantes.'
 
   parameters = {
     type: 'object',
@@ -22,17 +22,17 @@ export default class SearchJurisprudenceTool extends BaseTool {
       query: {
         type: 'string',
         description:
-          'Consulta sobre jurisprud�ncia (ex: "dano moral acidente trabalho", "rescis�o indireta", "honor�rios sucumbenciais")',
+          'Consulta sobre jurisprudência (ex: "dano moral acidente trabalho", "rescisão indireta", "honorários sucumbenciais")',
       },
       court_level: {
         type: 'string',
         enum: ['STF', 'STJ', 'TST', 'TRF', 'TJ', 'TRT', 'all'],
-        description: 'N�vel do tribunal para busca (padr�o: all)',
+        description: 'Nível do tribunal para busca (padrão: all)',
         default: 'all',
       },
       top_k: {
         type: 'number',
-        description: 'Quantidade de resultados (padr�o: 5, m�ximo: 10)',
+        description: 'Quantidade de resultados (padrão: 5, máximo: 10)',
         default: 5,
       },
     },
@@ -79,7 +79,7 @@ export default class SearchJurisprudenceTool extends BaseTool {
         return tribunal
       }
     }
-    return 'N�o identificado'
+    return 'Não identificado'
   }
 
   /**

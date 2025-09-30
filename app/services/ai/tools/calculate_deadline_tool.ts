@@ -8,14 +8,14 @@ import BaseTool from './base_tool.js'
 export default class CalculateDeadlineTool extends BaseTool {
   name = 'calculate_deadline'
   description =
-    'Calcula prazos processuais conforme CPC/CLT. Considera dias �teis, corridos, feriados forenses e prazos em dobro.'
+    'Calcula prazos processuais conforme CPC/CLT. Considera dias úteis, corridos, feriados forenses e prazos em dobro.'
 
   parameters = {
     type: 'object',
     properties: {
       start_date: {
         type: 'string',
-        description: 'Data de in�cio do prazo (formato: YYYY-MM-DD)',
+        description: 'Data de início do prazo (formato: YYYY-MM-DD)',
       },
       days: {
         type: 'number',
@@ -23,19 +23,19 @@ export default class CalculateDeadlineTool extends BaseTool {
       },
       count_type: {
         type: 'string',
-        enum: ['�teis', 'corridos'],
-        description: 'Tipo de contagem (�teis ou corridos)',
+        enum: ['úteis', 'corridos'],
+        description: 'Tipo de contagem (úteis ou corridos)',
       },
       doubled: {
         type: 'boolean',
         description:
-          'Prazo em dobro (litisconsortes com procuradores diferentes ou Fazenda P�blica)',
+          'Prazo em dobro (litisconsortes com procuradores diferentes ou Fazenda Pública)',
         default: false,
       },
       court_type: {
         type: 'string',
         enum: ['federal', 'estadual', 'trabalhista', 'eleitoral'],
-        description: 'Tipo de justi�a para considerar feriados espec�ficos',
+        description: 'Tipo de justiça para considerar feriados específicos',
         default: 'estadual',
       },
     },
@@ -45,7 +45,7 @@ export default class CalculateDeadlineTool extends BaseTool {
   async execute(parameters: {
     start_date: string
     days: number
-    count_type: '�teis' | 'corridos'
+    count_type: 'úteis' | 'corridos'
     doubled?: boolean
     court_type?: string
   }): Promise<any> {
@@ -53,7 +53,7 @@ export default class CalculateDeadlineTool extends BaseTool {
     const totalDays = parameters.doubled ? parameters.days * 2 : parameters.days
     const countType = parameters.count_type
 
-    // Feriados nacionais 2025 (simplificado - em produ��o usar API ou banco)
+    // Feriados nacionais 2025 (simplificado - em produção usar API ou banco)
     const nationalHolidays = [
       '2025-01-01', // Ano Novo
       '2025-02-28', // Carnaval
@@ -62,11 +62,11 @@ export default class CalculateDeadlineTool extends BaseTool {
       '2025-04-21', // Tiradentes
       '2025-05-01', // Dia do Trabalho
       '2025-06-19', // Corpus Christi
-      '2025-09-07', // Independ�ncia
+      '2025-09-07', // Independência
       '2025-10-12', // Nossa Senhora Aparecida
       '2025-11-02', // Finados
-      '2025-11-15', // Proclama��o da Rep�blica
-      '2025-11-20', // Dia da Consci�ncia Negra
+      '2025-11-15', // Proclamação da República
+      '2025-11-20', // Dia da Consciência Negra
       '2025-12-25', // Natal
     ]
 
@@ -81,7 +81,7 @@ export default class CalculateDeadlineTool extends BaseTool {
         // Dias corridos: conta todos os dias
         daysAdded++
       } else {
-        // Dias �teis: pula s�bados, domingos e feriados
+        // Dias úteis: pula sábados, domingos e feriados
         const isWeekend = currentDate.weekday === 6 || currentDate.weekday === 7
         const isHoliday = nationalHolidays.includes(currentDate.toISODate()!)
 
@@ -99,22 +99,22 @@ export default class CalculateDeadlineTool extends BaseTool {
     const today = DateTime.now()
     const daysRemaining = Math.ceil(deadlineDate.diff(today, 'days').days)
 
-    // Determina urg�ncia
+    // Determina urgência
     let urgency: 'critical' | 'attention' | 'normal'
     let urgencyIcon: string
 
     if (daysRemaining < 0) {
       urgency = 'critical'
-      urgencyIcon = '=4'
+      urgencyIcon = '🔴'
     } else if (daysRemaining <= 3) {
       urgency = 'critical'
-      urgencyIcon = '=4'
+      urgencyIcon = '🔴'
     } else if (daysRemaining <= 7) {
       urgency = 'attention'
-      urgencyIcon = '=�'
+      urgencyIcon = '🟡'
     } else {
       urgency = 'normal'
-      urgencyIcon = '=�'
+      urgencyIcon = '🟢'
     }
 
     return {
@@ -130,7 +130,7 @@ export default class CalculateDeadlineTool extends BaseTool {
       is_expired: daysRemaining < 0,
       message:
         daysRemaining < 0
-          ? `� PRAZO VENCIDO h� ${Math.abs(daysRemaining)} dias!`
+          ? `🚨 PRAZO VENCIDO há ${Math.abs(daysRemaining)} dias!`
           : `${urgencyIcon} Prazo vence em ${daysRemaining} dias (${deadlineDate.toFormat('dd/MM/yyyy')})`,
     }
   }

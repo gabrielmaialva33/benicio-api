@@ -4,7 +4,7 @@ import BaseTool from './base_tool.js'
 
 /**
  * SearchLegislationTool
- * Busca legisla��o brasileira usando RAG (Retrieval Augmented Generation)
+ * Busca legislação brasileira usando RAG (Retrieval Augmented Generation)
  */
 @inject()
 export default class SearchLegislationTool extends BaseTool {
@@ -14,7 +14,7 @@ export default class SearchLegislationTool extends BaseTool {
 
   name = 'search_legislation'
   description =
-    'Busca legisla��o brasileira (Constitui��o Federal, CPC, CLT, CCB, leis espec�ficas). Use para encontrar artigos de lei relevantes.'
+    'Busca legislação brasileira (Constituição Federal, CPC, CLT, CCB, leis específicas). Use para encontrar artigos de lei relevantes.'
 
   parameters = {
     type: 'object',
@@ -22,11 +22,11 @@ export default class SearchLegislationTool extends BaseTool {
       query: {
         type: 'string',
         description:
-          'Consulta sobre legisla��o (ex: "prescri��o trabalhista", "prazo para recurso CPC", "direitos do trabalhador CLT")',
+          'Consulta sobre legislação (ex: "prescrição trabalhista", "prazo para recurso CPC", "direitos do trabalhador CLT")',
       },
       top_k: {
         type: 'number',
-        description: 'Quantidade de resultados (padr�o: 5, m�ximo: 10)',
+        description: 'Quantidade de resultados (padrão: 5, máximo: 10)',
         default: 5,
       },
     },
