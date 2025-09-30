@@ -1,0 +1,50 @@
+apis:
+  main:
+    root: ./openapi.yaml
+
+extends:
+  - minimal
+
+# Validation rules
+rules:
+  operation-tag-defined: error
+  no-invalid-schema-examples: error
+  no-invalid-media-type-examples: error
+  operation-summary: error
+  operation-description: warn
+  operation-operationId: error
+  operation-2xx-response: error
+  operation-4xx-response: warn
+  spec-strict-refs: error
+  no-server-example.com: off  # Allow localhost for development
+
+  # Custom rules for sentence case
+  rule/operation-summary-sentence-case:
+    subject:
+      type: Operation
+      property: summary
+    message: Operation summary must be sentence cased.
+    assertions:
+      pattern: /^([A-Z]{2,}|[A-Z][^A-Z]*)\b(\s+(?:[A-Z]{2,}|[^A-Z]*)\b)*$/
+
+  rule/example-summary-sentence-case:
+    subject:
+      type: Example
+      property: summary
+    message: Example summary must be sentence cased.
+    assertions:
+      pattern: /^([A-Z]{2,}|[A-Z][^A-Z]*)\b(\s+(?:[A-Z]{2,}|[^A-Z]*)\b)*$/
+
+# Files to ignore
+ignore:
+  - .github
+  - node_modules
+  - .git
+  - '*.md'
+  - '*.http'
+
+# Metadata
+metadata:
+  title: Benicio Advogados API
+  description: Sistema completo de gestão jurídica com AI
+  version: 1.0.0

@@ -1789,7 +1789,7 @@ paths:
     post:
       tags:
         - AI
-      summary: Send message to AI agent (streaming)
+      summary: Send message to AI agent streaming
       description: |
         Same as `/ai/chat` but returns response as Server-Sent Events (SSE) for real-time streaming.
 
