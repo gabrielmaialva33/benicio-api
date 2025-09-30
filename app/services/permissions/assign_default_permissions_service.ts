@@ -31,8 +31,20 @@ export default class AssignDefaultPermissionsService {
     // ADMIN - All except permission management
     await this.assignAdminPermissions(trx)
 
+    // MANAGER - Manage team resources
+    await this.assignManagerPermissions(trx)
+
+    // EMPLOYEE - Work with clients and AI
+    await this.assignEmployeePermissions(trx)
+
+    // EDITOR - Content management
+    await this.assignEditorPermissions(trx)
+
     // USER - Basic permissions
     await this.assignUserPermissions(trx)
+
+    // CLIENT - Limited read access
+    await this.assignClientPermissions(trx)
 
     // GUEST - Read only
     await this.assignGuestPermissions(trx)
@@ -88,6 +100,16 @@ export default class AssignDefaultPermissionsService {
               IPermission.Actions.LIST,
             ])
         })
+        .orWhere((query) => {
+          query
+            .where('resource', IPermission.Resources.AI)
+            .whereIn('action', [
+              IPermission.Actions.CREATE,
+              IPermission.Actions.READ,
+              IPermission.Actions.DELETE,
+              IPermission.Actions.LIST,
+            ])
+        })
         .select('id')
 
       await this.syncRolePermissionsService.handle(
@@ -98,12 +120,163 @@ export default class AssignDefaultPermissionsService {
     }
   }
 
+  private async assignManagerPermissions(trx?: TransactionClientContract): Promise<void> {
+    const managerRole = await Role.findBy('slug', IRole.Slugs.MANAGER, { client: trx })
+    if (managerRole) {
+      const managerPermissions = await Permission.query({ client: trx })
+        .where((query) => {
+          // Full access to clients, files, reports, AI
+          query.whereIn('resource', [
+            IPermission.Resources.CLIENTS,
+            IPermission.Resources.FILES,
+            IPermission.Resources.REPORTS,
+            IPermission.Resources.AI,
+          ])
+        })
+        .orWhere((query) => {
+          // Read users and roles
+          query
+            .whereIn('resource', [IPermission.Resources.USERS, IPermission.Resources.ROLES])
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.LIST])
+        })
+        .orWhere((query) => {
+          // Read settings
+          query
+            .where('resource', IPermission.Resources.SETTINGS)
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.UPDATE])
+        })
+        .select('id')
+
+      await this.syncRolePermissionsService.handle(
+        managerRole.id,
+        managerPermissions.map((p) => p.id),
+        trx
+      )
+    }
+  }
+
+  private async assignEmployeePermissions(trx?: TransactionClientContract): Promise<void> {
+    const employeeRole = await Role.findBy('slug', IRole.Slugs.EMPLOYEE, { client: trx })
+    if (employeeRole) {
+      const employeePermissions = await Permission.query({ client: trx })
+        .where((query) => {
+          // Full CRUD on clients
+          query
+            .where('resource', IPermission.Resources.CLIENTS)
+            .whereIn('action', [
+              IPermission.Actions.CREATE,
+              IPermission.Actions.READ,
+              IPermission.Actions.UPDATE,
+              IPermission.Actions.DELETE,
+              IPermission.Actions.LIST,
+            ])
+        })
+        .orWhere((query) => {
+          // Full access to files and AI
+          query.whereIn('resource', [IPermission.Resources.FILES, IPermission.Resources.AI])
+        })
+        .orWhere((query) => {
+          // Read reports
+          query
+            .where('resource', IPermission.Resources.REPORTS)
+            .whereIn('action', [
+              IPermission.Actions.READ,
+              IPermission.Actions.CREATE,
+              IPermission.Actions.EXPORT,
+            ])
+        })
+        .orWhere((query) => {
+          // Read own user data
+          query
+            .where('resource', IPermission.Resources.USERS)
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.UPDATE])
+        })
+        .select('id')
+
+      await this.syncRolePermissionsService.handle(
+        employeeRole.id,
+        employeePermissions.map((p) => p.id),
+        trx
+      )
+    }
+  }
+
+  private async assignEditorPermissions(trx?: TransactionClientContract): Promise<void> {
+    const editorRole = await Role.findBy('slug', IRole.Slugs.EDITOR, { client: trx })
+    if (editorRole) {
+      const editorPermissions = await Permission.query({ client: trx })
+        .where((query) => {
+          // Full access to files, reports, AI
+          query.whereIn('resource', [
+            IPermission.Resources.FILES,
+            IPermission.Resources.REPORTS,
+            IPermission.Resources.AI,
+          ])
+        })
+        .orWhere((query) => {
+          // Read clients
+          query
+            .where('resource', IPermission.Resources.CLIENTS)
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.LIST])
+        })
+        .orWhere((query) => {
+          // Update own profile
+          query
+            .where('resource', IPermission.Resources.USERS)
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.UPDATE])
+        })
+        .select('id')
+
+      await this.syncRolePermissionsService.handle(
+        editorRole.id,
+        editorPermissions.map((p) => p.id),
+        trx
+      )
+    }
+  }
+
+  private async assignClientPermissions(trx?: TransactionClientContract): Promise<void> {
+    const clientRole = await Role.findBy('slug', IRole.Slugs.CLIENT, { client: trx })
+    if (clientRole) {
+      const clientPermissions = await Permission.query({ client: trx })
+        .where((query) => {
+          // Read own data
+          query
+            .where('resource', IPermission.Resources.USERS)
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.UPDATE])
+        })
+        .orWhere((query) => {
+          // Read files and use AI (limited)
+          query
+            .whereIn('resource', [IPermission.Resources.FILES, IPermission.Resources.AI])
+            .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.LIST])
+        })
+        .orWhere((query) => {
+          // View reports
+          query
+            .where('resource', IPermission.Resources.REPORTS)
+            .where('action', IPermission.Actions.READ)
+        })
+        .select('id')
+
+      await this.syncRolePermissionsService.handle(
+        clientRole.id,
+        clientPermissions.map((p) => p.id),
+        trx
+      )
+    }
+  }
+
   private async assignGuestPermissions(trx?: TransactionClientContract): Promise<void> {
     const guestRole = await Role.findBy('slug', IRole.Slugs.GUEST, { client: trx })
     if (guestRole) {
       const guestPermissions = await Permission.query({ client: trx })
         .whereIn('action', [IPermission.Actions.READ, IPermission.Actions.LIST])
-        .whereNotIn('resource', [IPermission.Resources.PERMISSIONS, IPermission.Resources.AUDIT])
+        .whereNotIn('resource', [
+          IPermission.Resources.PERMISSIONS,
+          IPermission.Resources.AUDIT,
+          IPermission.Resources.AI,
+        ])
         .select('id')
 
       await this.syncRolePermissionsService.handle(

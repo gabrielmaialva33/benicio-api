@@ -34,6 +34,7 @@ namespace IPermission {
     SETTINGS = 'settings',
     REPORTS = 'reports',
     AUDIT = 'audit',
+    AI = 'ai',
   }
 
   export enum Actions {
