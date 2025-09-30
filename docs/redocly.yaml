@@ -16,7 +16,7 @@ rules:
   operation-2xx-response: error
   operation-4xx-response: warn
   spec-strict-refs: error
-  no-server-example.com: off  # Allow localhost for development
+  no-server-example.com: off # Allow localhost for development
 
   # Custom rules for sentence case
   rule/operation-summary-sentence-case:

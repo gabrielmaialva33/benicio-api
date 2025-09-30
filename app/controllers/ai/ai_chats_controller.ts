@@ -99,9 +99,7 @@ export default class AiChatsController {
       response.response.end()
     } catch (error) {
       // Send error event
-      response.response.write(
-        `event: error\ndata: ${JSON.stringify({ error: error.message })}\n\n`
-      )
+      response.response.write(`event: error\ndata: ${JSON.stringify({ error: error.message })}\n\n`)
       response.response.end()
     } finally {
       // Clear heartbeat interval

@@ -1736,20 +1736,20 @@ paths:
               simple_question:
                 summary: Pergunta simples
                 value:
-                  message: "Qual o prazo para recurso de apelação cível?"
-                  mode: "single"
+                  message: 'Qual o prazo para recurso de apelação cível?'
+                  mode: 'single'
               with_context:
                 summary: Com contexto de processo
                 value:
-                  message: "Analise a viabilidade de recurso neste caso"
+                  message: 'Analise a viabilidade de recurso neste caso'
                   folder_id: 123
-                  mode: "single"
+                  mode: 'single'
               continue_conversation:
                 summary: Continuar conversa
                 value:
-                  message: "E para recursos trabalhistas?"
+                  message: 'E para recursos trabalhistas?'
                   conversation_id: 5
-                  mode: "single"
+                  mode: 'single'
       responses:
         '200':
           description: AI response generated successfully
@@ -1762,14 +1762,14 @@ paths:
                 data:
                   conversation_id: 1
                   message_id: 5
-                  agent: "legal-research"
-                  output: "O prazo para recurso de apelação cível é de 15 dias úteis, conforme o Art. 1.003, §5º do CPC/2015."
+                  agent: 'legal-research'
+                  output: 'O prazo para recurso de apelação cível é de 15 dias úteis, conforme o Art. 1.003, §5º do CPC/2015.'
                   tokens_used: 150
                   citations:
-                    - source_type: "legislation"
-                      source_title: "CPC - Código de Processo Civil"
-                      source_url: "http://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm"
-                      excerpt: "Art. 1.003. O prazo para interposição de recurso..."
+                    - source_type: 'legislation'
+                      source_title: 'CPC - Código de Processo Civil'
+                      source_url: 'http://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm'
+                      excerpt: 'Art. 1.003. O prazo para interposição de recurso...'
                       confidence_score: 0.98
         '400':
           description: Bad request - invalid parameters
@@ -1864,13 +1864,13 @@ paths:
               case_analysis:
                 summary: Análise completa de caso
                 value:
-                  workflow: "full-case-analysis"
-                  message: "Avaliar viabilidade de recurso"
+                  workflow: 'full-case-analysis'
+                  message: 'Avaliar viabilidade de recurso'
                   folder_id: 123
               contract_review:
                 summary: Revisão de contrato
                 value:
-                  workflow: "contract-review"
+                  workflow: 'contract-review'
                   folder_id: 456
       responses:
         '200':
@@ -1882,16 +1882,16 @@ paths:
               example:
                 success: true
                 data:
-                  workflow: "full-case-analysis"
+                  workflow: 'full-case-analysis'
                   results:
-                    - agent: "document-analyzer"
-                      output: "Análise documental: 3 documentos analisados..."
+                    - agent: 'document-analyzer'
+                      output: 'Análise documental: 3 documentos analisados...'
                       tokens_used: 500
-                    - agent: "legal-research"
-                      output: "Pesquisa jurisprudencial: 5 precedentes encontrados..."
+                    - agent: 'legal-research'
+                      output: 'Pesquisa jurisprudencial: 5 precedentes encontrados...'
                       tokens_used: 800
-                    - agent: "case-strategy"
-                      output: "Estratégia recomendada: Propor acordo..."
+                    - agent: 'case-strategy'
+                      output: 'Estratégia recomendada: Propor acordo...'
                       tokens_used: 600
                   summary: "# Resumo do Workflow\n\nTotal de agentes: 4..."
         '400':
@@ -1930,18 +1930,18 @@ paths:
                 success: true
                 data:
                   - id: 1
-                    name: "Pesquisador Jurídico"
-                    slug: "legal-research"
-                    description: "Especialista em pesquisa de jurisprudência..."
-                    model: "meta/llama-3.1-70b-instruct"
-                    capabilities: ["web_search", "vector_search"]
+                    name: 'Pesquisador Jurídico'
+                    slug: 'legal-research'
+                    description: 'Especialista em pesquisa de jurisprudência...'
+                    model: 'meta/llama-3.1-70b-instruct'
+                    capabilities: ['web_search', 'vector_search']
                     is_active: true
                   - id: 2
-                    name: "Analisador de Documentos"
-                    slug: "document-analyzer"
-                    description: "Analisa petições, contratos..."
-                    model: "microsoft/phi-4-multimodal-instruct"
-                    capabilities: ["pdf_parsing", "ocr"]
+                    name: 'Analisador de Documentos'
+                    slug: 'document-analyzer'
+                    description: 'Analisa petições, contratos...'
+                    model: 'microsoft/phi-4-multimodal-instruct'
+                    capabilities: ['pdf_parsing', 'ocr']
                     is_active: true
         '401':
           description: Unauthorized
@@ -2072,7 +2072,7 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Conversation deleted successfully"
+                    example: 'Conversation deleted successfully'
         '401':
           description: Unauthorized
         '404':

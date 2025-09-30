@@ -91,6 +91,7 @@ Resposta inclui metadados: `total`, `current_page`, `last_page`, etc.
 A [especificação completa da API](./openapi.yaml) está disponível em formato OpenAPI 3.1.0.
 
 Você pode:
+
 - ✅ Explorar todos os endpoints
 - ✅ Testar requisições diretamente
 - ✅ Ver exemplos de request/response
@@ -110,6 +111,7 @@ Baixe: [api.http](./api.http)
 ## 🛠️ Tecnologias Utilizadas
 
 ### Backend
+
 - **AdonisJS v6** - Framework Node.js/TypeScript
 - **PostgreSQL** - Banco de dados principal
 - **Redis** - Cache e gerenciamento de estado
@@ -117,12 +119,14 @@ Baixe: [api.http](./api.http)
 - **Lucid ORM** - Mapeamento objeto-relacional
 
 ### AI Stack
+
 - **NVIDIA NIM API** - Modelos LLM de última geração
 - **pgvector** - Extensão PostgreSQL para embeddings
 - **Vercel AI SDK** - Integração com NVIDIA
 - **OpenAI SDK** - Cliente compatível
 
 ### Modelos de IA
+
 - `meta/llama-3.1-70b-instruct` - Uso geral e chat
 - `qwen/qwen3-coder-480b-a35b-instruct` - Precisão em prazos
 - `deepseek-ai/deepseek-r1` - Raciocínio avançado

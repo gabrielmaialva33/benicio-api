@@ -47,11 +47,12 @@ export const listConversationsValidator = vine.compile(
 
 /**
  * Validator for conversation ID parameter from URL
+ * Note: Ownership validation is done in the service layer
  */
 export const conversationIdValidator = vine.compile(
   vine.object({
     params: vine.object({
-      id: vine.number().positive().exists({ table: 'ai_conversations', column: 'id' }),
+      id: vine.number().positive(),
     }),
   })
 )
