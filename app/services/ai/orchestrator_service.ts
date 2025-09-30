@@ -1,4 +1,5 @@
 import { inject } from '@adonisjs/core'
+import logger from '@adonisjs/core/services/logger'
 import AiAgent from '#models/ai_agent'
 import AiConversation from '#models/ai_conversation'
 import AiMessage from '#models/ai_message'
@@ -131,6 +132,8 @@ export default class OrchestratorService {
   }> {
     const { userId, input, workflow, folderId } = payload
 
+    logger.info(`[Workflow] Starting ${workflow} for user ${userId}`)
+
     // Create workflow conversation
     const conversation = await AiConversation.create({
       user_id: userId,
@@ -146,6 +149,7 @@ export default class OrchestratorService {
     // Execute workflow based on type
     switch (workflow) {
       case 'full-case-analysis':
+        logger.info('[Workflow] Step 1/4: Document Analysis')
         // 1. Document Analysis
         results.push(
           await this.documentAnalyzer.execute({
@@ -156,6 +160,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 2/4: Legal Research')
         // 2. Legal Research
         results.push(
           await this.legalResearch.execute({
@@ -166,6 +171,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 3/4: Strategy Analysis')
         // 3. Strategy Analysis
         results.push(
           await this.caseStrategy.execute({
@@ -176,6 +182,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 4/4: Client Communication')
         // 4. Client Communication
         results.push(
           await this.clientCommunicator.execute({
@@ -188,6 +195,7 @@ export default class OrchestratorService {
         break
 
       case 'contract-review':
+        logger.info('[Workflow] Step 1/3: Document Analysis')
         // 1. Document Analysis
         results.push(
           await this.documentAnalyzer.execute({
@@ -198,6 +206,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 2/3: Legal Research')
         // 2. Legal Research
         results.push(
           await this.legalResearch.execute({
@@ -208,6 +217,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 3/3: Legal Writer')
         // 3. Legal Writer
         results.push(
           await this.legalWriter.execute({
@@ -220,6 +230,7 @@ export default class OrchestratorService {
         break
 
       case 'litigation-strategy':
+        logger.info('[Workflow] Step 1/3: Legal Research')
         // 1. Legal Research
         results.push(
           await this.legalResearch.execute({
@@ -230,6 +241,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 2/3: Strategy Development')
         // 2. Strategy
         results.push(
           await this.caseStrategy.execute({
@@ -240,6 +252,7 @@ export default class OrchestratorService {
           })
         )
 
+        logger.info('[Workflow] Step 3/3: Deadline Management')
         // 3. Deadline Management
         results.push(
           await this.deadlineManager.execute({
@@ -254,6 +267,8 @@ export default class OrchestratorService {
       default:
         throw new Error(`Unknown workflow: ${workflow}`)
     }
+
+    logger.info(`[Workflow] Completed ${workflow} with ${results.length} agents`)
 
     // Generate workflow summary
     const summary = this.generateWorkflowSummary(workflow, results)

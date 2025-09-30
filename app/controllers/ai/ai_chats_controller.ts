@@ -65,6 +65,11 @@ export default class AiChatsController {
       'X-Accel-Buffering': 'no', // Disable nginx buffering
     })
 
+    // Keep-alive heartbeat to prevent connection timeout
+    const heartbeat = setInterval(() => {
+      response.response.write(': heartbeat\n\n')
+    }, 15000) // Every 15 seconds
+
     try {
       const stream = this.orchestrator.executeStream({
         userId: user.id,
@@ -75,8 +80,18 @@ export default class AiChatsController {
       })
 
       for await (const chunk of stream) {
-        // Send SSE formatted data
-        response.response.write(`data: ${chunk}\n\n`)
+        try {
+          // Send SSE formatted data
+          response.response.write(`data: ${chunk}\n\n`)
+          // Force flush to client
+          if (response.response.flush) {
+            response.response.flush()
+          }
+        } catch (chunkError) {
+          // Client may have disconnected
+          console.error('Error writing chunk:', chunkError)
+          break
+        }
       }
 
       // Send done event
@@ -84,14 +99,20 @@ export default class AiChatsController {
       response.response.end()
     } catch (error) {
       // Send error event
-      response.response.write(`event: error\ndata: ${JSON.stringify({ error: error.message })}\n\n`)
+      response.response.write(
+        `event: error\ndata: ${JSON.stringify({ error: error.message })}\n\n`
+      )
       response.response.end()
+    } finally {
+      // Clear heartbeat interval
+      clearInterval(heartbeat)
     }
   }
 
   /**
    * POST /api/v1/ai/workflows
    * Execute multi-agent workflow
+   * Timeout: 90 seconds (workflows can be slow due to multiple AI calls)
    */
   async executeWorkflow({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
@@ -100,18 +121,35 @@ export default class AiChatsController {
     const payload = await request.validateUsing(executeWorkflowValidator)
 
     try {
-      const result = await this.orchestrator.executeWorkflow({
+      // Set timeout for long-running workflows (90 seconds)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Workflow execution timeout (90s)')), 90000)
+      })
+
+      const workflowPromise = this.orchestrator.executeWorkflow({
         userId: user.id,
         input: payload.message || '',
         workflow: payload.workflow,
         folderId: payload.folder_id,
       })
 
+      // Race between workflow completion and timeout
+      const result = await Promise.race([workflowPromise, timeoutPromise])
+
       return response.ok({
         success: true,
         data: result,
       })
     } catch (error) {
+      // Check if it's a timeout error
+      if (error.message && error.message.includes('timeout')) {
+        return response.status(504).send({
+          success: false,
+          error:
+            'Workflow execution timeout. Consider using smaller workflows or background jobs for complex tasks.',
+        })
+      }
+
       return response.internalServerError({
         success: false,
         error: error.message || 'Failed to execute workflow',
@@ -180,7 +218,7 @@ export default class AiChatsController {
     const payload = await request.validateUsing(conversationIdValidator)
 
     try {
-      const result = await this.orchestrator.getConversation(payload.id, user.id)
+      const result = await this.orchestrator.getConversation(payload.params.id, user.id)
 
       return response.ok({
         success: true,
@@ -212,7 +250,7 @@ export default class AiChatsController {
     const payload = await request.validateUsing(conversationIdValidator)
 
     try {
-      await this.orchestrator.deleteConversation(payload.id, user.id)
+      await this.orchestrator.deleteConversation(payload.params.id, user.id)
 
       return response.ok({
         success: true,

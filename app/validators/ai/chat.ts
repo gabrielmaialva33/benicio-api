@@ -46,10 +46,12 @@ export const listConversationsValidator = vine.compile(
 )
 
 /**
- * Validator for conversation ID parameter
+ * Validator for conversation ID parameter from URL
  */
 export const conversationIdValidator = vine.compile(
   vine.object({
-    id: vine.number().positive().exists({ table: 'ai_conversations', column: 'id' }),
+    params: vine.object({
+      id: vine.number().positive().exists({ table: 'ai_conversations', column: 'id' }),
+    }),
   })
 )
