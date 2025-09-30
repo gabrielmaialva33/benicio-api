@@ -12,12 +12,12 @@ import { ClientAddressFactory } from '#database/factories/client_address_factory
 import { ClientContactFactory } from '#database/factories/client_contact_factory'
 import { RealisticCnjGeneratorService } from '#services/seeders/realistic_cnj_generator_service'
 import {
+  BenicioActionTypes,
+  type BenicioClientData,
   BenicioFirmData,
   BenicioLawyers,
-  BenicioTypicalClients,
-  BenicioActionTypes,
   BenicioTypicalCaseValues,
-  type BenicioClientData,
+  BenicioTypicalClients,
 } from '#defaults/benicio_legal_data'
 import { BrazilianCourts, type CourtData } from '#defaults/brazilian_legal_data'
 

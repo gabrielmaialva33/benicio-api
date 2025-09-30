@@ -4,7 +4,9 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiCitation {
   export interface Repository extends LucidRepositoryInterface<typeof AiCitation> {
     findByMessage(messageId: number): Promise<AiCitation[]>
+
     findBySourceType(sourceType: string, limit?: number): Promise<AiCitation[]>
+
     getStatistics(): Promise<Statistics>
   }
 

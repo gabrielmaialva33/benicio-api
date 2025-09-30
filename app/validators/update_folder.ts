@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine'
-import { FolderStatus, FolderPriority } from '../../contracts/folder_enums.js'
+import { FolderPriority, FolderStatus } from '../../contracts/folder_enums.js'
 
 export const updateFolderValidator = vine.withMetaData<{ folderId: number }>().compile(
   vine.object({

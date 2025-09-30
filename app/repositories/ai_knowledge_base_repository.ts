@@ -18,13 +18,13 @@ export default class AiKnowledgeBaseRepository
 
     const results = await this.model.query().client.rawQuery(
       `
-      SELECT *,
-        embedding <=> ?::vector as distance
-      FROM ai_knowledge_base
-      WHERE embedding IS NOT NULL
-      ORDER BY embedding <=> ?::vector
-      LIMIT ?
-    `,
+        SELECT *,
+               embedding <=> ?::vector as distance
+        FROM ai_knowledge_base
+        WHERE embedding IS NOT NULL
+        ORDER BY embedding <=> ?::vector
+        LIMIT ?
+      `,
       [embeddingStr, embeddingStr, limit]
     )
 

@@ -4,8 +4,11 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiKnowledgeBase {
   export interface Repository extends LucidRepositoryInterface<typeof AiKnowledgeBase> {
     similaritySearch(embedding: number[], limit?: number): Promise<any[]>
+
     findBySourceAndTags(sourceType: string, tags: string[]): Promise<AiKnowledgeBase[]>
+
     findBySource(sourceType: string, sourceId: string): Promise<AiKnowledgeBase[]>
+
     getStatistics(): Promise<Statistics>
   }
 

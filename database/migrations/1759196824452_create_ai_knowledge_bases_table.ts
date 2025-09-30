@@ -22,7 +22,7 @@ export default class extends BaseSchema {
     // Create vector index (ivfflat for similarity search)
     this.schema.raw(`
       CREATE INDEX idx_ai_knowledge_base_embedding
-      ON ai_knowledge_base USING ivfflat (embedding vector_cosine_ops)
+        ON ai_knowledge_base USING ivfflat (embedding vector_cosine_ops)
     `)
 
     // Create other indexes

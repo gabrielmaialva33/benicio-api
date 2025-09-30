@@ -4,7 +4,9 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiMessage {
   export interface Repository extends LucidRepositoryInterface<typeof AiMessage> {
     findByConversation(conversationId: number): Promise<AiMessage[]>
+
     getTotalTokens(conversationId: number): Promise<number>
+
     findWithToolCalls(conversationId: number): Promise<AiMessage[]>
   }
 

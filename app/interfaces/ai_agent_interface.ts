@@ -4,7 +4,9 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiAgent {
   export interface Repository extends LucidRepositoryInterface<typeof AiAgent> {
     findBySlug(slug: string): Promise<AiAgent | null>
+
     findAllActive(): Promise<AiAgent[]>
+
     findByCapability(capability: string): Promise<AiAgent[]>
   }
 

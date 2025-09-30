@@ -2,10 +2,10 @@ import { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import OrchestratorService from '#services/ai/orchestrator_service'
 import {
-  sendMessageValidator,
+  conversationIdValidator,
   executeWorkflowValidator,
   listConversationsValidator,
-  conversationIdValidator,
+  sendMessageValidator,
 } from '#validators/ai/chat'
 
 /**

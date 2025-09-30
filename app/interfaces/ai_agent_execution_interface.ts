@@ -4,8 +4,11 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiAgentExecution {
   export interface Repository extends LucidRepositoryInterface<typeof AiAgentExecution> {
     findByConversation(conversationId: number): Promise<AiAgentExecution[]>
+
     findByAgent(agentId: number, limit?: number): Promise<AiAgentExecution[]>
+
     getStatistics(agentId?: number): Promise<Statistics>
+
     findFailedExecutions(limit?: number): Promise<AiAgentExecution[]>
   }
 

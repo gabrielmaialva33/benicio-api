@@ -4,8 +4,11 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiTool {
   export interface Repository extends LucidRepositoryInterface<typeof AiTool> {
     findBySlug(slug: string): Promise<AiTool | null>
+
     findAllActive(): Promise<AiTool[]>
+
     findByAgent(agentSlug: string): Promise<AiTool[]>
+
     findRequiringAuth(): Promise<AiTool[]>
   }
 

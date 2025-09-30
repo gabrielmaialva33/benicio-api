@@ -4,7 +4,9 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiConversation {
   export interface Repository extends LucidRepositoryInterface<typeof AiConversation> {
     findActiveByUser(userId: number): Promise<AiConversation[]>
+
     findWithMessages(id: number): Promise<AiConversation | null>
+
     findByFolder(folderId: number): Promise<AiConversation[]>
   }
 

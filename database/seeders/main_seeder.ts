@@ -12,10 +12,10 @@ import { ClientAddressFactory } from '#database/factories/client_address_factory
 import { ClientContactFactory } from '#database/factories/client_contact_factory'
 import { RealisticCnjGeneratorService } from '#services/seeders/realistic_cnj_generator_service'
 import {
-  BrazilianCourts,
   BrazilianCompanies,
-  LegalActionTypes,
+  BrazilianCourts,
   type CourtData,
+  LegalActionTypes,
 } from '#defaults/brazilian_legal_data'
 
 /**

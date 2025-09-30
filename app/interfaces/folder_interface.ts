@@ -4,12 +4,19 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IFolder {
   export interface Repository extends LucidRepositoryInterface<typeof Folder> {
     findByClient(clientId: number): Promise<Folder[]>
+
     findByCnj(cnjNumber: string): Promise<Folder | null>
+
     cnjExists(cnjNumber: string, excludeId?: number): Promise<boolean>
+
     findWithRelations(id: number): Promise<Folder | null>
+
     search(filters: ListFilters): any
+
     getStatistics(): Promise<Statistics>
+
     softDeleteFolder(id: number, userId: number): Promise<Folder | null>
+
     restore(id: number, userId: number): Promise<Folder | null>
   }
 

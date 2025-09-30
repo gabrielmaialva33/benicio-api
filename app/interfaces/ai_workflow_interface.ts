@@ -4,7 +4,9 @@ import type LucidRepositoryInterface from '#shared/lucid/lucid_repository_interf
 namespace IAiWorkflow {
   export interface Repository extends LucidRepositoryInterface<typeof AiWorkflow> {
     findBySlug(slug: string): Promise<AiWorkflow | null>
+
     findAllActive(): Promise<AiWorkflow[]>
+
     findByAgent(agentSlug: string): Promise<AiWorkflow[]>
   }
 
