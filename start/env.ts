@@ -134,4 +134,33 @@ export default await Env.create(new URL('../', import.meta.url), {
   MAILGUN_API_KEY: Env.schema.string.optional(),
   MAILGUN_DOMAIN: Env.schema.string.optional(),
   MAILGUN_BASE_URL: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring AI (NVIDIA NIM)
+  |----------------------------------------------------------
+  */
+  NVIDIA_NIM_API_KEY: Env.schema.string(),
+  NVIDIA_NIM_BASE_URL: Env.schema.string.optional(),
+
+  // AI Models Configuration
+  AI_DEFAULT_MODEL: Env.schema.string.optional(),
+  AI_CODE_MODEL: Env.schema.string.optional(),
+  AI_REASONING_MODEL: Env.schema.string.optional(),
+  AI_FAST_MODEL: Env.schema.string.optional(),
+
+  // AI Embeddings Configuration
+  AI_EMBEDDING_MODEL: Env.schema.string.optional(),
+  AI_EMBEDDING_DIMENSION: Env.schema.number.optional(),
+
+  // AI Cache & Rate Limiting
+  AI_CACHE_TTL: Env.schema.number.optional(),
+  AI_MAX_TOKENS_PER_REQUEST: Env.schema.number.optional(),
+  AI_MAX_REQUESTS_PER_MINUTE: Env.schema.number.optional(),
+
+  // RAG Configuration
+  RAG_CHUNK_SIZE: Env.schema.number.optional(),
+  RAG_CHUNK_OVERLAP: Env.schema.number.optional(),
+  RAG_TOP_K_RESULTS: Env.schema.number.optional(),
+  RAG_MIN_CONFIDENCE: Env.schema.number.optional(),
 })
