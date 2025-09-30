@@ -26,6 +26,46 @@ const redisConfig = defineConfig({
         return times > 10 ? null : times * 50
       },
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | AI Cache connection
+    |--------------------------------------------------------------------------
+    |
+    | Connection used for AI response caching, RAG results, and permission
+    | caching. Uses DB 1 to separate AI cache from main application cache.
+    |
+    */
+    ai_cache: {
+      host: env.get('REDIS_HOST'),
+      port: env.get('REDIS_PORT'),
+      password: env.get('REDIS_PASSWORD', 'redis'),
+      db: 1,
+      keyPrefix: 'ai:cache:',
+      retryStrategy(times) {
+        return times > 10 ? null : times * 50
+      },
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | AI State connection
+    |--------------------------------------------------------------------------
+    |
+    | Connection used for LangGraph conversation state management and
+    | multi-agent orchestration state. Uses DB 2 to isolate state data.
+    |
+    */
+    ai_state: {
+      host: env.get('REDIS_HOST'),
+      port: env.get('REDIS_PORT'),
+      password: env.get('REDIS_PASSWORD', 'redis'),
+      db: 2,
+      keyPrefix: 'ai:state:',
+      retryStrategy(times) {
+        return times > 10 ? null : times * 50
+      },
+    },
   },
 })
 
