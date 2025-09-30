@@ -5,6 +5,7 @@ import GetActiveFoldersStatService from '#services/dashboard/get_active_folders_
 import GetAreaDivisionService from '#services/dashboard/get_area_division_service'
 import GetFolderActivityService from '#services/dashboard/get_folder_activity_service'
 import GetBirthdayService from '#services/dashboard/get_birthday_service'
+import GetFavoriteFoldersService from '#services/dashboard/get_favorite_folder_service'
 
 @inject()
 export default class DashboardController {
@@ -12,7 +13,8 @@ export default class DashboardController {
     private getActiveFoldersStatService: GetActiveFoldersStatService,
     private getAreaDivisionService: GetAreaDivisionService,
     private getFolderActivityService: GetFolderActivityService,
-    private getBirthdayService: GetBirthdayService
+    private getBirthdayService: GetBirthdayService,
+    private getFavoriteFoldersService: GetFavoriteFoldersService
   ) {}
 
   /**
@@ -30,12 +32,36 @@ export default class DashboardController {
   /**
    * Get favorite folders list
    */
-  async favoriteFolders({ response }: HttpContext) {
+  async favoriteFolders({ auth, response }: HttpContext) {
     try {
-      // For now, return empty array - can be implemented later with user-specific favorites
-      return response.ok([])
+      const folders = await this.getFavoriteFoldersService.execute(auth.user!.id)
+      return response.ok(folders)
     } catch (error) {
       return response.internalServerError({ message: 'Failed to get favorite folders' })
+    }
+  }
+
+  /**
+   * Add folder to favorites
+   */
+  async addFavorite({ auth, params, response }: HttpContext) {
+    try {
+      await auth.user!.related('favoriteFolders').attach([params.folderId])
+      return response.noContent()
+    } catch (error) {
+      return response.internalServerError({ message: 'Failed to add favorite' })
+    }
+  }
+
+  /**
+   * Remove folder from favorites
+   */
+  async removeFavorite({ auth, params, response }: HttpContext) {
+    try {
+      await auth.user!.related('favoriteFolders').detach([params.folderId])
+      return response.noContent()
+    } catch (error) {
+      return response.internalServerError({ message: 'Failed to remove favorite' })
     }
   }
 

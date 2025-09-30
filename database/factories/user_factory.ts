@@ -12,6 +12,7 @@ export const UserFactory = factory
       email: faker.internet.email().toLowerCase(),
       password: await hash.make('password123'),
       user_type: 'employee' as 'employee' | 'manager' | 'client',
+      birthday: DateTime.fromJSDate(faker.date.birthdate({ min: 25, max: 65, mode: 'age' })),
       metadata: {
         email_verified: faker.datatype.boolean({ probability: 0.8 }),
         email_verified_at: faker.datatype.boolean({ probability: 0.8 })

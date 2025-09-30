@@ -15,6 +15,8 @@ export default class extends BaseSchema {
 
       table.boolean('is_deleted').defaultTo(false)
 
+      table.date('birthday').nullable()
+
       table.jsonb('metadata').defaultTo(
         JSON.stringify({
           email_verified: false,
@@ -26,6 +28,9 @@ export default class extends BaseSchema {
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
+
+      // Indexes
+      table.index('birthday')
     })
   }
 

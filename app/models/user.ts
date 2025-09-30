@@ -19,6 +19,7 @@ import * as model from '@adonisjs/lucid/types/model'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import Role from '#models/role'
 import Permission from '#models/permission'
+import Folder from '#models/folder'
 import IRole from '#interfaces/role_interface'
 
 const AuthFinder = withAuthFinder(() => hash.use('argon'), {
@@ -62,6 +63,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare is_deleted: boolean
 
+  @column.date()
+  declare birthday: DateTime | null
+
   @column({
     prepare: (value) => JSON.stringify(value),
     consume: (value) => {
@@ -100,6 +104,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotColumns: ['granted', 'expires_at'],
   })
   declare permissions: ManyToMany<typeof Permission>
+
+  @manyToMany(() => Folder, {
+    pivotTable: 'user_favorite_folders',
+    pivotTimestamps: { createdAt: 'created_at', updatedAt: false },
+  })
+  declare favoriteFolders: ManyToMany<typeof Folder>
 
   /**
    * ------------------------------------------------------
