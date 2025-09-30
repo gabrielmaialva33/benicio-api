@@ -1,6 +1,12 @@
 import { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import OrchestratorService from '#services/ai/orchestrator_service'
+import {
+  sendMessageValidator,
+  executeWorkflowValidator,
+  listConversationsValidator,
+  conversationIdValidator,
+} from '#validators/ai/chat'
 
 /**
  * AiChatsController
@@ -17,26 +23,16 @@ export default class AiChatsController {
   async send({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const { message, conversationId, folderId, mode } = request.only([
-      'message',
-      'conversation_id',
-      'folder_id',
-      'mode',
-    ])
-
-    if (!message || typeof message !== 'string') {
-      return response.badRequest({
-        error: 'Message is required and must be a string',
-      })
-    }
+    // Validate request
+    const payload = await request.validateUsing(sendMessageValidator)
 
     try {
       const result = await this.orchestrator.execute({
         userId: user.id,
-        input: message,
-        conversationId,
-        folderId,
-        mode: mode || 'single',
+        input: payload.message,
+        conversationId: payload.conversation_id,
+        folderId: payload.folder_id,
+        mode: payload.mode || 'single',
       })
 
       return response.ok({
@@ -58,18 +54,8 @@ export default class AiChatsController {
   async stream({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const { message, conversationId, folderId, mode } = request.only([
-      'message',
-      'conversation_id',
-      'folder_id',
-      'mode',
-    ])
-
-    if (!message || typeof message !== 'string') {
-      return response.badRequest({
-        error: 'Message is required and must be a string',
-      })
-    }
+    // Validate request
+    const payload = await request.validateUsing(sendMessageValidator)
 
     // Set SSE headers
     response.response.writeHead(200, {
@@ -82,10 +68,10 @@ export default class AiChatsController {
     try {
       const stream = this.orchestrator.executeStream({
         userId: user.id,
-        input: message,
-        conversationId,
-        folderId,
-        mode: mode || 'single',
+        input: payload.message,
+        conversationId: payload.conversation_id,
+        folderId: payload.folder_id,
+        mode: payload.mode || 'single',
       })
 
       for await (const chunk of stream) {
@@ -110,24 +96,15 @@ export default class AiChatsController {
   async executeWorkflow({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const { workflow, message, folderId } = request.only(['workflow', 'message', 'folder_id'])
-
-    if (
-      !workflow ||
-      !['full-case-analysis', 'contract-review', 'litigation-strategy'].includes(workflow)
-    ) {
-      return response.badRequest({
-        error:
-          'Invalid workflow. Must be: full-case-analysis, contract-review, or litigation-strategy',
-      })
-    }
+    // Validate request
+    const payload = await request.validateUsing(executeWorkflowValidator)
 
     try {
       const result = await this.orchestrator.executeWorkflow({
         userId: user.id,
-        input: message || '',
-        workflow,
-        folderId,
+        input: payload.message || '',
+        workflow: payload.workflow,
+        folderId: payload.folder_id,
       })
 
       return response.ok({
@@ -169,13 +146,14 @@ export default class AiChatsController {
   async listConversations({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const { page, limit, folderId } = request.qs()
+    // Validate query params
+    const payload = await request.validateUsing(listConversationsValidator)
 
     try {
       const result = await this.orchestrator.listConversations(user.id, {
-        page: page ? Number.parseInt(page) : undefined,
-        limit: limit ? Number.parseInt(limit) : undefined,
-        folderId: folderId ? Number.parseInt(folderId) : undefined,
+        page: payload.page,
+        limit: payload.per_page,
+        folderId: payload.folder_id,
       })
 
       return response.ok({
@@ -195,18 +173,14 @@ export default class AiChatsController {
    * GET /api/v1/ai/conversations/:id
    * Get conversation details with messages
    */
-  async getConversation({ params, auth, response }: HttpContext) {
+  async getConversation({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
-    const conversationId = Number.parseInt(params.id)
 
-    if (!conversationId) {
-      return response.badRequest({
-        error: 'Invalid conversation ID',
-      })
-    }
+    // Validate params
+    const payload = await request.validateUsing(conversationIdValidator)
 
     try {
-      const result = await this.orchestrator.getConversation(conversationId, user.id)
+      const result = await this.orchestrator.getConversation(payload.id, user.id)
 
       return response.ok({
         success: true,
@@ -231,18 +205,14 @@ export default class AiChatsController {
    * DELETE /api/v1/ai/conversations/:id
    * Delete conversation
    */
-  async deleteConversation({ params, auth, response }: HttpContext) {
+  async deleteConversation({ request, auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
-    const conversationId = Number.parseInt(params.id)
 
-    if (!conversationId) {
-      return response.badRequest({
-        error: 'Invalid conversation ID',
-      })
-    }
+    // Validate params
+    const payload = await request.validateUsing(conversationIdValidator)
 
     try {
-      await this.orchestrator.deleteConversation(conversationId, user.id)
+      await this.orchestrator.deleteConversation(payload.id, user.id)
 
       return response.ok({
         success: true,
