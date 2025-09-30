@@ -64,24 +64,30 @@ export default class BenicioSeeder extends BaseSeeder {
 
     // 5. Create legal cases by practice area
     logger.info('📁 Creating legal cases by practice area...')
-    const foldersCount = await this.createLegalCases({
+    const folders = await this.createLegalCases({
       clients,
       courts,
       lawyers: [...partners, ...associates],
       juniors,
       managers: partners,
     })
-    logger.info(`   ✅ Created ${foldersCount} folders with movements, parties, and documents\n`)
+    logger.info(`   ✅ Created ${folders.count} folders with movements, parties, and documents\n`)
+
+    // 6. Create favorite folders for default users (employee, manager, client)
+    logger.info('⭐ Creating favorite folders for default users...')
+    const favoritesCount = await this.createFavoriteFoldersForDefaultUsers(folders.allFolders)
+    logger.info(`   ✅ Created ${favoritesCount} favorite folder relationships\n`)
 
     logger.info('🎉 Benicio Seeding completed successfully!\n')
     logger.info('📊 Summary:')
     logger.info(`   - Lawyers: ${partners.length + associates.length + juniors.length}`)
     logger.info(`   - Courts: ${courts.length}`)
     logger.info(`   - Clients: ${clients.length + 1} (including Benicio)`)
-    logger.info(`   - Folders: ${foldersCount}`)
-    logger.info(`   - Estimated movements: ~${foldersCount * 15}`)
-    logger.info(`   - Estimated documents: ~${foldersCount * 6}`)
-    logger.info(`   - Estimated parties: ~${foldersCount * 3}`)
+    logger.info(`   - Folders: ${folders.count}`)
+    logger.info(`   - Favorite folders: ${favoritesCount}`)
+    logger.info(`   - Estimated movements: ~${folders.count * 15}`)
+    logger.info(`   - Estimated documents: ~${folders.count * 6}`)
+    logger.info(`   - Estimated parties: ~${folders.count * 3}`)
   }
 
   /**
@@ -309,6 +315,7 @@ export default class BenicioSeeder extends BaseSeeder {
   }) {
     const { clients, courts, lawyers, juniors, managers } = params
     let foldersCreated = 0
+    const allFolders: any[] = []
 
     // Practice area distribution (matching Benicio's focus)
     const practiceAreas = [
@@ -416,11 +423,47 @@ export default class BenicioSeeder extends BaseSeeder {
           }).create()
         }
 
+        allFolders.push(folder)
         foldersCreated++
       }
     }
 
-    return foldersCreated
+    return { count: foldersCreated, allFolders }
+  }
+
+  /**
+   * Create favorite folders for default users (employee, manager, client)
+   */
+  private async createFavoriteFoldersForDefaultUsers(folders: any[]) {
+    const UserModule = await import('#models/user')
+    const User = UserModule.default
+
+    // Find default users by email
+    const employee = await User.findBy('email', 'employee@benicio.com.br')
+    const manager = await User.findBy('email', 'manager@benicio.com.br')
+    const client = await User.findBy('email', 'client@benicio.com.br')
+
+    const defaultUsers = [employee, manager, client].filter(Boolean)
+    let favoritesCreated = 0
+
+    for (const user of defaultUsers) {
+      if (!user) continue
+
+      // Each default user gets 5-8 favorite folders
+      const favoriteCount = this.randomInt(5, 8)
+
+      // Select random folders without repetition
+      const shuffled = [...folders].sort(() => 0.5 - Math.random())
+      const selectedFolders = shuffled.slice(0, Math.min(favoriteCount, folders.length))
+
+      // Create the many-to-many relationship
+      const folderIds = selectedFolders.map((f) => f.id)
+      await user.related('favorite_folders').attach(folderIds)
+
+      favoritesCreated += folderIds.length
+    }
+
+    return favoritesCreated
   }
 
   /**
