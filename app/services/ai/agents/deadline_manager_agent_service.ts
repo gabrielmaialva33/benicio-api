@@ -182,7 +182,6 @@ IMPORTANTE: Prazos vencidos devem ser sinalizados de forma clara e imediata.`
       switch (toolName) {
         case 'calculate_deadline':
           // Simulated deadline calculation
-          const days = parameters.doubled ? parameters.days * 2 : parameters.days
           result = {
             deadline_date: '2025-10-20',
             days_remaining: 15,
@@ -190,6 +189,7 @@ IMPORTANTE: Prazos vencidos devem ser sinalizados de forma clara e imediata.`
             holidays_in_period: ['2025-10-12 - Dia de Nossa Senhora Aparecida'],
             doubled: parameters.doubled || false,
             urgency: 'normal',
+            total_days: parameters.doubled ? parameters.days * 2 : parameters.days,
           }
           break
 
