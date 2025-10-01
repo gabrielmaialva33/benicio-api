@@ -36,9 +36,7 @@ export default class Folder extends BaseModel {
   @column()
   declare cnj_number: string | null
 
-  @column({
-    serializeAs: 'code', // Expose as "code" in JSON
-  })
+  @column()
   declare internal_client_code: string | null
 
   @column()
@@ -400,6 +398,11 @@ export default class Folder extends BaseModel {
    * Computed Properties
    * ------------------------------------------------------
    */
+  // Expose internal_client_code as "code" for frontend compatibility
+  public get code(): string | null {
+    return this.internal_client_code
+  }
+
   public get displayTitle(): string {
     if (this.cnj_number) {
       return `${this.title} (${this.cnj_number})`
