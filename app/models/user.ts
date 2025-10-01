@@ -10,6 +10,7 @@ import {
   beforePaginate,
   beforeSave,
   column,
+  computed,
   manyToMany,
   SnakeCaseNamingStrategy,
 } from '@adonisjs/lucid/orm'
@@ -116,6 +117,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
    * Computed Properties
    * ------------------------------------------------------
    */
+  @computed()
   public get avatar_url(): string {
     // Generate deterministic avatar based on user ID
     // Using avataaars.io with random seed based on user ID

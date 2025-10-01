@@ -7,6 +7,7 @@ import {
   beforePaginate,
   belongsTo,
   column,
+  computed,
   hasMany,
   scope,
   SnakeCaseNamingStrategy,
@@ -399,6 +400,7 @@ export default class Folder extends BaseModel {
    * ------------------------------------------------------
    */
   // Expose internal_client_code as "code" for frontend compatibility
+  @computed()
   public get code(): string | null {
     return this.internal_client_code
   }
