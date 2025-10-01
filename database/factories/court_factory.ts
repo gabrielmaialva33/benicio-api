@@ -3,14 +3,14 @@ import Court from '#models/court'
 
 export const CourtFactory = factory
   .define(Court, async ({ faker }) => {
-    const courtTypes = ['federal', 'state', 'military', 'electoral', 'labor']
+    const courtTypes = ['federal', 'state', 'military', 'electoral', 'labor'] as const
     const courtType = faker.helpers.arrayElement(courtTypes)
 
     return {
       name: `${faker.helpers.arrayElement(['TJ', 'Vara', 'Foro'])} ${faker.location.city().substring(0, 10)}`,
       cnj_code: faker.string.numeric(4),
       tribunal_code: faker.string.numeric(2),
-      court_type: courtType,
+      court_type: courtType as 'state' | 'federal' | 'military' | 'electoral' | 'labor',
       instance: faker.helpers.arrayElement(['first', 'second', 'superior']),
       level: faker.number.int({ min: 1, max: 3 }),
       jurisdiction: faker.location.state(),

@@ -85,10 +85,6 @@ export default class AiChatsController {
         try {
           // Send SSE formatted data
           response.response.write(`data: ${chunk}\n\n`)
-          // Force flush to client
-          if (response.response.flush) {
-            response.response.flush()
-          }
         } catch (chunkError) {
           // Client may have disconnected
           console.error('Error writing chunk:', chunkError)

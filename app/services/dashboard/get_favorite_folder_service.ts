@@ -13,9 +13,9 @@ export default class GetFavoriteFoldersService {
 
     return folders.map((folder) => ({
       id: folder.id,
-      code: folder.cnjNumber || folder.internalClientCode || `F-${folder.id}`,
+      code: folder.cnj_number || folder.internal_client_code || `F-${folder.id}`,
       title: folder.title,
-      client_name: folder.client.fantasyName,
+      client_name: folder.client.fantasy_name,
       color: folder.folder_type.color,
     }))
   }

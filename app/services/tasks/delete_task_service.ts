@@ -20,7 +20,7 @@ export default class DeleteTaskService {
       }
 
       // Delete task (hard delete)
-      await this.taskRepository.delete(taskId, { client: transaction })
+      await task.delete()
 
       // Commit if we created the transaction
       if (!trx) {

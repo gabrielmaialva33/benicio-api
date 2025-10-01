@@ -43,7 +43,8 @@ export default class UpdateTaskService {
       }
 
       // Update task
-      await this.taskRepository.update(taskId, parsedPayload, { client: transaction })
+      task.merge(parsedPayload)
+      await task.save()
 
       // Commit if we created the transaction
       if (!trx) {
@@ -52,10 +53,10 @@ export default class UpdateTaskService {
 
       // Reload task with relationships
       const updatedTask = await this.taskRepository.findBy('id', taskId)
-      await updatedTask?.load('assigned_to')
-      await updatedTask?.load('created_by')
+      await updatedTask?.load('assigned_to' as any)
+      await updatedTask?.load('created_by' as any)
       if (updatedTask?.folder_id) {
-        await updatedTask.load('folder')
+        await updatedTask.load('folder' as any)
       }
 
       return updatedTask

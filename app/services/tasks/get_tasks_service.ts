@@ -11,9 +11,9 @@ export default class GetTasksService {
 
     const query = this.taskRepository
       .search(filters)
-      .preload('assigned_to', (q) => q.select(['id', 'full_name', 'email']))
-      .preload('created_by', (q) => q.select(['id', 'full_name', 'email']))
-      .preload('folder', (q) => q.select(['id', 'title', 'cnj_number']))
+      .preload('assigned_to' as any, (q: any) => q.select(['id', 'full_name', 'email']))
+      .preload('created_by' as any, (q: any) => q.select(['id', 'full_name', 'email']))
+      .preload('folder' as any, (q: any) => q.select(['id', 'title', 'cnj_number']))
       .orderBy(sortBy, direction)
 
     const tasks = await query.paginate(page, perPage)

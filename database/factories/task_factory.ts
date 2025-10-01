@@ -142,19 +142,19 @@ export const TaskFactory = factory
       tags,
     }
   })
-  .relation('assigned_to', () => UserFactory)
-  .relation('created_by', () => UserFactory)
-  .relation('folder', () => FolderFactory)
+  .relation('assigned_to' as any, () => UserFactory)
+  .relation('created_by' as any, () => UserFactory)
+  .relation('folder' as any, () => FolderFactory)
   .state('urgent', (task) => {
     task.priority = 'urgent'
     task.due_date = DateTime.now().plus({ days: 1 })
   })
   .state('overdue', (task) => {
     task.status = 'pending'
-    task.due_date = DateTime.now().minus({ days: faker.number.int({ min: 1, max: 10 }) })
+    task.due_date = DateTime.now().minus({ days: 5 })
   })
   .state('completed', (task) => {
     task.status = 'completed'
-    task.completed_at = DateTime.now().minus({ hours: faker.number.int({ min: 1, max: 72 }) })
+    task.completed_at = DateTime.now().minus({ hours: 24 })
   })
   .build()

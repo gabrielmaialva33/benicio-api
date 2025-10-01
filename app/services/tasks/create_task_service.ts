@@ -31,10 +31,10 @@ export default class CreateTaskService {
       }
 
       // Load relationships
-      await task.load('assigned_to')
-      await task.load('created_by')
+      await task.load('assigned_to' as any)
+      await task.load('created_by' as any)
       if (task.folder_id) {
-        await task.load('folder')
+        await task.load('folder' as any)
       }
 
       return task
