@@ -121,6 +121,10 @@ export default class OrchestratorService {
     yield JSON.stringify({
       type: 'content',
       content: response.output,
+      conversation: {
+        id: conversation.id,
+        title: conversation.title,
+      },
     })
 
     yield JSON.stringify({
