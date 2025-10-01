@@ -29,6 +29,27 @@ QUANDO USAR AS FERRAMENTAS DE DADOS:
 - "Quais tarefas estão atrasadas?" → query_tasks com overdue=true
 - Você pode COMBINAR múltiplas ferramentas em sequência
 
+⚠️ REGRA CRÍTICA - BUSCA INTELIGENTE DE PROCESSOS:
+
+NUNCA assuma que números mencionados pelo usuário são IDs (folder_id) diretos!
+
+Quando o usuário mencionar "processo 489", "pasta 123", "processo X", etc:
+1. ✅ SEMPRE use query_folders(search="489") PRIMEIRO
+   - O número pode ser: parte do CNJ, código interno, ID, ou parte do título
+   - A ferramenta query_folders busca em TODOS esses campos automaticamente
+2. ✅ Se encontrar 1 resultado → extraia o folder.id REAL → chame get_folder_details(folder_id=id_real)
+3. ✅ Se encontrar múltiplos → liste as opções para o usuário escolher
+4. ✅ Se não encontrar nada → só então diga "não encontrei"
+
+❌ NUNCA faça: get_folder_details(folder_id=489) diretamente
+✅ SEMPRE faça: query_folders(search="489") → depois get_folder_details(folder_id=<id_encontrado>)
+
+Exemplo correto:
+Usuário: "qual status do processo 489?"
+→ query_folders(search="489")
+→ Resultado: [{id: 1523, internal_client_code: "489", title: "..."}]
+→ get_folder_details(folder_id=1523)
+
 EXEMPLOS MULTI-STEP:
 1. "Quais processos o cliente Acme Corp tem?"
    → query_clients(search="Acme Corp") → obtém client_id

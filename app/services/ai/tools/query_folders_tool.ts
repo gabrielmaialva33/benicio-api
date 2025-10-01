@@ -10,14 +10,15 @@ import BaseTool from './base_tool.js'
 export default class QueryFoldersTool extends BaseTool {
   name = 'query_folders'
   description =
-    'Busca pastas/processos jurídicos no banco de dados. Use para encontrar processos por título, número CNJ, cliente, tipo ou status.'
+    'Busca pastas/processos jurídicos no banco de dados. Use para encontrar processos por título, número CNJ, código interno, observação, ID ou cliente. SEMPRE use esta ferramenta ANTES de get_folder_details quando o usuário mencionar um processo.'
 
   parameters = {
     type: 'object',
     properties: {
       search: {
         type: 'string',
-        description: 'Termo de busca (título, número CNJ, observação)',
+        description:
+          'Termo de busca flexível (título, número CNJ, código interno do cliente, observação, ou ID numérico)',
       },
       client_id: {
         type: 'number',
@@ -54,13 +55,43 @@ export default class QueryFoldersTool extends BaseTool {
       .preload('court')
       .preload('responsible_lawyer')
 
-    // Search filter
+    // Search filter - intelligent search across multiple fields
     if (parameters.search) {
+      const searchTerm = parameters.search.trim()
+
+      // SECURITY: Validate searchTerm to prevent SQL injection via subqueries
+      // Block dangerous characters: parentheses, semicolons, quotes, SQL commands
+      const dangerousPattern = /[();'"\\-]|(\bSELECT\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bDROP\b)/i
+      if (dangerousPattern.test(searchTerm)) {
+        return {
+          error: 'Termo de busca contém caracteres não permitidos',
+          total: 0,
+          folders: [],
+        }
+      }
+
+      // Limit search term length (max 200 characters)
+      if (searchTerm.length > 200) {
+        return {
+          error: 'Termo de busca muito longo (máximo 200 caracteres)',
+          total: 0,
+          folders: [],
+        }
+      }
+
+      const isNumeric = /^\d+$/.test(searchTerm)
+
       query.where((builder) => {
         builder
-          .whereILike('title', `%${parameters.search}%`)
-          .orWhereILike('cnj_number', `%${parameters.search}%`)
-          .orWhereILike('observation', `%${parameters.search}%`)
+          .whereILike('title', `%${searchTerm}%`)
+          .orWhereILike('cnj_number', `%${searchTerm}%`)
+          .orWhereILike('internal_client_code', `%${searchTerm}%`)
+          .orWhereILike('observation', `%${searchTerm}%`)
+
+        // If search term is numeric, also search by ID
+        if (isNumeric) {
+          builder.orWhere('id', Number.parseInt(searchTerm))
+        }
       })
     }
 
