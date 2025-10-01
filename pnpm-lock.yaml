@@ -101,6 +101,9 @@ importers:
       pg:
         specifier: ^8.16.3
         version: 8.16.3
+      pino-pretty:
+        specifier: ^13.1.1
+        version: 13.1.1
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -165,9 +168,6 @@ importers:
       hot-hook:
         specifier: ^0.4.0
         version: 0.4.0
-      pino-pretty:
-        specifier: ^13.1.1
-        version: 13.1.1
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
