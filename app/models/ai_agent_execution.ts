@@ -35,7 +35,10 @@ export default class AiAgentExecution extends BaseModel {
   @column()
   declare output: string | null
 
-  @column()
+  @column({
+    prepare: (value: Record<string, any>[] | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | null) => (value ? JSON.parse(value) : null),
+  })
   declare tool_calls: Record<string, any>[] | null
 
   @column()

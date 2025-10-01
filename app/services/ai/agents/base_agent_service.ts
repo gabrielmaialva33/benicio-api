@@ -11,6 +11,14 @@ import logger from '@adonisjs/core/services/logger'
 import { DateTime } from 'luxon'
 import NotFoundException from '#exceptions/not_found_exception'
 import BadRequestException from '#exceptions/bad_request_exception'
+import type BaseTool from '../tools/base_tool.js'
+import QueryClientsTool from '../tools/query_clients_tool.js'
+import GetClientDetailsTool from '../tools/get_client_details_tool.js'
+import QueryFoldersTool from '../tools/query_folders_tool.js'
+import GetFolderDetailsTool from '../tools/get_folder_details_tool.js'
+import QueryTasksTool from '../tools/query_tasks_tool.js'
+import QueryFolderMovementsTool from '../tools/query_folder_movements_tool.js'
+import QueryDocumentsTool from '../tools/query_documents_tool.js'
 
 /**
  * Base Agent Service
@@ -83,7 +91,10 @@ export default abstract class BaseAgentService {
           // If tools were called, make another request with results
           const toolMessages = [
             ...messages,
-            { role: 'assistant' as const, content: response.content },
+            // Only add assistant message if content is not empty
+            ...(response.content
+              ? [{ role: 'assistant' as const, content: response.content }]
+              : []),
             ...toolResults.map((t) => ({
               role: 'user' as const,
               content: `Tool ${t.tool_name} result: ${JSON.stringify(t.result)}`,
@@ -198,21 +209,209 @@ export default abstract class BaseAgentService {
 
   /**
    * Get available tools for this agent (override in subclasses)
+   * Base implementation provides data access tools to ALL agents
    */
   protected async getTools(): Promise<any[]> {
-    // Default: no tools
-    return []
+    // Data access tools available to all agents
+    return [
+      {
+        type: 'function',
+        function: {
+          name: 'query_clients',
+          description: 'Busca clientes no sistema por nome, documento ou tipo',
+          parameters: {
+            type: 'object',
+            properties: {
+              search: { type: 'string', description: 'Termo de busca (nome, documento)' },
+              client_type: {
+                type: 'string',
+                enum: ['prospect', 'client', 'board_contact'],
+                description: 'Tipo do cliente',
+              },
+              is_active: { type: 'boolean', description: 'Filtrar ativos/inativos' },
+              limit: { type: 'number', description: 'Limite de resultados (max 50)' },
+            },
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'get_client_details',
+          description: 'Obtém detalhes completos de um cliente pelo ID',
+          parameters: {
+            type: 'object',
+            properties: {
+              client_id: { type: 'number', description: 'ID do cliente' },
+            },
+            required: ['client_id'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'query_folders',
+          description: 'Busca processos/pastas por cliente, status, tipo',
+          parameters: {
+            type: 'object',
+            properties: {
+              search: { type: 'string', description: 'Termo de busca' },
+              client_id: { type: 'number', description: 'ID do cliente' },
+              folder_type_id: {
+                type: 'number',
+                description: 'Tipo: 1-Cível, 2-Trabalhista, 3-Criminal, 4-Tributário',
+              },
+              status: { type: 'string', enum: ['active', 'archived', 'suspended', 'concluded'] },
+              limit: { type: 'number', description: 'Limite (max 50)' },
+            },
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'get_folder_details',
+          description: 'Obtém detalhes completos de um processo/pasta pelo ID',
+          parameters: {
+            type: 'object',
+            properties: {
+              folder_id: { type: 'number', description: 'ID do processo' },
+              include_recent_movements: {
+                type: 'boolean',
+                description: 'Incluir últimas 10 movimentações',
+              },
+              include_tasks: { type: 'boolean', description: 'Incluir tarefas' },
+            },
+            required: ['folder_id'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'query_tasks',
+          description: 'Busca tarefas por status, prioridade, pasta',
+          parameters: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                enum: ['pending', 'in_progress', 'completed', 'cancelled'],
+              },
+              priority: { type: 'string', enum: ['low', 'medium', 'high', 'urgent'] },
+              folder_id: { type: 'number', description: 'ID da pasta' },
+              overdue: { type: 'boolean', description: 'Apenas atrasadas' },
+              upcoming_days: { type: 'number', description: 'Vencimento nos próximos X dias' },
+              limit: { type: 'number', description: 'Limite (max 50)' },
+            },
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'query_folder_movements',
+          description: 'Busca movimentações/andamentos de um processo',
+          parameters: {
+            type: 'object',
+            properties: {
+              folder_id: { type: 'number', description: 'ID do processo' },
+              days: { type: 'number', description: 'Últimos X dias' },
+              requires_action: { type: 'boolean', description: 'Requer ação' },
+              is_deadline: { type: 'boolean', description: 'Tem prazo' },
+              urgency_level: { type: 'string', enum: ['low', 'normal', 'high', 'urgent'] },
+              limit: { type: 'number', description: 'Limite (max 100)' },
+            },
+            required: ['folder_id'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'query_documents',
+          description: 'Busca documentos anexados a um processo',
+          parameters: {
+            type: 'object',
+            properties: {
+              folder_id: { type: 'number', description: 'ID do processo' },
+              document_type: { type: 'string', description: 'Tipo do documento' },
+              limit: { type: 'number', description: 'Limite (max 100)' },
+            },
+            required: ['folder_id'],
+          },
+        },
+      },
+    ]
   }
 
   /**
-   * Process tool calls (override in subclasses)
+   * Get tool instance by name
+   */
+  protected getToolInstance(toolName: string): BaseTool | null {
+    switch (toolName) {
+      case 'query_clients':
+        return new QueryClientsTool()
+      case 'get_client_details':
+        return new GetClientDetailsTool()
+      case 'query_folders':
+        return new QueryFoldersTool()
+      case 'get_folder_details':
+        return new GetFolderDetailsTool()
+      case 'query_tasks':
+        return new QueryTasksTool()
+      case 'query_folder_movements':
+        return new QueryFolderMovementsTool()
+      case 'query_documents':
+        return new QueryDocumentsTool()
+      default:
+        return null
+    }
+  }
+
+  /**
+   * Process tool calls
+   * SECURITY: Injects user_id from authenticated payload
    */
   protected async processToolCalls(
-    _toolCalls: any[],
-    _payload: IAiAgent.ExecutePayload
+    toolCalls: any[],
+    payload: IAiAgent.ExecutePayload
   ): Promise<any[]> {
-    // Default: return empty results
-    return []
+    const results: any[] = []
+
+    for (const toolCall of toolCalls) {
+      const toolName = toolCall.function.name
+      const parameters = JSON.parse(toolCall.function.arguments)
+
+      // SECURITY: Inject user_id from authenticated payload (never trust LLM)
+      const toolParameters = {
+        ...parameters,
+        user_id: payload.user_id,
+      }
+
+      let result: any
+
+      // Get tool instance and execute
+      const tool = this.getToolInstance(toolName)
+      if (tool) {
+        try {
+          result = await tool.execute(toolParameters)
+        } catch (error) {
+          result = { error: error.message }
+        }
+      } else {
+        result = { error: 'Tool not found' }
+      }
+
+      results.push({
+        tool_name: toolName,
+        parameters,
+        result,
+      })
+    }
+
+    return results
   }
 
   /**

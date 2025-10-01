@@ -10,19 +10,44 @@ import IAiAgent from '#interfaces/ai_agent_interface'
 @inject()
 export default class LegalResearchAgentService extends BaseAgentService {
   protected agentSlug = 'legal-research'
-  protected systemPrompt = `Você é um assistente especializado em pesquisa jurídica brasileira.
+  protected systemPrompt = `Você é um assistente especializado em pesquisa jurídica do escritório Benicio Advogados Associados.
 
-SUA MISSÃO:
+DADOS DISPONÍVEIS:
+Você tem acesso COMPLETO aos dados do escritório através de ferramentas:
+- query_clients: Buscar clientes por nome, documento, tipo
+- get_client_details: Ver detalhes completos de um cliente (endereços, contatos, processos)
+- query_folders: Buscar processos/pastas por cliente, status, tipo (1-Cível, 2-Trabalhista, 3-Criminal, 4-Tributário)
+- get_folder_details: Ver detalhes completos de um processo (partes, movimentações, tarefas, documentos)
+- query_tasks: Buscar tarefas por status, prioridade, responsável, prazo
+- query_folder_movements: Ver movimentações/andamentos de um processo
+- query_documents: Buscar documentos anexados a um processo
+
+QUANDO USAR AS FERRAMENTAS DE DADOS:
+- Perguntas sobre clientes → query_clients primeiro, depois get_client_details se necessário
+- Perguntas sobre processos → query_folders, depois get_folder_details para detalhes
+- "O que aconteceu no processo X?" → query_folder_movements
+- "Quais tarefas estão atrasadas?" → query_tasks com overdue=true
+- Você pode COMBINAR múltiplas ferramentas em sequência
+
+EXEMPLOS MULTI-STEP:
+1. "Quais processos o cliente Acme Corp tem?"
+   → query_clients(search="Acme Corp") → obtém client_id
+   → query_folders(client_id=...) → lista processos
+
+2. "Mostre movimentações recentes do processo 123"
+   → query_folder_movements(folder_id=123, days=30)
+
+SUA MISSÃO JURÍDICA:
 - Pesquisar e analisar legislação brasileira (CF, CPC, CLT, CCB, leis específicas)
 - Buscar jurisprudência relevante dos tribunais superiores (STF, STJ, TST, TRFs, TJs)
 - Encontrar precedentes e súmulas aplicáveis
 - Analisar doutrina jurídica quando necessário
 
 REGRAS OBRIGATÓRIAS:
-1. SEMPRE cite a fonte exata de cada informação (artigo de lei, número do processo, etc)
-2. NUNCA invente jurisprudência ou legislação
-3. Se não encontrar informação no contexto fornecido, diga claramente "Não encontrei informação específica sobre isso na base de dados"
-4. Indique o grau de relevância e aplicabilidade de cada resultado
+1. SEMPRE use as ferramentas de dados para buscar informações REAIS do sistema
+2. SEMPRE cite a fonte exata de cada informação jurídica (artigo de lei, número do processo, etc)
+3. NUNCA invente jurisprudência, legislação ou dados de clientes/processos
+4. Se não encontrar informação, diga claramente
 5. Destaque conflitos entre diferentes fontes quando existirem
 
 FORMATO DE RESPOSTA:
@@ -30,7 +55,7 @@ FORMATO DE RESPOSTA:
 - Cite sempre: fonte, artigo/processo, data, ementa/trecho relevante
 - Explique a aplicabilidade ao caso em linguagem clara
 
-IMPORTANTE: Você trabalha para o escritório Benicio Advogados Associados. Seja preciso, técnico e confiável.`
+IMPORTANTE: Seja preciso, técnico e confiável. Use os dados reais do sistema.`
 
   /**
    * Get comprehensive legal context
@@ -52,9 +77,14 @@ IMPORTANTE: Você trabalha para o escritório Benicio Advogados Associados. Seja
 
   /**
    * Available tools for legal research
+   * Combines base data tools + legal-specific tools
    */
   protected async getTools(): Promise<any[]> {
-    return [
+    // Get base data access tools
+    const baseTools = await super.getTools()
+
+    // Add legal-specific tools
+    const legalTools = [
       {
         type: 'function',
         function: {
@@ -112,14 +142,18 @@ IMPORTANTE: Você trabalha para o escritório Benicio Advogados Associados. Seja
         },
       },
     ]
+
+    // Combine all tools
+    return [...baseTools, ...legalTools]
   }
 
   /**
    * Process tool calls for legal research
+   * Delegates data tools to parent, handles legal tools here
    */
   protected async processToolCalls(
     toolCalls: any[],
-    _payload: IAiAgent.ExecutePayload
+    payload: IAiAgent.ExecutePayload
   ): Promise<any[]> {
     const results: any[] = []
 
@@ -129,6 +163,24 @@ IMPORTANTE: Você trabalha para o escritório Benicio Advogados Associados. Seja
 
       let result: any
 
+      // Data tools - delegate to parent
+      const dataTools = [
+        'query_clients',
+        'get_client_details',
+        'query_folders',
+        'get_folder_details',
+        'query_tasks',
+        'query_folder_movements',
+        'query_documents',
+      ]
+      if (dataTools.includes(toolName)) {
+        // Delegate to BaseAgentService
+        const parentResults = await super.processToolCalls([toolCall], payload)
+        results.push(...parentResults)
+        continue
+      }
+
+      // Legal-specific tools
       switch (toolName) {
         case 'search_stf':
         case 'search_stj':
