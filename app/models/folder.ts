@@ -282,6 +282,18 @@ export default class Folder extends BaseModel {
     if (!folder.level) {
       folder.level = 0
     }
+
+    // Auto-generate internal_client_code if not provided
+    if (!folder.internal_client_code && folder.client_id) {
+      // Get count of existing folders for this client
+      const count = await Folder.query()
+        .where('client_id', folder.client_id)
+        .whereNotNull('deleted_at', undefined) // Include soft-deleted
+        .count('* as total')
+
+      const folderNumber = (Number(count[0].$extras.total) + 1).toString().padStart(3, '0')
+      folder.internal_client_code = `CLI${folder.client_id}-${folderNumber}`
+    }
   }
 
   @beforeFind()
