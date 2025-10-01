@@ -116,6 +116,89 @@ export default class User extends compose(BaseModel, AuthFinder) {
    * Computed Properties
    * ------------------------------------------------------
    */
+  public get avatar_url(): string {
+    // Generate deterministic avatar based on user ID
+    // Using avataaars.io with random seed based on user ID
+    const seed = this.id || 0
+    const topTypes = ['NoHair', 'Eyepatch', 'Hat', 'Hijab', 'Turban', 'WinterHat1']
+    const accessoriesTypes = [
+      'Blank',
+      'Kurt',
+      'Prescription01',
+      'Prescription02',
+      'Round',
+      'Sunglasses',
+      'Wayfarers',
+    ]
+    const facialHairTypes = [
+      'Blank',
+      'BeardMedium',
+      'BeardLight',
+      'BeardMajestic',
+      'MoustacheFancy',
+      'MoustacheMagnum',
+    ]
+    const clotheTypes = [
+      'BlazerShirt',
+      'BlazerSweater',
+      'CollarSweater',
+      'GraphicShirt',
+      'Hoodie',
+      'Overall',
+      'ShirtCrewNeck',
+      'ShirtScoopNeck',
+      'ShirtVNeck',
+    ]
+    const eyeTypes = [
+      'Close',
+      'Cry',
+      'Default',
+      'Dizzy',
+      'EyeRoll',
+      'Happy',
+      'Hearts',
+      'Side',
+      'Squint',
+      'Surprised',
+      'Wink',
+      'WinkWacky',
+    ]
+    const eyebrowTypes = [
+      'Angry',
+      'AngryNatural',
+      'Default',
+      'DefaultNatural',
+      'FlatNatural',
+      'RaisedExcited',
+      'RaisedExcitedNatural',
+      'SadConcerned',
+      'SadConcernedNatural',
+      'UnibrowNatural',
+      'UpDown',
+      'UpDownNatural',
+    ]
+    const mouthTypes = [
+      'Concerned',
+      'Default',
+      'Disbelief',
+      'Eating',
+      'Grimace',
+      'Sad',
+      'ScreamOpen',
+      'Serious',
+      'Smile',
+      'Tongue',
+      'Twinkle',
+      'Vomit',
+    ]
+    const skinColors = ['Tanned', 'Yellow', 'Pale', 'Light', 'Brown', 'DarkBrown', 'Black']
+
+    // Use ID as seed for deterministic random selection
+    const selectFromArray = (arr: string[], seedVal: number) => arr[seedVal % arr.length]
+
+    return `https://avataaars.io/?avatarStyle=Circle&topType=${selectFromArray(topTypes, seed)}&accessoriesType=${selectFromArray(accessoriesTypes, seed + 1)}&facialHairType=${selectFromArray(facialHairTypes, seed + 2)}&clotheType=${selectFromArray(clotheTypes, seed + 3)}&eyeType=${selectFromArray(eyeTypes, seed + 4)}&eyebrowType=${selectFromArray(eyebrowTypes, seed + 5)}&mouthType=${selectFromArray(mouthTypes, seed + 6)}&skinColor=${selectFromArray(skinColors, seed + 7)}`
+  }
+
   public get is_employee(): boolean {
     return this.user_type === 'employee'
   }
