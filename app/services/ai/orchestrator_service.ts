@@ -91,6 +91,14 @@ export default class OrchestratorService {
     // Detect intent and select agent
     const selectedAgent = await this.selectAgent(input, mode)
 
+    // Save user message
+    await AiMessage.create({
+      conversation_id: conversation.id,
+      agent_id: selectedAgent.id,
+      role: 'user',
+      content: input,
+    })
+
     // Get agent service
     const agentService = this.getAgentService(selectedAgent.slug)
 
@@ -100,6 +108,14 @@ export default class OrchestratorService {
       input,
       folder_id: folderId,
       user_id: userId,
+    })
+
+    // Save assistant message
+    await AiMessage.create({
+      conversation_id: conversation.id,
+      agent_id: selectedAgent.id,
+      role: 'assistant',
+      content: response.output,
     })
 
     yield JSON.stringify({
