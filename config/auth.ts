@@ -29,7 +29,7 @@ const authConfig = defineConfig({
     }),
     jwt: jwtGuard({
       tokenExpiresIn: '1h',
-      useCookies: true,
+      useCookies: false,
       provider: sessionUserProvider({
         model: () => import('#models/user'),
       }),
