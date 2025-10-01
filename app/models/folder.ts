@@ -36,7 +36,9 @@ export default class Folder extends BaseModel {
   @column()
   declare cnj_number: string | null
 
-  @column()
+  @column({
+    serializeAs: 'code', // Expose as "code" in JSON
+  })
   declare internal_client_code: string | null
 
   @column()
@@ -285,13 +287,16 @@ export default class Folder extends BaseModel {
 
     // Auto-generate internal_client_code if not provided
     if (!folder.internal_client_code && folder.client_id) {
-      // Get count of existing folders for this client
-      const count = await Folder.query()
+      // Get count of ALL folders for this client (including soft-deleted to maintain sequence)
+      // Using raw Database query to bypass soft delete hooks
+      const db = await import('@adonisjs/lucid/services/db')
+      const result = await db.default
+        .from('folders')
         .where('client_id', folder.client_id)
-        .whereNotNull('deleted_at', undefined) // Include soft-deleted
         .count('* as total')
+        .first()
 
-      const folderNumber = (Number(count[0].$extras.total) + 1).toString().padStart(3, '0')
+      const folderNumber = (Number(result.total) + 1).toString().padStart(3, '0')
       folder.internal_client_code = `CLI${folder.client_id}-${folderNumber}`
     }
   }
